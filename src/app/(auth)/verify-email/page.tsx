@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { BrandLockup } from "@/components/shared/BrandLockup";
 
 type VerificationMode = "login" | "signup";
 
@@ -128,83 +129,105 @@ export default function VerifyEmailPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.panel}>
-        <div className={styles.brand}>
-          <span className={styles.mark}>B</span>
-          <span>BIRVANA</span>
-        </div>
+      <section className={styles.shell}>
+        <aside className={styles.story}>
+          <div className={styles.storyHeader}>
+            <BrandLockup badge="Email verification" />
+          </div>
 
-        <p className={styles.eyebrow}>Verify email</p>
-        <h1 className={styles.title}>Enter the code from your inbox.</h1>
-        <p className={styles.subtitle}>
-          {mode === "signup"
-            ? "Finish account setup with the one-time verification code sent from birvana.official.in@gmail.com."
-            : "Use the one-time sign-in code from birvana.official.in@gmail.com to open your account securely."}
-        </p>
+          <div className={styles.storyCopyWrap}>
+            <p className={styles.storyEyebrow}>Verify email</p>
+            <h1 className={styles.storyTitle}>Confirm the code and move forward.</h1>
+            <p className={styles.storyCopy}>
+              {mode === "signup"
+                ? "Finish account setup with the one-time verification code sent from birvana.official.in@gmail.com."
+                : "Use the one-time sign-in code from birvana.official.in@gmail.com to open your account securely."}
+            </p>
+          </div>
 
-        <form className={styles.form} onSubmit={onSubmit}>
-          <label className={styles.field}>
-            <span className={styles.label}>Email</span>
-            <input
-              name="email"
-              className={styles.input}
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </label>
+          <div className={styles.storyGrid}>
+            <article className={styles.storyCard}>
+              <p className={styles.storyCardTitle}>Inbox first</p>
+              <p className={styles.storyCardBody}>The verification message should arrive with the BIRVANA secure access header and your one-time code.</p>
+            </article>
+            <article className={styles.storyCard}>
+              <p className={styles.storyCardTitle}>One clean step</p>
+              <p className={styles.storyCardBody}>Enter the code once and the session continues into the app without extra redirects.</p>
+            </article>
+          </div>
+        </aside>
 
-          <label className={styles.field}>
-            <span className={styles.label}>Verification code</span>
-            <input
-              name="token"
-              className={styles.input}
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              placeholder="6-digit code"
-              value={token}
-              onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
-              required
-            />
-          </label>
+        <section className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <p className={styles.eyebrow}>Verification</p>
+            <h2 className={styles.title}>Enter the code from your inbox.</h2>
+            <p className={styles.subtitle}>Use the same email address that requested the code.</p>
+          </div>
 
-          {error ? <p className={`${styles.status} ${styles.statusError}`}>{error}</p> : null}
-          {notice ? <p className={`${styles.status} ${styles.statusSuccess}`}>{notice}</p> : null}
-          {!enabled ? <p className={`${styles.status} ${styles.statusError}`}>{configurationError}</p> : null}
+          <form className={styles.form} onSubmit={onSubmit}>
+            <label className={styles.field}>
+              <span className={styles.label}>Email</span>
+              <input
+                name="email"
+                className={styles.input}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+            </label>
 
-          <button className={styles.button} type="submit" disabled={pending !== null || !enabled}>
-            {pending === "verify" ? "Verifying..." : enabled ? "Verify code" : "Auth unavailable"}
-          </button>
-        </form>
+            <label className={styles.field}>
+              <span className={styles.label}>Verification code</span>
+              <input
+                name="token"
+                className={styles.input}
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                placeholder="Enter the code from your email"
+                value={token}
+                onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
+                required
+              />
+            </label>
 
-        <div className={styles.buttonRow}>
-          {mode === "login" ? (
-            <button
-              className={styles.secondaryButton}
-              type="button"
-              onClick={resendCode}
-              disabled={pending !== null || !enabled}
-            >
-              {pending === "resend" ? "Sending..." : "Resend code"}
+            {error ? <p className={`${styles.status} ${styles.statusError}`}>{error}</p> : null}
+            {notice ? <p className={`${styles.status} ${styles.statusSuccess}`}>{notice}</p> : null}
+            {!enabled ? <p className={`${styles.status} ${styles.statusError}`}>{configurationError}</p> : null}
+
+            <button className={styles.button} type="submit" disabled={pending !== null || !enabled}>
+              {pending === "verify" ? "Verifying..." : enabled ? "Verify code" : "Auth unavailable"}
             </button>
-          ) : (
-            <Link className={styles.secondaryButton} href="/register">
-              Go back to sign up
-            </Link>
-          )}
-        </div>
+          </form>
 
-        <p className={styles.footer}>
-          Need a different address?{" "}
-          <Link href={mode === "signup" ? "/register" : "/login"}>
-            {mode === "signup" ? "Go back to sign up" : "Go back to sign in"}
-          </Link>
-        </p>
+          <div className={styles.buttonRow}>
+            {mode === "login" ? (
+              <button
+                className={styles.secondaryButton}
+                type="button"
+                onClick={resendCode}
+                disabled={pending !== null || !enabled}
+              >
+                {pending === "resend" ? "Sending..." : "Resend code"}
+              </button>
+            ) : (
+              <Link className={styles.secondaryButton} href="/register">
+                Go back to sign up
+              </Link>
+            )}
+          </div>
+
+          <p className={styles.footer}>
+            Need a different address?{" "}
+            <Link href={mode === "signup" ? "/register" : "/login"}>
+              {mode === "signup" ? "Go back to sign up" : "Go back to sign in"}
+            </Link>
+          </p>
+        </section>
       </section>
     </main>
   );

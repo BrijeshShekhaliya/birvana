@@ -35,9 +35,13 @@ const preferenceBootstrapScript = `
 (() => {
   try {
     const root = document.documentElement;
+    const pathname = window.location.pathname;
+    const isPublicThemeRoute = pathname === "/" || pathname === "/login" || pathname === "/register" || pathname === "/verify-email";
     const savedTheme = window.localStorage.getItem("birvana-theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const theme = savedTheme === "dark" || (!savedTheme && prefersDark) ? "dark" : "light";
+    const theme = isPublicThemeRoute
+      ? (prefersDark ? "dark" : "light")
+      : (savedTheme === "dark" || (!savedTheme && prefersDark) ? "dark" : "light");
     const motion = window.localStorage.getItem("birvana-motion") === "reduced" ? "reduced" : "full";
     const playerSize = window.localStorage.getItem("birvana-player-size") === "comfortable" ? "comfortable" : "compact";
     const sourceBadges = window.localStorage.getItem("birvana-source-badges") === "off" ? "off" : "on";
@@ -49,11 +53,13 @@ const preferenceBootstrapScript = `
     root.dataset.playerSize = playerSize;
     root.dataset.sourceBadges = sourceBadges;
     root.dataset.desktopEffects = desktopEffects;
-    document.cookie = "birvana-theme=" + theme + ";path=/;max-age=" + maxAge + ";samesite=lax";
     document.cookie = "birvana-motion=" + motion + ";path=/;max-age=" + maxAge + ";samesite=lax";
     document.cookie = "birvana-player-size=" + playerSize + ";path=/;max-age=" + maxAge + ";samesite=lax";
     document.cookie = "birvana-source-badges=" + sourceBadges + ";path=/;max-age=" + maxAge + ";samesite=lax";
     document.cookie = "birvana-desktop-effects=" + desktopEffects + ";path=/;max-age=" + maxAge + ";samesite=lax";
+    if (!isPublicThemeRoute) {
+      document.cookie = "birvana-theme=" + theme + ";path=/;max-age=" + maxAge + ";samesite=lax";
+    }
   } catch {
     document.documentElement.dataset.theme = "light";
     document.documentElement.dataset.motion = "full";

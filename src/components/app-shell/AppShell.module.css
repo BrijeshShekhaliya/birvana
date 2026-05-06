@@ -47,9 +47,9 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: linear-gradient(135deg, #16181b, #2b2f35);
-  color: white;
-  box-shadow: 0 12px 24px rgba(16, 20, 26, 0.22);
+  background: #101114;
+  color: #fffaf1;
+  box-shadow: 0 12px 24px rgba(16, 17, 20, 0.16);
 }
 
 .headerAction,

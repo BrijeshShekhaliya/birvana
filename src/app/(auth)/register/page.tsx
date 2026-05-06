@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { BrandLockup } from "@/components/shared/BrandLockup";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -76,72 +77,90 @@ export default function RegisterPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.panel}>
-        <div className={styles.brand}>
-          <span className={styles.mark}>B</span>
-          <span>BIRVANA</span>
-        </div>
+      <section className={styles.shell}>
+        <aside className={styles.story}>
+          <div className={styles.storyHeader}>
+            <BrandLockup badge="New account" />
+          </div>
 
-        <p className={styles.eyebrow}>Create account</p>
-        <h1 className={styles.title}>Start your music space.</h1>
-        <p className={styles.subtitle}>
-          Join BIRVANA to save music, build playlists, publish your own releases, and get your
-          verification code from birvana.official.in@gmail.com.
-        </p>
+          <div className={styles.storyCopyWrap}>
+            <p className={styles.storyEyebrow}>Create account</p>
+            <h1 className={styles.storyTitle}>Start clean, publish fast, keep everything together.</h1>
+            <p className={styles.storyCopy}>
+              Build your profile, save the music you love, and step into the studio flow with one
+              account. Verification emails come from birvana.official.in@gmail.com.
+            </p>
+          </div>
 
-        <form className={styles.form} onSubmit={onSubmit}>
-          <label className={styles.field}>
-            <span className={styles.label}>Name</span>
-            <input
-              name="display_name"
-              className={styles.input}
-              type="text"
-              autoComplete="name"
-              placeholder="How your profile should appear"
-              required
-            />
-          </label>
+          <div className={styles.storyGrid}>
+            <article className={styles.storyCard}>
+              <p className={styles.storyCardTitle}>One account for all flows</p>
+              <p className={styles.storyCardBody}>Discovery, playlists, liked songs, uploads, and artist tools all stay under the same identity.</p>
+            </article>
+            <article className={styles.storyCard}>
+              <p className={styles.storyCardTitle}>Professional verification</p>
+              <p className={styles.storyCardBody}>A one-time code confirms your email before the account is fully active.</p>
+            </article>
+          </div>
+        </aside>
 
-          <label className={styles.field}>
-            <span className={styles.label}>Email</span>
-            <input
-              name="email"
-              className={styles.input}
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="name@example.com"
-              required
-            />
-          </label>
+        <section className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <p className={styles.eyebrow}>Create account</p>
+            <h2 className={styles.title}>Make your BIRVANA account.</h2>
+            <p className={styles.subtitle}>Set the details once, then move straight into the catalog and studio.</p>
+          </div>
 
-          <label className={styles.field}>
-            <span className={styles.label}>Password</span>
-            <input
-              name="password"
-              className={styles.input}
-              type="password"
-              autoComplete="new-password"
-              placeholder="Create a password"
-              required
-            />
-          </label>
+          <form className={styles.form} onSubmit={onSubmit}>
+            <label className={styles.field}>
+              <span className={styles.label}>Name</span>
+              <input
+                name="display_name"
+                className={styles.input}
+                type="text"
+                autoComplete="name"
+                placeholder="How your profile should appear"
+                required
+              />
+            </label>
 
-          {error ? <p className={styles.error}>{error}</p> : null}
-          {!enabled ? <p className={styles.error}>{configurationError}</p> : null}
+            <label className={styles.field}>
+              <span className={styles.label}>Email</span>
+              <input
+                name="email"
+                className={styles.input}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="name@example.com"
+                required
+              />
+            </label>
 
-          <button
-            className={styles.button}
-            type="submit"
-            disabled={pending || !enabled}
-          >
-            {pending ? "Creating account..." : enabled ? "Create account" : "Auth unavailable"}
-          </button>
-        </form>
+            <label className={styles.field}>
+              <span className={styles.label}>Password</span>
+              <input
+                name="password"
+                className={styles.input}
+                type="password"
+                autoComplete="new-password"
+                placeholder="Create a password"
+                required
+              />
+            </label>
 
-        <p className={styles.footer}>
-          Already registered? <Link href="/login">Sign in</Link>
-        </p>
+            {error ? <p className={`${styles.status} ${styles.statusError}`}>{error}</p> : null}
+            {!enabled ? <p className={`${styles.status} ${styles.statusError}`}>{configurationError}</p> : null}
+
+            <button className={styles.button} type="submit" disabled={pending || !enabled}>
+              {pending ? "Creating account..." : enabled ? "Create account" : "Auth unavailable"}
+            </button>
+          </form>
+
+          <p className={styles.footer}>
+            Already registered? <Link href="/login">Sign in</Link>
+          </p>
+        </section>
       </section>
     </main>
   );

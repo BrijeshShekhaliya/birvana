@@ -1,0 +1,77 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  color: var(--ink);
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.mark {
+  width: 2.55rem;
+  height: 2.55rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #101114;
+  color: #fffaf1;
+  box-shadow: 0 16px 30px rgba(16, 17, 20, 0.14);
+  flex: 0 0 auto;
+}
+
+.letter {
+  display: block;
+  font-size: 1rem;
+  line-height: 1;
+  transform: translateY(-0.04em);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.45rem;
+  padding: 0 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 74%, transparent);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .root {
+    gap: 0.58rem;
+    letter-spacing: 0.06em;
+  }
+
+  .mark {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .wordmark {
+    font-size: 0.94rem;
+  }
+
+  .badge {
+    min-height: 2.15rem;
+    padding-inline: 0.82rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+  }
+}

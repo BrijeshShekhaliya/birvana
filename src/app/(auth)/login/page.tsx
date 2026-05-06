@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { BrandLockup } from "@/components/shared/BrandLockup";
 
 type SignInMethod = "password" | "otp";
 
@@ -153,45 +154,65 @@ export default function LoginPage() {
 
   return (
     <main className={styles.page}>
-      <section className={styles.panel}>
-        <div className={styles.brand}>
-          <span className={styles.mark}>B</span>
-          <span>BIRVANA</span>
-        </div>
+      <section className={styles.shell}>
+        <aside className={styles.story}>
+          <div className={styles.storyHeader}>
+            <BrandLockup badge="Secure access" />
+          </div>
 
-        <p className={styles.eyebrow}>Sign in</p>
-        <h1 className={styles.title}>Pick up where you left off.</h1>
-        <p className={styles.subtitle}>
-          Open your library, continue listening, and manage your studio from one account. Sign in
-          with your password or use a one-time code sent from birvana.official.in@gmail.com.
-        </p>
+          <div className={styles.storyCopyWrap}>
+            <p className={styles.storyEyebrow}>Sign in</p>
+            <h1 className={styles.storyTitle}>Open your music space without friction.</h1>
+            <p className={styles.storyCopy}>
+              Keep password login for speed, or switch to a one-time email code from
+              {" "}birvana.official.in@gmail.com when you want a clean secure sign-in.
+            </p>
+          </div>
 
-        <div className={styles.methodSwitcher} role="tablist" aria-label="Sign-in method">
-          <button
-            className={`${styles.methodButton} ${method === "password" ? styles.methodButtonActive : ""}`}
-            type="button"
-            onClick={() => {
-              setMethod("password");
-              setError("");
-              setNotice("");
-            }}
-          >
-            Password
-          </button>
-          <button
-            className={`${styles.methodButton} ${method === "otp" ? styles.methodButtonActive : ""}`}
-            type="button"
-            onClick={() => {
-              setMethod("otp");
-              setError("");
-              setNotice("");
-            }}
-          >
-            Email OTP
-          </button>
-        </div>
+          <div className={styles.storyGrid}>
+            <article className={styles.storyCard}>
+              <p className={styles.storyCardTitle}>Continue listening</p>
+              <p className={styles.storyCardBody}>Return to your queue, liked songs, and latest artist updates in one place.</p>
+            </article>
+            <article className={styles.storyCard}>
+              <p className={styles.storyCardTitle}>Two ways to access</p>
+              <p className={styles.storyCardBody}>Use your password when you know it, or request an email code when you need a safer quick entry.</p>
+            </article>
+          </div>
+        </aside>
 
-        <div className={styles.form}>
+        <section className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <p className={styles.eyebrow}>Account access</p>
+            <h2 className={styles.title}>Welcome back.</h2>
+            <p className={styles.subtitle}>Choose the sign-in method that fits this device.</p>
+          </div>
+
+          <div className={styles.methodSwitcher} role="tablist" aria-label="Sign-in method">
+            <button
+              className={`${styles.methodButton} ${method === "password" ? styles.methodButtonActive : ""}`}
+              type="button"
+              onClick={() => {
+                setMethod("password");
+                setError("");
+                setNotice("");
+              }}
+            >
+              Password
+            </button>
+            <button
+              className={`${styles.methodButton} ${method === "otp" ? styles.methodButtonActive : ""}`}
+              type="button"
+              onClick={() => {
+                setMethod("otp");
+                setError("");
+                setNotice("");
+              }}
+            >
+              Email OTP
+            </button>
+          </div>
+
           <label className={styles.field}>
             <span className={styles.label}>Email</span>
             <input
@@ -229,25 +250,15 @@ export default function LoginPage() {
                 />
               </label>
 
-              <p className={styles.helper}>
-                Use this if you already know your account password.
-              </p>
+              <p className={styles.helper}>Use password sign-in on devices you trust.</p>
 
-              <button
-                className={styles.button}
-                type="submit"
-                disabled={pending !== null || !enabled}
-              >
+              <button className={styles.button} type="submit" disabled={pending !== null || !enabled}>
                 {pending === "password-sign-in" ? "Signing in..." : enabled ? "Sign in with password" : "Auth unavailable"}
               </button>
             </form>
-          ) : null}
-
-          {method === "otp" ? (
+          ) : (
             <div className={styles.form}>
-              <p className={styles.helper}>
-                We&apos;ll email a six-digit code and sign you in as soon as it is verified.
-              </p>
+              <p className={styles.helper}>We&apos;ll send a code to your inbox and sign you in as soon as it is verified.</p>
 
               <div className={styles.buttonRow}>
                 <button
@@ -270,34 +281,29 @@ export default function LoginPage() {
                       type="text"
                       inputMode="numeric"
                       autoComplete="one-time-code"
-                      placeholder="6-digit code"
+                      placeholder="Enter the code from your email"
                       value={token}
                       onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
                       required
                     />
                   </label>
 
-                  <button
-                    className={styles.button}
-                    type="button"
-                    onClick={verifyCode}
-                    disabled={pending !== null || !enabled}
-                  >
+                  <button className={styles.button} type="button" onClick={verifyCode} disabled={pending !== null || !enabled}>
                     {pending === "verify-code" ? "Verifying..." : "Sign in with email code"}
                   </button>
                 </>
               ) : null}
             </div>
-          ) : null}
+          )}
 
           {error ? <p className={`${styles.status} ${styles.statusError}`}>{error}</p> : null}
           {notice ? <p className={`${styles.status} ${styles.statusSuccess}`}>{notice}</p> : null}
           {!enabled ? <p className={`${styles.status} ${styles.statusError}`}>{configurationError}</p> : null}
-        </div>
 
-        <p className={styles.footer}>
-          No account yet? <Link href="/register">Create one</Link>
-        </p>
+          <p className={styles.footer}>
+            No account yet? <Link href="/register">Create one</Link>
+          </p>
+        </section>
       </section>
     </main>
   );

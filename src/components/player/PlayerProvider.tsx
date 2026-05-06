@@ -45,6 +45,7 @@ type PlayerContextValue = {
   playPrevious: () => void;
   toggleShuffle: () => void;
   cycleRepeatMode: () => void;
+  resetPlayback: () => void;
 };
 
 type PlayerTimelineContextValue = {
@@ -123,6 +124,7 @@ const playerContextDefaults: PlayerContextValue = {
   playPrevious: () => undefined,
   toggleShuffle: () => undefined,
   cycleRepeatMode: () => undefined,
+  resetPlayback: () => undefined,
 };
 
 const playerTimelineDefaults: PlayerTimelineContextValue = {
@@ -460,6 +462,47 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       releaseAudioTransitionMute(audio, seekTransitionUnmuteDelayMs);
     }
   }, [muteAudioForTransition, releaseAudioTransitionMute]);
+
+  const resetPlaybackState = useCallback(() => {
+    const audio = audioRef.current;
+
+    sourceTransitionTokenRef.current += 1;
+    pendingSeekRef.current = null;
+    clearAudioTransitionTimeout();
+
+    if (audio) {
+      audio.pause();
+      audio.muted = false;
+      audio.removeAttribute("src");
+      audio.load();
+    }
+
+    sourceRef.current = "";
+    queueRef.current = [];
+    queueKeyRef.current = null;
+    queueContextRef.current = null;
+    playOrderRef.current = [];
+    playheadRef.current = -1;
+    progressRef.current = 0;
+    durationRef.current = 0;
+    playingRef.current = false;
+
+    setQueue([]);
+    setQueueKey(null);
+    setQueueContext(null);
+    setPlayOrder([]);
+    setPlayhead(-1);
+    setPlaying(false);
+    setProgress(0);
+    setDuration(0);
+
+    try {
+      window.localStorage.removeItem(playerStateStorageKey);
+      window.localStorage.removeItem(playerPositionStorageKey);
+    } catch {
+      // Ignore storage failures; stopping playback should still complete.
+    }
+  }, [clearAudioTransitionTimeout]);
 
   useEffect(() => {
     queueRef.current = queue;
@@ -1312,6 +1355,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           return "off";
         });
       },
+      resetPlayback() {
+        resetPlaybackState();
+      },
     }),
     [
       currentIndex,
@@ -1321,6 +1367,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       queueKey,
       queueContext,
       repeatMode,
+      resetPlaybackState,
       seekAudioQuietly,
       shuffle,
       storeHistoryItem,

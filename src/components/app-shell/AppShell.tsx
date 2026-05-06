@@ -6,6 +6,7 @@ import { Clock3, Compass, Heart, Library, LogOut, Settings, SlidersHorizontal, U
 import { usePathname, useRouter } from "next/navigation";
 import styles from "./AppShell.module.css";
 import { PlayerBar } from "@/components/player/PlayerBar";
+import { usePlayerPlayback } from "@/components/player/PlayerProvider";
 import { ToastProvider } from "@/components/shared/ToastProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getBrowserSupabase } from "@/lib/supabase/client";
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
+  const { resetPlayback } = usePlayerPlayback();
   const bottomNavItems = navItems.filter((item) => item.showInMobile !== false);
   const bottomNavStyle = { "--bottom-nav-count": String(bottomNavItems.length) } as CSSProperties;
 
@@ -55,8 +57,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [pathname, router]);
 
   const signOut = async () => {
+    resetPlayback();
     const supabase = getBrowserSupabase();
-    if (!supabase) return;
+    if (!supabase) {
+      router.replace("/login");
+      return;
+    }
     await supabase.auth.signOut();
     router.replace("/login");
   };
