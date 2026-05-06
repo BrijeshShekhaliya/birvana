@@ -86,12 +86,27 @@ function readToggleCookie(value: string | undefined): ToggleMode | undefined {
   return value === "off" || value === "on" ? value : undefined;
 }
 
+function getAudioOrigin() {
+  const baseUrl = process.env.R2_PUBLIC_BASE_URL;
+
+  if (!baseUrl) {
+    return null;
+  }
+
+  try {
+    return new URL(baseUrl).origin;
+  } catch {
+    return null;
+  }
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
+  const audioOrigin = getAudioOrigin();
   const savedTheme = readThemeCookie(cookieStore.get("birvana-theme")?.value);
   const savedMotion = readMotionCookie(cookieStore.get("birvana-motion")?.value) ?? "full";
   const savedPlayerSize = readPlayerSizeCookie(cookieStore.get("birvana-player-size")?.value) ?? "compact";
@@ -109,6 +124,14 @@ export default async function RootLayout({
       data-desktop-effects={savedDesktopEffects}
       suppressHydrationWarning
     >
+      <head>
+        {audioOrigin ? (
+          <>
+            <link rel="dns-prefetch" href={audioOrigin} />
+            <link rel="preconnect" href={audioOrigin} crossOrigin="" />
+          </>
+        ) : null}
+      </head>
       <body>
         <AppProviders>{children}</AppProviders>
         <Script
