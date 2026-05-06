@@ -32,6 +32,10 @@ function getSubject(mode: "login" | "signup") {
   return mode === "signup" ? "Verify your BIRVANA account" : "Your BIRVANA sign-in code";
 }
 
+function splitOtp(otp: string) {
+  return otp.replace(/\s+/g, "").split("");
+}
+
 function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
   const intro =
     mode === "signup"
@@ -49,6 +53,16 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
       ? "Need help? Return to BIRVANA and request a fresh verification code."
       : "Need help? Return to BIRVANA and request a fresh sign-in code.";
   const codeLabel = mode === "signup" ? "Verify your email to continue" : "Use this code to sign in now";
+  const otpDigits = splitOtp(otp);
+  const otpCells = otpDigits
+    .map(
+      (digit) => `
+        <td align="center" valign="middle" width="42" height="52" style="width:42px;height:52px;border-radius:14px;background:#fff7f1;border:1px solid #d99879;font-family:Arial,sans-serif;font-size:28px;line-height:52px;font-weight:700;color:#171516;">
+          ${digit}
+        </td>
+      `,
+    )
+    .join('<td width="8" style="width:8px;font-size:0;line-height:0;">&nbsp;</td>');
 
   const html = `
     <!DOCTYPE html>
@@ -107,6 +121,13 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             letter-spacing: 0.06em;
             color: #171516;
           }
+          .brand-sub {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #8a5a48;
+          }
           .badge {
             display: inline-block;
             padding: 8px 14px;
@@ -151,13 +172,11 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             color: #8a4e3a;
           }
           .code-value {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 42px;
-            line-height: 1.1;
+            font-family: Arial, sans-serif;
+            font-size: 28px;
+            line-height: 1;
             font-weight: 700;
-            letter-spacing: 0.12em;
             color: #171516;
-            white-space: nowrap;
           }
           .detail-card {
             background: #f3eadf;
@@ -192,9 +211,15 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
               font-size: 15px !important;
               line-height: 1.7 !important;
             }
-            .code-value {
-              font-size: 34px !important;
-              letter-spacing: 0.08em !important;
+            .badge {
+              font-size: 11px !important;
+              letter-spacing: 0.12em !important;
+            }
+            .digit {
+              width: 34px !important;
+              height: 46px !important;
+              line-height: 46px !important;
+              font-size: 24px !important;
             }
             .mobile-stack,
             .mobile-stack tbody,
@@ -203,8 +228,15 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
               display: block !important;
               width: 100% !important;
             }
-            .mobile-stack td + td {
-              padding-top: 12px !important;
+            .hero-row,
+            .hero-row tbody,
+            .hero-row tr,
+            .hero-row td {
+              display: table !important;
+              width: auto !important;
+            }
+            .hero-badge {
+              padding-top: 10px !important;
             }
           }
         </style>
@@ -219,24 +251,29 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
               <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="card" style="width:100%;max-width:640px;background:#fffaf2;border:1px solid #e5d7c8;border-radius:30px;overflow:hidden;">
                 <tr>
                   <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fff7ef 0%,#f4e7d8 58%,#f0ddd0 100%);border-bottom:1px solid #eadfce;">
-                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="mobile-stack">
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td align="left" valign="middle" style="padding-bottom:14px;">
-                          <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="border-collapse:separate !important;">
+                        <td align="left" valign="top">
+                          <table role="presentation" border="0" cellspacing="0" cellpadding="0" class="hero-row" style="border-collapse:separate !important;">
                             <tr>
-                              <td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;border-radius:24px;background:#a75439;background-image:linear-gradient(135deg,#bf6a4b,#8d442f);font-family:Arial,sans-serif;font-size:23px;font-weight:700;color:#fff7ef;line-height:48px;text-align:center;">
-                                B
+                              <td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;border-radius:24px;background:#a75439;background-image:linear-gradient(135deg,#bf6a4b,#8d442f);">
+                                <div style="width:48px;height:48px;line-height:48px;font-size:0;">&nbsp;</div>
                               </td>
                               <td width="14" style="width:14px;font-size:0;line-height:0;">&nbsp;</td>
-                              <td class="brand" valign="middle" style="font-family:Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#171516;">
-                                BIRVANA
+                              <td valign="middle">
+                                <div class="brand" style="font-family:Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#171516;">
+                                  BIRVANA
+                                </div>
+                                <div class="brand-sub" style="padding-top:4px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#8a5a48;">
+                                  Music platform
+                                </div>
                               </td>
                             </tr>
                           </table>
                         </td>
                       </tr>
                       <tr>
-                        <td align="left" valign="middle">
+                        <td align="left" valign="middle" class="hero-badge" style="padding-top:14px;">
                           <span class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#efe4d7;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#756d67;">Secure access</span>
                         </td>
                       </tr>
@@ -272,9 +309,11 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                             <tr>
                               <td align="center" style="padding:22px 16px 24px;">
                                 <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a4e3a;">Verification code</div>
-                                <div class="code-value" style="font-family:'Courier New',Courier,monospace;font-size:42px;line-height:1.1;font-weight:700;letter-spacing:0.12em;color:#171516;white-space:nowrap;">
-                                  ${otp}
-                                </div>
+                                <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" style="margin:0 auto;">
+                                  <tr>
+                                    ${otpCells.replace(/<td align="center"/g, '<td class="digit" align="center"')}
+                                  </tr>
+                                </table>
                                 <div class="body-copy" style="padding-top:10px;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#6b625d;">
                                   ${codeLabel}
                                 </div>
