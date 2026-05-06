@@ -1,6 +1,5 @@
 import "server-only";
 
-import path from "node:path";
 import nodemailer from "nodemailer";
 import { hasSmtpEnv, requireServerEnv } from "@/lib/env";
 
@@ -57,6 +56,13 @@ function escapeXml(value: string) {
     .replaceAll("'", "&apos;");
 }
 
+function getBrandLogoUrl() {
+  return (
+    process.env.SMTP_BRAND_LOGO_URL ||
+    "https://cdn.jsdelivr.net/gh/BrijeshShekhaliya/birvana@main/public/brand/birvana-mark.png"
+  );
+}
+
 function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
   const intro =
     mode === "signup"
@@ -74,7 +80,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
       ? "Need help? Return to BIRVANA and request a fresh verification code."
       : "Need help? Return to BIRVANA and request a fresh sign-in code.";
   const codeLabel = mode === "signup" ? "Verify your email to continue" : "Use this code to sign in now";
-  const brandMarkPath = path.join(process.cwd(), "public", "brand", "birvana-mark.png");
+  const brandLogoUrl = getBrandLogoUrl();
   const otpCells = splitOtp(otp)
     .map(
       (digit) => `
@@ -239,7 +245,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                       <tr>
                         <td valign="middle" style="width:44px;">
                           <img
-                            src="cid:birvana-mark@birvana"
+                            src="${brandLogoUrl}"
                             alt="BIRVANA"
                             width="44"
                             height="44"
@@ -351,14 +357,6 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
   ].join("\n");
 
   return {
-    attachments: [
-      {
-        cid: "birvana-mark@birvana",
-        path: brandMarkPath,
-        contentType: "image/png",
-        filename: "birvana-mark.png",
-      },
-    ],
     html,
     text,
   };
@@ -370,10 +368,9 @@ export async function sendOtpEmail(input: SendOtpEmailInput) {
   }
 
   const transporter = getTransport();
-  const { attachments, html, text } = renderOtpEmail(input);
+  const { html, text } = renderOtpEmail(input);
 
   await transporter.sendMail({
-    attachments,
     from: getFromAddress(),
     to: input.email,
     subject: getSubject(input.mode),
