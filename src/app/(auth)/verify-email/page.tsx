@@ -137,7 +137,7 @@ export default function VerifyEmailPage() {
 
           <div className={styles.storyCopyWrap}>
             <p className={styles.storyEyebrow}>Verify email</p>
-            <h1 className={styles.storyTitle}>Confirm the code and move forward.</h1>
+            <h1 className={styles.storyTitle}>Confirm the code and finish the sign-in step.</h1>
             <p className={styles.storyCopy}>
               {mode === "signup"
                 ? "Finish account setup with the one-time verification code sent from birvana.official.in@gmail.com."
@@ -159,6 +159,9 @@ export default function VerifyEmailPage() {
 
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
+            <div className={styles.mobileOnly}>
+              <BrandLockup badge="Email verification" />
+            </div>
             <p className={styles.eyebrow}>Verification</p>
             <h2 className={styles.title}>Enter the code from your inbox.</h2>
             <p className={styles.subtitle}>Use the same email address that requested the code.</p>
@@ -185,11 +188,13 @@ export default function VerifyEmailPage() {
               <input
                 name="token"
                 className={styles.input}
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                placeholder="Enter the code from your email"
-                value={token}
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="[0-9]{6,8}"
+              maxLength={8}
+              placeholder="Enter the code from your email"
+              value={token}
                 onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
                 required
               />

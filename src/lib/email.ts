@@ -10,16 +10,27 @@ type SendOtpEmailInput = {
   displayName?: string;
 };
 
+let cachedTransport: nodemailer.Transporter | null = null;
+
 function getTransport() {
-  return nodemailer.createTransport({
+  if (cachedTransport) {
+    return cachedTransport;
+  }
+
+  cachedTransport = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "smtp.gmail.com",
     port: Number(process.env.SMTP_PORT || 465),
     secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : true,
+    pool: true,
+    maxConnections: 2,
+    maxMessages: 50,
     auth: {
       user: requireServerEnv("SMTP_USER"),
       pass: requireServerEnv("SMTP_PASS"),
     },
   });
+
+  return cachedTransport;
 }
 
 function getFromAddress() {
@@ -62,6 +73,12 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
       ? "Need help? Return to BIRVANA and request a fresh verification code."
       : "Need help? Return to BIRVANA and request a fresh sign-in code.";
   const codeLabel = mode === "signup" ? "Verify your email to continue" : "Use this code to sign in now";
+  const brandMarkSvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" role="img" aria-label="BIRVANA">
+      <circle cx="22" cy="22" r="22" fill="#101114" />
+      <text x="22" y="28" text-anchor="middle" fill="#fffaf1" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">B</text>
+    </svg>
+  `;
   const otpCells = splitOtp(otp)
     .map(
       (digit) => `
@@ -225,9 +242,13 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                     <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td valign="middle" style="width:44px;">
-                          <div style="width:44px;height:44px;line-height:44px;border-radius:999px;background:#101114;text-align:center;font-family:Arial,sans-serif;font-size:18px;font-weight:700;color:#fffaf1;">
-                            B
-                          </div>
+                          <img
+                            src="cid:birvana-mark@birvana"
+                            alt="BIRVANA"
+                            width="44"
+                            height="44"
+                            style="display:block;width:44px;height:44px;border:0;outline:none;text-decoration:none;"
+                          />
                         </td>
                         <td style="width:12px;"></td>
                         <td valign="middle" style="font-family:Arial,sans-serif;font-size:20px;font-weight:700;letter-spacing:0.08em;color:#171516;white-space:nowrap;">
@@ -247,7 +268,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                   <td class="content-pad" style="padding:32px;">
                     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td class="eyebrow" style="padding-bottom:12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#8a5a48;">
+                        <td class="eyebrow" style="padding-bottom:12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#7c736b;">
                           One-time code
                         </td>
                       </tr>
@@ -268,10 +289,10 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                       </tr>
                       <tr>
                         <td style="padding-bottom:18px;">
-                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="code-card" style="background:linear-gradient(135deg,#fff2e9 0%,#f8ece1 100%);border:1px solid #edd2bd;border-radius:26px;">
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="code-card" style="background:linear-gradient(135deg,#fffaf4 0%,#f7efe5 100%);border:1px solid #eadfce;border-radius:26px;">
                             <tr>
                               <td align="center" style="padding:22px 16px 24px;">
-                                <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a4e3a;">Verification code</div>
+                                <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#6d6660;">Verification code</div>
                                 <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center">
                                   <tr>
                                     ${otpCells}
@@ -287,7 +308,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                       </tr>
                       <tr>
                         <td style="padding-bottom:22px;">
-                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="detail-card" style="background:#f3eadf;border:1px solid #eadfce;border-radius:22px;">
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="detail-card" style="background:#f6f0e8;border:1px solid #eadfce;border-radius:22px;">
                             <tr>
                               <td style="padding:18px 18px 16px;">
                                 <div class="body-copy" style="font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#5f5853;">
@@ -334,7 +355,14 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
   ].join("\n");
 
   return {
-    attachments: [],
+    attachments: [
+      {
+        cid: "birvana-mark@birvana",
+        content: brandMarkSvg,
+        contentType: "image/svg+xml",
+        filename: "birvana-mark.svg",
+      },
+    ],
     html,
     text,
   };

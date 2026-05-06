@@ -85,10 +85,10 @@ export default function RegisterPage() {
 
           <div className={styles.storyCopyWrap}>
             <p className={styles.storyEyebrow}>Create account</p>
-            <h1 className={styles.storyTitle}>Start clean, publish fast, keep everything together.</h1>
+            <h1 className={styles.storyTitle}>Create your account and move straight into the catalog.</h1>
             <p className={styles.storyCopy}>
-              Build your profile, save the music you love, and step into the studio flow with one
-              account. Verification emails come from birvana.official.in@gmail.com.
+              Set up the basics once, then use the same account for listening, playlists, and
+              studio uploads. Verification emails come from birvana.official.in@gmail.com.
             </p>
           </div>
 
@@ -106,9 +106,12 @@ export default function RegisterPage() {
 
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
+            <div className={styles.mobileOnly}>
+              <BrandLockup badge="New account" />
+            </div>
             <p className={styles.eyebrow}>Create account</p>
-            <h2 className={styles.title}>Make your BIRVANA account.</h2>
-            <p className={styles.subtitle}>Set the details once, then move straight into the catalog and studio.</p>
+            <h2 className={styles.title}>Create your BIRVANA account.</h2>
+            <p className={styles.subtitle}>Add your details once and finish with email verification.</p>
           </div>
 
           <form className={styles.form} onSubmit={onSubmit}>

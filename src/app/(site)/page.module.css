@@ -244,6 +244,13 @@
   line-height: 1.6;
 }
 
+:global(html[data-theme="dark"]) .solid,
+:global(html[data-theme="dark"]) .queueIndex {
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: color-mix(in srgb, #120d0a 90%, white);
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
 @media (min-width: 980px) {
   .hero {
     min-height: calc(100vh - 2rem);
@@ -265,17 +272,31 @@
 
 @media (max-width: 720px) {
   .page {
-    padding: 0.75rem;
+    padding: 0.6rem;
   }
 
   .hero {
-    border-radius: 1.45rem;
-    padding: 1rem;
+    border-radius: 1.35rem;
+    padding: 0.95rem;
   }
 
   .title {
     max-width: none;
-    font-size: clamp(2.7rem, 16vw, 4.1rem);
+    font-size: clamp(2.3rem, 12vw, 3.25rem);
+    line-height: 0.98;
+  }
+
+  .subtitle {
+    font-size: 0.97rem;
+    line-height: 1.58;
+  }
+
+  .featureGrid {
+    gap: 0.75rem;
+  }
+
+  .metaRow {
+    display: none;
   }
 
   .queueRow {

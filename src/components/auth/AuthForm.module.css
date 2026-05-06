@@ -20,6 +20,10 @@
   gap: 1rem;
 }
 
+.mobileOnly {
+  display: none;
+}
+
 .story,
 .panel {
   border: 1px solid var(--line);
@@ -68,7 +72,7 @@
   margin: 0;
   max-width: 12ch;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(2.6rem, 5vw, 4.8rem);
+  font-size: clamp(2.3rem, 4.6vw, 4.1rem);
   line-height: 0.95;
   letter-spacing: -0.08em;
 }
@@ -124,6 +128,26 @@
 .panelHeader {
   display: grid;
   gap: 0.75rem;
+}
+
+.fieldHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.fieldAction {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.fieldAction:hover {
+  color: var(--ink);
 }
 
 .title {
@@ -196,6 +220,11 @@
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-soft) 72%, transparent);
 }
 
+.input:disabled {
+  opacity: 0.76;
+  cursor: not-allowed;
+}
+
 .button,
 .secondaryButton {
   min-height: 54px;
@@ -257,6 +286,17 @@
   font-weight: 700;
 }
 
+:global(html[data-theme="dark"]) .methodButtonActive,
+:global(html[data-theme="dark"]) .button {
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: color-mix(in srgb, #120d0a 90%, white);
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+:global(html[data-theme="dark"]) .fieldAction {
+  color: color-mix(in srgb, var(--accent) 82%, white);
+}
+
 @media (min-width: 980px) {
   .shell {
     grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.92fr);
@@ -278,21 +318,44 @@
 
 @media (max-width: 760px) {
   .page {
-    padding: 0.75rem;
+    padding: 0.6rem;
   }
 
   .shell {
+    width: min(100%, 34rem);
     min-height: auto;
   }
 
   .story,
   .panel {
-    border-radius: 1.5rem;
-    padding: 1.05rem;
+    border-radius: 1.35rem;
+    padding: 1rem;
   }
 
-  .storyTitle {
-    max-width: none;
-    font-size: clamp(2.2rem, 10vw, 3rem);
+  .story {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+
+  .panel {
+    min-height: calc(100vh - 1.2rem);
+    align-content: start;
+    gap: 1rem;
+  }
+
+  .panelHeader {
+    gap: 0.65rem;
+  }
+
+  .title {
+    font-size: clamp(1.95rem, 9vw, 2.6rem);
+  }
+
+  .subtitle {
+    font-size: 0.96rem;
+    line-height: 1.58;
   }
 }

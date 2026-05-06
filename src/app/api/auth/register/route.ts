@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
 import { sendOtpEmail } from "@/lib/email";
 import { hasSupabaseEnv, hasSmtpEnv } from "@/lib/env";
 import { getAdminSupabase } from "@/lib/supabase/server";
@@ -43,24 +43,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unable to generate the verification code." }, { status: 400 });
   }
 
-  try {
-    await sendOtpEmail({
-      email,
-      otp: emailOtp,
-      mode: "signup",
-      displayName,
-    });
-  } catch (sendError) {
-    return NextResponse.json(
-      {
-        error:
-          sendError instanceof Error
-            ? sendError.message
-            : "Unable to send the verification email right now.",
-      },
-      { status: 500 },
-    );
-  }
+  after(async () => {
+    try {
+      await sendOtpEmail({
+        email,
+        otp: emailOtp,
+        mode: "signup",
+        displayName,
+      });
+    } catch (sendError) {
+      console.error("Unable to send signup OTP email", sendError);
+    }
+  });
 
   return NextResponse.json({
     ok: true,

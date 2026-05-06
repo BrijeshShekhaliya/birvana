@@ -35,6 +35,7 @@ export default function LoginPage() {
   const [notice, setNotice] = useState("");
   const [otpRequested, setOtpRequested] = useState(false);
   const configurationError = "Authentication is not available right now.";
+  const emailLocked = method === "otp" && otpRequested;
 
   useEffect(() => {
     if (!user) {
@@ -114,7 +115,7 @@ export default function LoginPage() {
     setPending(null);
     setOtpRequested(true);
     setToken("");
-    setNotice("Your sign-in code has been sent. Enter it below to sign in directly.");
+    setNotice("Your sign-in code is on the way. The email is locked below so the verification step stays on the same address.");
   };
 
   const verifyCode = async () => {
@@ -162,10 +163,10 @@ export default function LoginPage() {
 
           <div className={styles.storyCopyWrap}>
             <p className={styles.storyEyebrow}>Sign in</p>
-            <h1 className={styles.storyTitle}>Open your music space without friction.</h1>
+            <h1 className={styles.storyTitle}>Choose password or email code and get back in fast.</h1>
             <p className={styles.storyCopy}>
-              Keep password login for speed, or switch to a one-time email code from
-              {" "}birvana.official.in@gmail.com when you want a clean secure sign-in.
+              Password stays available for regular sign-in, and the email code path gives you a
+              quick secure fallback from birvana.official.in@gmail.com.
             </p>
           </div>
 
@@ -183,9 +184,12 @@ export default function LoginPage() {
 
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
+            <div className={styles.mobileOnly}>
+              <BrandLockup badge="Secure access" />
+            </div>
             <p className={styles.eyebrow}>Account access</p>
-            <h2 className={styles.title}>Welcome back.</h2>
-            <p className={styles.subtitle}>Choose the sign-in method that fits this device.</p>
+            <h2 className={styles.title}>Sign in to BIRVANA.</h2>
+            <p className={styles.subtitle}>Use your password, or request a one-time code for this email.</p>
           </div>
 
           <div className={styles.methodSwitcher} role="tablist" aria-label="Sign-in method">
@@ -214,7 +218,23 @@ export default function LoginPage() {
           </div>
 
           <label className={styles.field}>
-            <span className={styles.label}>Email</span>
+            <span className={styles.fieldHeader}>
+              <span className={styles.label}>Email</span>
+              {emailLocked ? (
+                <button
+                  type="button"
+                  className={styles.fieldAction}
+                  onClick={() => {
+                    setOtpRequested(false);
+                    setToken("");
+                    setNotice("");
+                    setError("");
+                  }}
+                >
+                  Change email
+                </button>
+              ) : null}
+            </span>
             <input
               name="email"
               className={styles.input}
@@ -223,6 +243,7 @@ export default function LoginPage() {
               autoComplete="email"
               placeholder="name@example.com"
               value={email}
+              disabled={emailLocked}
               onChange={(event) => {
                 setEmail(event.target.value.trim());
                 setOtpRequested(false);
@@ -258,7 +279,7 @@ export default function LoginPage() {
             </form>
           ) : (
             <div className={styles.form}>
-              <p className={styles.helper}>We&apos;ll send a code to your inbox and sign you in as soon as it is verified.</p>
+              <p className={styles.helper}>We&apos;ll send a code to your inbox, lock this email for the verification step, and sign you in after the code is confirmed.</p>
 
               <div className={styles.buttonRow}>
                 <button
@@ -281,6 +302,8 @@ export default function LoginPage() {
                       type="text"
                       inputMode="numeric"
                       autoComplete="one-time-code"
+                      pattern="[0-9]{6,8}"
+                      maxLength={8}
                       placeholder="Enter the code from your email"
                       value={token}
                       onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}

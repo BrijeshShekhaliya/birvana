@@ -18,7 +18,7 @@ export default async function LandingPage() {
       <section className={styles.shell}>
         <section className={styles.hero}>
           <header className={styles.header}>
-            <BrandLockup badge="Listen • Collect • Release" href="/" />
+            <BrandLockup badge="Listen / Collect / Release" href="/" />
 
             <div className={styles.actions}>
               <Link className={styles.ghost} href="/login">
@@ -33,11 +33,10 @@ export default async function LandingPage() {
           <div className={styles.heroGrid}>
             <div className={styles.lead}>
               <p className={styles.eyebrow}>Music for listening, collecting, and releasing</p>
-              <h1 className={styles.title}>One place for listeners, playlists, and your studio flow.</h1>
+              <h1 className={styles.title}>Your music, library, and studio in one place.</h1>
               <p className={styles.subtitle}>
-                BIRVANA keeps discovery, saved music, artist pages, and uploads under one calm
-                interface so you spend less time switching tools and more time staying with the
-                music.
+                Discover tracks, keep your saved music close, and move into uploads without
+                bouncing between separate tools.
               </p>
 
               <div className={styles.heroActions}>
@@ -56,7 +55,7 @@ export default async function LandingPage() {
                     <Headphones size={18} />
                   </div>
                   <p className={styles.featureTitle}>Discover that stays readable</p>
-                  <p className={styles.featureBody}>Browse tracks and artists without noisy colors or overloaded cards.</p>
+                  <p className={styles.featureBody}>Browse tracks and artists without overloaded cards or muddy contrast.</p>
                 </article>
                 <article className={styles.feature}>
                   <div className={styles.featureIcon}>
@@ -92,7 +91,7 @@ export default async function LandingPage() {
                     <span className={styles.queueIndex}>1</span>
                     <div>
                       <p className={styles.queueTitle}>Neon Shoreline</p>
-                      <p className={styles.queueMeta}>Editorial mix • Warm start</p>
+                      <p className={styles.queueMeta}>Editorial mix - Warm start</p>
                     </div>
                     <p className={styles.queueDuration}>3:24</p>
                   </article>
