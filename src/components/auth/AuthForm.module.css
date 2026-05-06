@@ -63,8 +63,8 @@
 .eyebrow {
   margin: 0;
   color: var(--muted);
-  font-size: 0.76rem;
-  letter-spacing: 0.22em;
+  font-size: var(--app-kicker-size);
+  letter-spacing: var(--app-kicker-track);
   text-transform: uppercase;
 }
 
@@ -72,9 +72,9 @@
   margin: 0;
   max-width: 12ch;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(2.3rem, 4.6vw, 4.1rem);
-  line-height: 0.95;
-  letter-spacing: -0.08em;
+  font-size: var(--app-title-public);
+  line-height: 0.94;
+  letter-spacing: -0.07em;
 }
 
 .storyCopy,
@@ -82,7 +82,8 @@
 .helper {
   margin: 0;
   color: var(--muted);
-  line-height: 1.65;
+  font-size: var(--app-copy-md);
+  line-height: var(--app-copy-line);
 }
 
 .otpGroup {
@@ -178,14 +179,16 @@
 .storyCardTitle {
   margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 1.06rem;
+  font-size: 1.02rem;
+  font-weight: 700;
   letter-spacing: -0.04em;
 }
 
 .storyCardBody {
   margin: 0;
   color: var(--muted);
-  line-height: 1.55;
+  font-size: var(--app-copy-sm);
+  line-height: var(--app-copy-line);
 }
 
 .panel {
@@ -229,9 +232,9 @@
 .title {
   margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(2.1rem, 4vw, 3.2rem);
-  line-height: 0.98;
-  letter-spacing: -0.07em;
+  font-size: var(--app-title-xl);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
 }
 
 .methodSwitcher {
@@ -252,6 +255,10 @@
   color: var(--muted);
   font-weight: 700;
   cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .methodButtonActive {
@@ -271,7 +278,7 @@
 }
 
 .label {
-  font-size: 0.88rem;
+  font-size: var(--app-copy-sm);
   color: var(--muted);
 }
 
@@ -340,8 +347,8 @@
 
 .status {
   margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: var(--app-copy-sm);
+  line-height: var(--app-copy-line);
 }
 
 .statusError {
@@ -355,6 +362,8 @@
 .footer {
   margin: 0;
   color: var(--muted);
+  font-size: var(--app-copy-sm);
+  line-height: var(--app-copy-line);
 }
 
 .footer a {

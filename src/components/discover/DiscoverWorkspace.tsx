@@ -4,7 +4,6 @@ import { Search, X } from "lucide-react";
 import { startTransition, useDeferredValue, useMemo, useState } from "react";
 import styles from "./DiscoverWorkspace.module.css";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { LazyImage } from "@/components/shared/LazyImage";
 import { PlaylistCard } from "@/components/shared/PlaylistCard";
 import { TrackCard } from "@/components/shared/TrackCard";
 import { resolveTrackCategory, type MusicCategory } from "@/lib/music/categories";
@@ -15,21 +14,77 @@ type DiscoverCategory =
   | "all"
   | MusicCategory;
 type DiscoverTrackCategory = Exclude<DiscoverCategory, "all">;
+type DiscoverCategoryOption = {
+  id: DiscoverCategory;
+  label: string;
+  eyebrow: string;
+  description: string;
+  accent: string;
+};
 
 const shelfLimit = 12;
 
-const browseCategories: Array<{
-  id: DiscoverCategory;
-  label: string;
-}> = [
-  { id: "all", label: "All songs" },
-  { id: "hindi", label: "Hindi" },
-  { id: "punjabi", label: "Punjabi" },
-  { id: "english", label: "English" },
-  { id: "south", label: "Tamil & South" },
-  { id: "devotional", label: "Devotional" },
-  { id: "other", label: "Other" },
+const browseCategories: DiscoverCategoryOption[] = [
+  {
+    id: "all",
+    label: "All songs",
+    eyebrow: "Full catalog",
+    description: "Every public track in one place.",
+    accent: "Everything",
+  },
+  {
+    id: "hindi",
+    label: "Hindi",
+    eyebrow: "Film and pop",
+    description: "Bollywood hooks, romantic cuts, and chart staples.",
+    accent: "Bollywood",
+  },
+  {
+    id: "punjabi",
+    label: "Punjabi",
+    eyebrow: "High energy",
+    description: "Bhangra pressure, rap edges, and fast hooks.",
+    accent: "Bhangra",
+  },
+  {
+    id: "english",
+    label: "English",
+    eyebrow: "Global picks",
+    description: "Mainstream pop, alt favorites, and crossover singles.",
+    accent: "Global",
+  },
+  {
+    id: "south",
+    label: "Tamil & South",
+    eyebrow: "Regional favorites",
+    description: "Tamil, Telugu, Malayalam, and South-led standouts.",
+    accent: "South",
+  },
+  {
+    id: "devotional",
+    label: "Devotional",
+    eyebrow: "Reflective sets",
+    description: "Bhajans, aartis, and spiritual listening sessions.",
+    accent: "Bhakti",
+  },
+  {
+    id: "other",
+    label: "Other",
+    eyebrow: "Outside the main lanes",
+    description: "Indie uploads, experiments, and everything uncategorized.",
+    accent: "Indie",
+  },
 ];
+
+const categoryThemeClassNames: Record<DiscoverCategory, string> = {
+  all: styles.categoryArtAll,
+  hindi: styles.categoryArtHindi,
+  punjabi: styles.categoryArtPunjabi,
+  english: styles.categoryArtEnglish,
+  south: styles.categoryArtSouth,
+  devotional: styles.categoryArtDevotional,
+  other: styles.categoryArtOther,
+};
 
 function getCreatedTime(track: Track) {
   if (!track.created_at) {
@@ -42,15 +97,6 @@ function getCreatedTime(track: Track) {
 
 function getCategoryLabel(categoryId: DiscoverCategory) {
   return browseCategories.find((category) => category.id === categoryId)?.label ?? "Songs";
-}
-
-function getCategoryFallback(label: string) {
-  return label
-    .split(/\s|&/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.at(0))
-    .join("");
 }
 
 function TrackShelf({
@@ -196,7 +242,6 @@ export function DiscoverWorkspace({
       return {
         ...category,
         count: categoryTracks.length,
-        leadTrack: categoryTracks[0] ?? null,
       };
     });
   }, [tracks, tracksByCategory]);
@@ -217,7 +262,11 @@ export function DiscoverWorkspace({
 
   const categoryShelves = useMemo(() => {
     return browseCategories
-      .filter((category): category is { id: DiscoverTrackCategory; label: string } => category.id !== "all")
+      .filter(
+        (
+          category,
+        ): category is DiscoverCategoryOption & { id: DiscoverTrackCategory } => category.id !== "all",
+      )
       .map((category) => ({
         ...category,
         tracks: tracksByCategory[category.id],
@@ -247,7 +296,9 @@ export function DiscoverWorkspace({
       <section className={styles.hero} aria-label="Discover music">
         <div className={styles.heroCopy}>
           <h1 className={styles.heroTitle}>Discover</h1>
-          <p className={styles.heroText}>Find songs, browse categories, and keep listening.</p>
+          <p className={styles.heroText}>
+            Find songs, move through sharper categories, and keep your listening flow intact.
+          </p>
         </div>
 
         <label className={styles.searchField}>
@@ -277,23 +328,14 @@ export function DiscoverWorkspace({
               className={`${styles.categoryCard} ${active ? styles.categoryCardActive : ""}`}
               onClick={() => selectCategory(category.id)}
             >
-              <span
-                className={styles.categoryArt}
-                aria-hidden="true"
-              >
-                {category.leadTrack?.cover_url ? (
-                  <LazyImage
-                    className={styles.categoryImage}
-                    src={category.leadTrack.cover_url}
-                    alt=""
-                  />
-                ) : (
-                  getCategoryFallback(category.label)
-                )}
+              <span className={`${styles.categoryArt} ${categoryThemeClassNames[category.id]}`} aria-hidden="true">
+                <span className={styles.categoryEyebrow}>{category.eyebrow}</span>
+                <span className={styles.categoryAccent}>{category.accent}</span>
               </span>
               <span className={styles.categoryBody}>
                 <span className={styles.categoryTitle}>{category.label}</span>
-                <span className={styles.categoryMeta}>{category.count} songs</span>
+                <span className={styles.categoryDescription}>{category.description}</span>
+                <span className={styles.categoryMeta}>{category.count} songs available</span>
               </span>
             </button>
           );

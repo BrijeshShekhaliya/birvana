@@ -32,18 +32,19 @@
 .heroTitle {
   margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(1.98rem, 3vw, 2.8rem);
+  font-size: var(--app-title-xl);
   font-weight: 700;
-  line-height: 0.98;
+  line-height: 0.94;
   letter-spacing: -0.06em;
 }
 
 .heroText {
   margin: 0;
-  max-width: 36rem;
+  max-width: 38rem;
   color: var(--muted);
-  font-size: 0.96rem;
-  line-height: 1.55;
+  font-size: var(--app-copy-md);
+  line-height: var(--app-copy-line);
+  text-wrap: pretty;
 }
 
 .searchField {
@@ -88,7 +89,7 @@
 
 .categoryDeck {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.8rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   gap: 0.75rem;
   min-width: 0;
   padding: 0.88rem;
@@ -100,14 +101,14 @@
 
 .categoryCard {
   min-width: 0;
-  min-height: 5.2rem;
+  min-height: 12rem;
   border: 1px solid var(--app-border-strong);
   border-radius: 1rem;
   background: var(--app-surface-soft);
   display: grid;
-  grid-template-columns: 3.4rem minmax(0, 1fr);
-  align-items: center;
-  gap: 0.75rem;
+  grid-template-rows: minmax(6.35rem, auto) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.92rem;
   padding: 0.72rem;
   color: var(--ink);
   text-align: left;
@@ -121,56 +122,137 @@
 }
 
 .categoryCardActive {
-  border-color: color-mix(in srgb, var(--ink) 14%, transparent);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--paper) 98%, transparent), color-mix(in srgb, var(--paper) 82%, var(--canvas)));
+  border-color: color-mix(in srgb, var(--ink) 16%, transparent);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--paper) 99%, transparent),
+      color-mix(in srgb, var(--paper) 84%, var(--canvas))
+    );
   box-shadow: var(--app-shadow-soft);
 }
 
 .categoryArt {
   position: relative;
   display: grid;
-  place-items: center;
-  width: 3.4rem;
-  height: 3.4rem;
-  border-radius: 0.78rem;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 34%, transparent), rgba(23, 21, 22, 0.12)),
-    rgba(250, 248, 243, 0.9);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  color: var(--ink);
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-weight: 800;
+  align-content: space-between;
+  min-height: 6.35rem;
+  border-radius: 0.9rem;
+  padding: 0.9rem;
   overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.categoryImage {
+.categoryArt::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  inset: auto -14% -26% auto;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: -1;
+}
+
+.categoryEyebrow,
+.categoryAccent {
+  display: block;
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+.categoryEyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.categoryAccent {
+  max-width: 8ch;
+  font-size: clamp(1.52rem, 1.5vw, 2.1rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+}
+
+.categoryArtAll {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.22), transparent 34%),
+    linear-gradient(135deg, #111317, #23272f 58%, #2c3340);
+}
+
+.categoryArtHindi {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #5f1634, #8a2d52 52%, #c15853);
+}
+
+.categoryArtPunjabi {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #2f1420, #60203d 44%, #d56c2f);
+}
+
+.categoryArtEnglish {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #132836, #1a4560 48%, #3f7b8f);
+}
+
+.categoryArtSouth {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #18342a, #266347 48%, #59a06f);
+}
+
+.categoryArtDevotional {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #4e1f11, #7f4320 48%, #d59749);
+}
+
+.categoryArtOther {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #262135, #44305e 48%, #6d5f99);
 }
 
 .categoryBody {
   display: grid;
-  gap: 0.16rem;
+  align-content: start;
+  gap: 0.2rem;
   min-width: 0;
 }
 
 .categoryTitle {
   overflow: hidden;
-  font-weight: 800;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.04rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.categoryDescription {
+  color: var(--muted);
+  font-size: var(--app-copy-sm);
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 
 .categoryMeta,
 .sectionMeta {
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: var(--app-copy-sm);
   line-height: 1.5;
+}
+
+.categoryMeta {
+  margin-top: 0.08rem;
 }
 
 .shelf,
@@ -209,14 +291,15 @@
   margin: 0;
   color: var(--ink);
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(1.48rem, 2.2vw, 2.1rem);
+  font-size: var(--app-title-lg);
   font-weight: 700;
-  line-height: 1.02;
+  line-height: 0.98;
   letter-spacing: -0.05em;
 }
 
 .sectionMeta {
   margin: 0.22rem 0 0;
+  text-wrap: pretty;
 }
 
 .textButton {
@@ -227,7 +310,7 @@
   background: var(--app-surface-strong);
   padding: 0 0.82rem;
   color: var(--ink);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 700;
   box-shadow: var(--app-shadow-soft);
 }
@@ -264,6 +347,10 @@
   grid-auto-columns: minmax(10.25rem, 10.25rem);
 }
 
+.playlistRailViewport :global(article) {
+  align-self: stretch;
+}
+
 :global(html[data-theme="dark"]) .page {
   background:
     radial-gradient(circle at 8% -4%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 26rem),
@@ -279,9 +366,7 @@
 }
 
 :global(html[data-theme="dark"]) .categoryArt {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), rgba(255, 255, 255, 0.04)),
-    color-mix(in srgb, var(--paper) 66%, #08090b);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 :global(html[data-theme="dark"]) .categoryCardActive {
@@ -301,10 +386,6 @@
   .categoryCard {
     transition: none;
   }
-}
-
-.playlistRailViewport :global(article) {
-  align-self: stretch;
 }
 
 @media (min-width: 720px) {
@@ -387,18 +468,22 @@
   }
 
   .categoryCard {
-    flex: 0 0 10.7rem;
-    min-height: 4.9rem;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    gap: 0.62rem;
+    flex: 0 0 14.6rem;
+    min-height: 11.25rem;
+    grid-template-rows: minmax(5.55rem, auto) minmax(0, 1fr);
+    gap: 0.72rem;
     padding: 0.62rem;
     border-radius: 0.95rem;
   }
 
   .categoryArt {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.72rem;
+    min-height: 5.55rem;
+    border-radius: 0.82rem;
+    padding: 0.72rem;
+  }
+
+  .categoryAccent {
+    font-size: 1.34rem;
   }
 
   .shelf {
@@ -419,7 +504,7 @@
   }
 
   .sectionTitle {
-    font-size: 1.34rem;
+    font-size: 1.28rem;
   }
 
   .sectionMeta {

@@ -33,8 +33,15 @@
   --app-button-solid-ink: #fffaf1;
   --app-pill-active-bg: linear-gradient(180deg, #17191d, #0f1216);
   --app-pill-active-ink: #fffaf1;
-  --app-title-xl: clamp(2.2rem, 4.2vw, 4rem);
-  --app-title-lg: clamp(1.65rem, 2.6vw, 2.55rem);
+  --app-title-xl: clamp(2.02rem, 3.3vw, 3rem);
+  --app-title-lg: clamp(1.4rem, 2.2vw, 1.95rem);
+  --app-title-public: clamp(2.4rem, 5vw, 4.4rem);
+  --app-title-display: clamp(3rem, 8.2vw, 6rem);
+  --app-kicker-size: 0.75rem;
+  --app-kicker-track: 0.2em;
+  --app-copy-md: 0.97rem;
+  --app-copy-sm: 0.88rem;
+  --app-copy-line: 1.58;
 }
 
 html[data-theme="dark"] {

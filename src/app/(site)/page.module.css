@@ -77,8 +77,8 @@
 .eyebrow {
   margin: 0;
   color: var(--muted);
-  font-size: 0.76rem;
-  letter-spacing: 0.24em;
+  font-size: var(--app-kicker-size);
+  letter-spacing: calc(var(--app-kicker-track) + 0.02em);
   text-transform: uppercase;
 }
 
@@ -86,17 +86,17 @@
   margin: 0;
   max-width: 12ch;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-size: var(--app-title-display);
   line-height: 0.92;
-  letter-spacing: -0.09em;
+  letter-spacing: -0.085em;
 }
 
 .subtitle {
   margin: 0;
   max-width: 42ch;
   color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.7;
+  font-size: var(--app-copy-md);
+  line-height: calc(var(--app-copy-line) + 0.06);
 }
 
 .heroActions {
@@ -127,7 +127,7 @@
 .metaLabel {
   margin: 0;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: var(--app-kicker-size);
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -135,8 +135,8 @@
 .metaValue {
   margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 1.15rem;
-  line-height: 1.2;
+  font-size: 1.08rem;
+  line-height: 1.28;
   letter-spacing: -0.04em;
 }
 
@@ -156,7 +156,7 @@
 .panelTitle {
   margin: 0;
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.18rem;
   letter-spacing: -0.04em;
 }
 
@@ -205,7 +205,7 @@
 .queueMeta,
 .queueDuration {
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--app-copy-sm);
 }
 
 .featureGrid {
@@ -235,13 +235,15 @@
 
 .featureTitle {
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 1.08rem;
+  font-size: 1.04rem;
+  font-weight: 700;
   letter-spacing: -0.04em;
 }
 
 .featureBody {
   color: var(--muted);
-  line-height: 1.6;
+  font-size: var(--app-copy-sm);
+  line-height: var(--app-copy-line);
 }
 
 :global(html[data-theme="dark"]) .solid,

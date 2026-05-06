@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./BrandLockup.module.css";
 
@@ -15,7 +16,14 @@ function Content({ badge }: Pick<BrandLockupProps, "badge">) {
   return (
     <>
       <span className={styles.mark} aria-hidden="true">
-        <span className={styles.letter}>B</span>
+        <Image
+          src="/brand/birvana-mark.png"
+          alt=""
+          width={44}
+          height={44}
+          sizes="(max-width: 640px) 36px, 41px"
+          className={styles.markImage}
+        />
       </span>
       <span className={styles.wordmark}>BIRVANA</span>
       {badge ? <span className={styles.badge}>{badge}</span> : null}

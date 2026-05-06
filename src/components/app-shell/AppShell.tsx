@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import styles from "./AppShell.module.css";
 import { PlayerBar } from "@/components/player/PlayerBar";
 import { usePlayerPlayback } from "@/components/player/PlayerProvider";
+import { BrandLockup } from "@/components/shared/BrandLockup";
 import { ToastProvider } from "@/components/shared/ToastProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getBrowserSupabase } from "@/lib/supabase/client";
@@ -71,10 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <ToastProvider>
       <div className={styles.viewport}>
         <aside className={styles.sidebar}>
-          <Link href="/discover" className={styles.brand}>
-            <span className={styles.brandMark}>B</span>
-            <span>BIRVANA</span>
-          </Link>
+          <BrandLockup href="/discover" className={styles.brand} />
 
           <nav className={styles.nav}>
             {navItems.map((item) => {
@@ -109,10 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <div className={styles.mainArea}>
           <header className={styles.mobileHeader}>
-            <Link href="/discover" className={styles.mobileBrand}>
-              <span className={styles.brandMark}>B</span>
-              <span>BIRVANA</span>
-            </Link>
+            <BrandLockup href="/discover" className={styles.mobileBrand} />
             <button type="button" className={styles.headerAction} onClick={signOut}>
               Logout
             </button>

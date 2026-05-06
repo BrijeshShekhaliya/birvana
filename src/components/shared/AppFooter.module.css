@@ -11,17 +11,14 @@
 
 .brand {
   margin: 0;
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 0.9rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
 }
 
 .caption {
   margin: 0.45rem 0 0;
   max-width: 34ch;
   color: var(--muted);
-  line-height: 1.6;
+  font-size: var(--app-copy-sm);
+  line-height: var(--app-copy-line);
 }
 
 .links {

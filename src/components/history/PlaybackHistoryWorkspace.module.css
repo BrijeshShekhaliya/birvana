@@ -45,8 +45,8 @@
 }
 
 .hero h1 {
-  font-size: clamp(1.98rem, 3vw, 2.8rem);
-  line-height: 0.98;
+  font-size: var(--app-title-xl);
+  line-height: 0.94;
   font-weight: 700;
 }
 
@@ -54,7 +54,8 @@
 .empty p {
   margin: 0;
   color: var(--muted);
-  line-height: 1.55;
+  font-size: var(--app-copy-md);
+  line-height: var(--app-copy-line);
 }
 
 .clearButton,
@@ -156,7 +157,9 @@
 
 .trackTitle {
   color: var(--ink);
-  font-weight: 700;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1rem;
+  font-weight: 650;
   letter-spacing: -0.03em;
 }
 
@@ -165,11 +168,15 @@
   color: var(--muted);
 }
 
+.trackMeta {
+  font-size: var(--app-copy-sm);
+}
+
 .rowMeta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.38rem 0.7rem;
-  font-size: 0.86rem;
+  font-size: var(--app-copy-sm);
   line-height: 1.45;
 }
 

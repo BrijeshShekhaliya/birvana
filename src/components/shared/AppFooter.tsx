@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./AppFooter.module.css";
+import { BrandLockup } from "@/components/shared/BrandLockup";
 
 const footerLinks = [
   { href: "/discover", label: "Discover" },
@@ -12,7 +13,7 @@ export function AppFooter() {
     <footer className={styles.footer}>
       <div className={styles.brandRow}>
         <div>
-          <p className={styles.brand}>BIRVANA</p>
+          <BrandLockup className={styles.brand} />
           <p className={styles.caption}>Listen, collect, and publish from one clean music space.</p>
         </div>
         <div className={styles.links}>
