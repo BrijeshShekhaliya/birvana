@@ -102,9 +102,9 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
           }
           .brand {
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
             color: #171516;
           }
           .badge {
@@ -114,9 +114,9 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             background: #efe4d7;
             font-family: Arial, sans-serif;
             font-size: 12px;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: #6e6762;
+            color: #756d67;
           }
           .eyebrow {
             font-family: Arial, sans-serif;
@@ -221,20 +221,23 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                   <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fff7ef 0%,#f4e7d8 58%,#f0ddd0 100%);border-bottom:1px solid #eadfce;">
                     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="mobile-stack">
                       <tr>
-                        <td align="left" valign="middle">
-                          <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                        <td align="left" valign="middle" style="padding-bottom:14px;">
+                          <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="border-collapse:separate !important;">
                             <tr>
-                              <td width="46" valign="middle" style="padding-right:12px;">
-                                <div style="width:46px;height:46px;line-height:46px;text-align:center;border-radius:999px;background:linear-gradient(135deg,#b86244,#7d3d2c);font-family:Arial,sans-serif;font-size:24px;font-weight:700;color:#fff7ef;">B</div>
+                              <td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;border-radius:24px;background:#a75439;background-image:linear-gradient(135deg,#bf6a4b,#8d442f);font-family:Arial,sans-serif;font-size:23px;font-weight:700;color:#fff7ef;line-height:48px;text-align:center;">
+                                B
                               </td>
-                              <td class="brand" valign="middle" style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;color:#171516;">
+                              <td width="14" style="width:14px;font-size:0;line-height:0;">&nbsp;</td>
+                              <td class="brand" valign="middle" style="font-family:Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#171516;">
                                 BIRVANA
                               </td>
                             </tr>
                           </table>
                         </td>
-                        <td align="right" valign="middle">
-                          <span class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#efe4d7;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#6e6762;">Secure access</span>
+                      </tr>
+                      <tr>
+                        <td align="left" valign="middle">
+                          <span class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#efe4d7;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#756d67;">Secure access</span>
                         </td>
                       </tr>
                     </table>
