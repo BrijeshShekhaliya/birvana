@@ -3,19 +3,32 @@
   display: grid;
   padding: 1rem;
   background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 22rem),
-    linear-gradient(180deg, #faf8f3 0%, #f1ede5 45%, #ede6db 100%);
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 14%, transparent), transparent 24rem),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 28rem),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper) 96%, transparent) 0%,
+      color-mix(in srgb, var(--canvas) 92%, var(--paper)) 52%,
+      color-mix(in srgb, var(--canvas) 88%, var(--paper)) 100%
+    );
 }
 
 .panel {
   width: min(460px, 100%);
   margin: auto;
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(250, 245, 236, 0.96));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 38%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper) 94%, transparent),
+      color-mix(in srgb, var(--paper) 88%, var(--canvas))
+    );
   border-radius: 2rem;
   padding: 1.5rem;
   box-shadow: var(--shadow);
   color: var(--ink);
+  backdrop-filter: blur(18px);
 }
 
 .brand {
@@ -33,9 +46,10 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: linear-gradient(135deg, #16181b, #2b2f35);
-  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: color-mix(in srgb, #140d09 84%, white);
   font-weight: 700;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
 .brand span:last-child {
@@ -86,22 +100,30 @@
   border: 1px solid var(--line);
   border-radius: 1.1rem;
   padding: 0 1rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
   color: var(--ink);
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
 
 .input::placeholder {
-  color: rgba(82, 77, 70, 0.58);
+  color: color-mix(in srgb, var(--muted) 76%, transparent);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 62%, var(--line));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-soft) 88%, transparent);
 }
 
 .button {
   min-height: 54px;
   border: 0;
   border-radius: 999px;
-  background: var(--ink);
-  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: color-mix(in srgb, #120d0a 90%, white);
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .button:disabled {
@@ -113,23 +135,77 @@
   min-height: 52px;
   display: grid;
   place-items: center;
-  margin-top: 0.8rem;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.74);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
   color: var(--ink);
   font-weight: 700;
   text-decoration: none;
+  padding-inline: 1rem;
+  cursor: pointer;
 }
 
 .secondaryButton:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
 }
 
-.error {
+.secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonRow {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.divider {
+  display: grid;
+  place-items: center;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.divider span {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.2rem;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+}
+
+.divider span::before,
+.divider span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 4.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.divider span::before {
+  right: calc(100% + 0.75rem);
+}
+
+.divider span::after {
+  left: calc(100% + 0.75rem);
+}
+
+.status {
   margin: 0;
-  color: #b42318;
   font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.statusError {
+  color: #b42318;
+}
+
+.statusSuccess {
+  color: color-mix(in srgb, #0f8a4b 82%, var(--ink));
 }
 
 .footer {
@@ -150,5 +226,10 @@
   .panel {
     border-radius: 1.5rem;
     padding: 1.15rem;
+  }
+
+  .divider span::before,
+  .divider span::after {
+    width: 3.25rem;
   }
 }

@@ -14,7 +14,7 @@ const protectedPrefixes = [
   "/studio",
 ];
 
-const authRoutes = new Set(["/login", "/register"]);
+const authRoutes = new Set(["/", "/login", "/register", "/verify-email"]);
 
 export async function proxy(request: NextRequest) {
   if (!hasSupabaseEnv()) {
@@ -75,6 +75,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/discover/:path*",
     "/library/:path*",
     "/liked/:path*",
@@ -86,5 +87,6 @@ export const config = {
     "/studio/:path*",
     "/login",
     "/register",
+    "/verify-email",
   ],
 };

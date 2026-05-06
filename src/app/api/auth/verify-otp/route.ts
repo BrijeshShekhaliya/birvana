@@ -2,19 +2,25 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { getPublicSupabaseEnv, hasSupabaseEnv } from "@/lib/env";
 
+type OtpMode = "login" | "signup";
+
+function normalizeMode(value: string | undefined): OtpMode {
+  return value === "signup" ? "signup" : "login";
+}
+
 export async function POST(request: NextRequest) {
   if (!hasSupabaseEnv()) {
     return NextResponse.json({ error: "Authentication is not available right now." }, { status: 500 });
   }
 
-  const { displayName, email, password } = (await request.json().catch(() => ({}))) as {
-    displayName?: string;
+  const { email, token, mode } = (await request.json().catch(() => ({}))) as {
     email?: string;
-    password?: string;
+    token?: string;
+    mode?: string;
   };
 
-  if (!displayName || !email || !password) {
-    return NextResponse.json({ error: "Fill in all fields to create the account." }, { status: 400 });
+  if (!email || !token) {
+    return NextResponse.json({ error: "Enter your email and the verification code." }, { status: 400 });
   }
 
   const response = NextResponse.json({ ok: true });
@@ -33,23 +39,16 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const { data, error } = await supabase.auth.signUp({
+  const verificationType = normalizeMode(mode) === "signup" ? "signup" : "email";
+  const { error } = await supabase.auth.verifyOtp({
     email,
-    password,
-    options: {
-      data: {
-        display_name: displayName,
-      },
-    },
+    token,
+    type: verificationType,
   });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json({
-    ok: true,
-    needsEmailConfirmation: !data.session,
-    email: data.user?.email ?? email,
-  });
+  return response;
 }

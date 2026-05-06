@@ -13,14 +13,18 @@
 .poster {
   display: grid;
   gap: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   border-radius: 2rem;
   padding: 1.5rem;
   background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 26%),
-    linear-gradient(180deg, rgba(19, 23, 28, 0.97), rgba(10, 12, 15, 0.98));
-  color: white;
-  box-shadow: 0 32px 90px rgba(11, 14, 18, 0.18);
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 20%, transparent), transparent 26%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper) 95%, transparent),
+      color-mix(in srgb, var(--canvas) 90%, var(--paper))
+    );
+  color: var(--ink);
+  box-shadow: var(--shadow);
 }
 
 .nav {
@@ -45,8 +49,8 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: var(--ink);
-  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: color-mix(in srgb, #120d0a 90%, white);
 }
 
 .actions {
@@ -66,12 +70,13 @@
 }
 
 .ghost {
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 74%, transparent);
 }
 
 .solid {
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-  color: #08120b;
+  color: color-mix(in srgb, #120d0a 90%, white);
   font-weight: 700;
 }
 
@@ -84,7 +89,7 @@
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.24em;
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--muted);
   font-size: 0.75rem;
 }
 
@@ -99,7 +104,7 @@
 .subtitle {
   margin: 0;
   max-width: 38ch;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
   line-height: 1.65;
   font-size: 1rem;
 }
@@ -112,9 +117,9 @@
 .preview {
   display: grid;
   gap: 0.7rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   border-radius: 1.4rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
   padding: 1rem;
 }
 
@@ -123,7 +128,7 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.54);
+  color: var(--muted);
 }
 
 .previewValue {
@@ -143,7 +148,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--line);
   padding-bottom: 0.75rem;
 }
 
@@ -157,7 +162,7 @@
 }
 
 .row span {
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--muted);
   font-size: 0.92rem;
   max-width: 18ch;
   text-align: right;

@@ -51,6 +51,7 @@ export default function RegisterPage() {
     const payload = (await response.json().catch(() => ({}))) as {
       error?: string;
       needsEmailConfirmation?: boolean;
+      email?: string;
     };
 
     if (!response.ok) {
@@ -60,8 +61,12 @@ export default function RegisterPage() {
     }
 
     if (payload.needsEmailConfirmation) {
-      setError("Account created. Confirm your email before signing in.");
       setPending(false);
+      const params = new URLSearchParams({
+        email: payload.email || email,
+        mode: "signup",
+      });
+      router.push(`/verify-email?${params.toString()}`);
       return;
     }
 
@@ -80,7 +85,8 @@ export default function RegisterPage() {
         <p className={styles.eyebrow}>Create account</p>
         <h1 className={styles.title}>Start your music space.</h1>
         <p className={styles.subtitle}>
-          Join BIRVANA to save music, build playlists, and publish your own releases.
+          Join BIRVANA to save music, build playlists, publish your own releases, and verify your
+          email with a one-time code.
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>

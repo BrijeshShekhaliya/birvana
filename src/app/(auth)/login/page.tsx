@@ -23,7 +23,10 @@ function getSafeRedirectTarget() {
 export default function LoginPage() {
   const router = useRouter();
   const { enabled, user } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
+  const [otpPending, setOtpPending] = useState(false);
   const [error, setError] = useState("");
   const configurationError = "Authentication is not available right now.";
 
@@ -37,9 +40,6 @@ export default function LoginPage() {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const email = String(formData.get("email") ?? "").trim();
-    const password = String(formData.get("password") ?? "");
 
     if (!email || !password) {
       setError("Enter your email and password.");
@@ -74,6 +74,45 @@ export default function LoginPage() {
     window.location.href = getSafeRedirectTarget();
   };
 
+  const requestCode = async () => {
+    if (!email) {
+      setError("Enter your email first.");
+      return;
+    }
+
+    setOtpPending(true);
+    setError("");
+
+    const response = await fetch("/api/auth/request-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        mode: "login",
+      }),
+    });
+
+    const payload = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    };
+
+    if (!response.ok) {
+      setError(payload.error || "Unable to send the sign-in code.");
+      setOtpPending(false);
+      return;
+    }
+
+    setOtpPending(false);
+    const params = new URLSearchParams({
+      email,
+      mode: "login",
+      next: getSafeRedirectTarget(),
+    });
+    router.push(`/verify-email?${params.toString()}`);
+  };
+
   return (
     <main className={styles.page}>
       <section className={styles.panel}>
@@ -85,7 +124,8 @@ export default function LoginPage() {
         <p className={styles.eyebrow}>Sign in</p>
         <h1 className={styles.title}>Pick up where you left off.</h1>
         <p className={styles.subtitle}>
-          Open your library, continue listening, and manage your studio from one account.
+          Open your library, continue listening, and manage your studio from one account in the
+          same dark or light theme you already chose.
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>
@@ -98,6 +138,8 @@ export default function LoginPage() {
               inputMode="email"
               autoComplete="email"
               placeholder="name@example.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value.trim())}
               required
             />
           </label>
@@ -110,6 +152,8 @@ export default function LoginPage() {
               type="password"
               autoComplete="current-password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               required
             />
           </label>
@@ -126,9 +170,18 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <Link className={styles.secondaryButton} href="/admin">
-          Open admin panel
-        </Link>
+        <div className={styles.divider}>
+          <span>or</span>
+        </div>
+
+        <button
+          className={styles.secondaryButton}
+          type="button"
+          onClick={requestCode}
+          disabled={otpPending || pending || !enabled}
+        >
+          {otpPending ? "Sending code..." : "Email me a sign-in code"}
+        </button>
 
         <p className={styles.footer}>
           No account yet? <Link href="/register">Create one</Link>
