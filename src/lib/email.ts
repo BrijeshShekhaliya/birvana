@@ -48,42 +48,273 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
     mode === "signup"
       ? "Need help? Return to BIRVANA and request a fresh verification code."
       : "Need help? Return to BIRVANA and request a fresh sign-in code.";
+  const codeLabel = mode === "signup" ? "Verify your email to continue" : "Use this code to sign in now";
 
   const html = `
-    <div style="margin:0;padding:32px 16px;background:#ede6db;font-family:Inter,Arial,sans-serif;color:#171516;">
-      <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-        ${title} - ${otp}
-      </div>
-      <div style="max-width:640px;margin:0 auto;background:#fffaf2;border:1px solid rgba(23,21,22,0.08);border-radius:30px;overflow:hidden;box-shadow:0 32px 90px rgba(24,19,16,0.12);">
-        <div style="padding:32px 32px 18px 32px;background:radial-gradient(circle at top right, rgba(184,98,68,0.18), transparent 32%),linear-gradient(180deg,#fff7ef 0%,#f6ede1 100%);border-bottom:1px solid rgba(23,21,22,0.06);">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;">
-            <div style="display:inline-flex;align-items:center;gap:12px;font-family:'Space Grotesk',Arial,sans-serif;font-weight:700;letter-spacing:0.08em;">
-              <span style="width:46px;height:46px;display:inline-grid;place-items:center;border-radius:999px;background:linear-gradient(135deg,#b86244,#7d3d2c);color:#fff7ef;font-weight:700;">B</span>
-              <span>BIRVANA</span>
-            </div>
-            <div style="padding:8px 12px;border-radius:999px;background:rgba(23,21,22,0.06);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#6e6762;">Secure access</div>
-          </div>
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="x-apple-disable-message-reformatting" />
+        <title>${title}</title>
+        <style>
+          body, table, td, a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+          }
+          table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+          }
+          img {
+            -ms-interpolation-mode: bicubic;
+          }
+          table {
+            border-collapse: collapse !important;
+          }
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: #ede6db;
+          }
+          .shell {
+            padding: 32px 16px;
+          }
+          .card {
+            width: 100%;
+            max-width: 640px;
+            background: #fffaf2;
+            border: 1px solid #e5d7c8;
+            border-radius: 30px;
+            overflow: hidden;
+          }
+          .hero {
+            background: linear-gradient(135deg, #fff7ef 0%, #f4e7d8 58%, #f0ddd0 100%);
+          }
+          .hero-pad {
+            padding: 28px 32px 24px;
+          }
+          .content-pad {
+            padding: 32px;
+          }
+          .brand {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #171516;
+          }
+          .badge {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #efe4d7;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #6e6762;
+          }
+          .eyebrow {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: #8a5a48;
+          }
+          .title {
+            font-family: Arial, sans-serif;
+            font-size: 44px;
+            line-height: 1.02;
+            font-weight: 700;
+            color: #171516;
+          }
+          .body-copy {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #4f4945;
+          }
+          .code-card {
+            background: linear-gradient(135deg, #fff2e9 0%, #f8ece1 100%);
+            border: 1px solid #edd2bd;
+            border-radius: 26px;
+          }
+          .code-label {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #8a4e3a;
+          }
+          .code-value {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 42px;
+            line-height: 1.1;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: #171516;
+            white-space: nowrap;
+          }
+          .detail-card {
+            background: #f3eadf;
+            border: 1px solid #eadfce;
+            border-radius: 22px;
+          }
+          .divider {
+            border-top: 1px solid #eadfce;
+          }
+          .footer-title {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: #171516;
+          }
+          @media screen and (max-width: 600px) {
+            .shell {
+              padding: 14px 8px !important;
+            }
+            .hero-pad {
+              padding: 20px 18px 18px !important;
+            }
+            .content-pad {
+              padding: 22px 18px 24px !important;
+            }
+            .title {
+              font-size: 34px !important;
+              line-height: 1.06 !important;
+            }
+            .body-copy {
+              font-size: 15px !important;
+              line-height: 1.7 !important;
+            }
+            .code-value {
+              font-size: 34px !important;
+              letter-spacing: 0.08em !important;
+            }
+            .mobile-stack,
+            .mobile-stack tbody,
+            .mobile-stack tr,
+            .mobile-stack td {
+              display: block !important;
+              width: 100% !important;
+            }
+            .mobile-stack td + td {
+              padding-top: 12px !important;
+            }
+          }
+        </style>
+      </head>
+      <body style="margin:0;padding:0;background:#ede6db;">
+        <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+          ${title} - ${otp}
         </div>
-        <div style="padding:30px 32px 34px 32px;">
-          <p style="margin:0 0 12px 0;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a5a48;">One-time code</p>
-          <h1 style="margin:0;font-family:'Space Grotesk',Arial,sans-serif;font-size:42px;line-height:1;letter-spacing:-0.06em;color:#171516;">${title}</h1>
-          <p style="margin:18px 0 0 0;font-size:16px;line-height:1.7;color:#4f4945;">${greeting}</p>
-          <p style="margin:10px 0 0 0;font-size:16px;line-height:1.7;color:#4f4945;">${intro}</p>
-          <div style="margin:26px 0 18px 0;padding:24px 22px;border-radius:26px;background:linear-gradient(135deg,rgba(184,98,68,0.14),rgba(255,247,239,0.98));border:1px solid rgba(184,98,68,0.18);text-align:center;">
-            <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:#7d3d2c;margin-bottom:10px;">Verification code</div>
-            <div style="font-family:'Space Grotesk',Arial,sans-serif;font-size:44px;font-weight:700;letter-spacing:0.34em;color:#171516;">${otp}</div>
-          </div>
-          <div style="padding:18px 18px 16px 18px;border-radius:22px;background:#f3eadf;border:1px solid rgba(23,21,22,0.06);">
-            <p style="margin:0;font-size:14px;line-height:1.7;color:#5f5853;">${detail}</p>
-            <p style="margin:12px 0 0 0;font-size:14px;line-height:1.7;color:#5f5853;">Requested for: <strong style="color:#171516;">${email}</strong></p>
-          </div>
-          <div style="margin-top:22px;padding-top:18px;border-top:1px solid rgba(23,21,22,0.08);">
-            <p style="margin:0;font-family:'Space Grotesk',Arial,sans-serif;font-size:18px;color:#171516;">${actionLabel}</p>
-            <p style="margin:8px 0 0 0;font-size:14px;line-height:1.7;color:#5f5853;">${footer}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#ede6db;">
+          <tr>
+            <td align="center" class="shell" style="padding:32px 16px;">
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="card" style="width:100%;max-width:640px;background:#fffaf2;border:1px solid #e5d7c8;border-radius:30px;overflow:hidden;">
+                <tr>
+                  <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fff7ef 0%,#f4e7d8 58%,#f0ddd0 100%);border-bottom:1px solid #eadfce;">
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="mobile-stack">
+                      <tr>
+                        <td align="left" valign="middle">
+                          <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                              <td width="46" valign="middle" style="padding-right:12px;">
+                                <div style="width:46px;height:46px;line-height:46px;text-align:center;border-radius:999px;background:linear-gradient(135deg,#b86244,#7d3d2c);font-family:Arial,sans-serif;font-size:24px;font-weight:700;color:#fff7ef;">B</div>
+                              </td>
+                              <td class="brand" valign="middle" style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;color:#171516;">
+                                BIRVANA
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td align="right" valign="middle">
+                          <span class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#efe4d7;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#6e6762;">Secure access</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-pad" style="padding:32px;">
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td class="eyebrow" style="padding-bottom:12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#8a5a48;">
+                          One-time code
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="title" style="padding-bottom:18px;font-family:Arial,sans-serif;font-size:44px;line-height:1.02;font-weight:700;color:#171516;">
+                          ${title}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="body-copy" style="padding-bottom:8px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4f4945;">
+                          ${greeting}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="body-copy" style="padding-bottom:22px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4f4945;">
+                          ${intro}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom:18px;">
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="code-card" style="background:linear-gradient(135deg,#fff2e9 0%,#f8ece1 100%);border:1px solid #edd2bd;border-radius:26px;">
+                            <tr>
+                              <td align="center" style="padding:22px 16px 24px;">
+                                <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a4e3a;">Verification code</div>
+                                <div class="code-value" style="font-family:'Courier New',Courier,monospace;font-size:42px;line-height:1.1;font-weight:700;letter-spacing:0.12em;color:#171516;white-space:nowrap;">
+                                  ${otp}
+                                </div>
+                                <div class="body-copy" style="padding-top:10px;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#6b625d;">
+                                  ${codeLabel}
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom:22px;">
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="detail-card" style="background:#f3eadf;border:1px solid #eadfce;border-radius:22px;">
+                            <tr>
+                              <td style="padding:18px 18px 16px;">
+                                <div class="body-copy" style="font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#5f5853;">
+                                  ${detail}
+                                </div>
+                                <div class="body-copy" style="padding-top:12px;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#5f5853;">
+                                  Requested for: <strong style="color:#171516;">${email}</strong>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="divider" style="padding-top:20px;border-top:1px solid #eadfce;">
+                          <div class="footer-title" style="padding-bottom:8px;font-family:Arial,sans-serif;font-size:18px;line-height:1.4;font-weight:700;color:#171516;">
+                            ${actionLabel}
+                          </div>
+                          <div class="body-copy" style="font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#5f5853;">
+                            ${footer}
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 
   const text = [
