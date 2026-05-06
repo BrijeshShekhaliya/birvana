@@ -15,6 +15,10 @@ export function hasR2Env() {
   );
 }
 
+export function hasSmtpEnv() {
+  return Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
 export function getPublicSupabaseEnv() {
   return {
     url: publicSupabaseUrl,

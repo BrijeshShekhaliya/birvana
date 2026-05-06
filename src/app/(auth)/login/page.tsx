@@ -125,7 +125,8 @@ export default function LoginPage() {
         <h1 className={styles.title}>Pick up where you left off.</h1>
         <p className={styles.subtitle}>
           Open your library, continue listening, and manage your studio from one account in the
-          same dark or light theme you already chose.
+          same dark or light theme you already chose. OTP emails are sent from
+          {" "}birvana.official.in@gmail.com.
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>

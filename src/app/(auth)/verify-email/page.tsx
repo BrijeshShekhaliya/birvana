@@ -86,6 +86,12 @@ export default function VerifyEmailPage() {
   };
 
   const resendCode = async () => {
+    if (mode === "signup") {
+      setNotice("Go back to sign up if you need a fresh signup code.");
+      setError("");
+      return;
+    }
+
     if (!email) {
       setError("Enter your email first.");
       return;
@@ -132,8 +138,8 @@ export default function VerifyEmailPage() {
         <h1 className={styles.title}>Enter the code from your inbox.</h1>
         <p className={styles.subtitle}>
           {mode === "signup"
-            ? "Finish account setup with the one-time verification code sent to your email."
-            : "Use the one-time sign-in code from your email to open your account securely."}
+            ? "Finish account setup with the one-time verification code sent from birvana.official.in@gmail.com."
+            : "Use the one-time sign-in code from birvana.official.in@gmail.com to open your account securely."}
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>
@@ -177,14 +183,20 @@ export default function VerifyEmailPage() {
         </form>
 
         <div className={styles.buttonRow}>
-          <button
-            className={styles.secondaryButton}
-            type="button"
-            onClick={resendCode}
-            disabled={pending !== null || !enabled}
-          >
-            {pending === "resend" ? "Sending..." : "Resend code"}
-          </button>
+          {mode === "login" ? (
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              onClick={resendCode}
+              disabled={pending !== null || !enabled}
+            >
+              {pending === "resend" ? "Sending..." : "Resend code"}
+            </button>
+          ) : (
+            <Link className={styles.secondaryButton} href="/register">
+              Go back to sign up
+            </Link>
+          )}
         </div>
 
         <p className={styles.footer}>

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const verificationType = normalizeMode(mode) === "signup" ? "signup" : "email";
+  const verificationType = normalizeMode(mode) === "signup" ? "signup" : "magiclink";
   const { error } = await supabase.auth.verifyOtp({
     email,
     token,

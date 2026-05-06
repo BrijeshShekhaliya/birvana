@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { getPublicSupabaseEnv, hasSupabaseEnv } from "@/lib/env";
+import { sendOtpEmail } from "@/lib/email";
+import { hasSupabaseEnv, hasSmtpEnv } from "@/lib/env";
+import { getAdminSupabase } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
-  if (!hasSupabaseEnv()) {
+  if (!hasSupabaseEnv() || !hasSmtpEnv()) {
     return NextResponse.json({ error: "Authentication is not available right now." }, { status: 500 });
   }
 
@@ -17,23 +18,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Fill in all fields to create the account." }, { status: 400 });
   }
 
-  const response = NextResponse.json({ ok: true });
-  const { url, anonKey } = getPublicSupabaseEnv();
+  const adminSupabase = await getAdminSupabase();
+  if (!adminSupabase) {
+    return NextResponse.json({ error: "Authentication is not available right now." }, { status: 500 });
+  }
 
-  const supabase = createServerClient(url!, anonKey!, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
-      },
-    },
-  });
-
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await adminSupabase.auth.admin.generateLink({
+    type: "signup",
     email,
     password,
     options: {
@@ -47,9 +38,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  const emailOtp = data?.properties.email_otp;
+  if (!emailOtp) {
+    return NextResponse.json({ error: "Unable to generate the verification code." }, { status: 400 });
+  }
+
+  try {
+    await sendOtpEmail({
+      email,
+      otp: emailOtp,
+      mode: "signup",
+      displayName,
+    });
+  } catch (sendError) {
+    return NextResponse.json(
+      {
+        error:
+          sendError instanceof Error
+            ? sendError.message
+            : "Unable to send the verification email right now.",
+      },
+      { status: 500 },
+    );
+  }
+
   return NextResponse.json({
     ok: true,
-    needsEmailConfirmation: !data.session,
+    needsEmailConfirmation: true,
     email: data.user?.email ?? email,
   });
 }

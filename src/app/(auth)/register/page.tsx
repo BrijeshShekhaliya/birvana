@@ -85,8 +85,8 @@ export default function RegisterPage() {
         <p className={styles.eyebrow}>Create account</p>
         <h1 className={styles.title}>Start your music space.</h1>
         <p className={styles.subtitle}>
-          Join BIRVANA to save music, build playlists, publish your own releases, and verify your
-          email with a one-time code.
+          Join BIRVANA to save music, build playlists, publish your own releases, and get your
+          verification code from birvana.official.in@gmail.com.
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>

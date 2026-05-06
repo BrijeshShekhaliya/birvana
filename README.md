@@ -10,7 +10,7 @@ BIRVANA is a Next.js 16 music platform with:
 ## Local development
 
 1. Create `.env.local` from `.env.example`.
-2. Fill in your Supabase and R2 values.
+2. Fill in your Supabase, R2, and SMTP values.
 3. Make sure `ffmpeg` and `ffprobe` are installed locally, or point `FFMPEG_PATH` and `FFPROBE_PATH` at the binaries.
 4. Install dependencies and start the app:
 
@@ -34,7 +34,16 @@ R2_BUCKET=
 R2_PUBLIC_BASE_URL=
 FFMPEG_PATH=
 FFPROBE_PATH=
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=birvana.official.in@gmail.com
+SMTP_PASS=
+SMTP_FROM_EMAIL=birvana.official.in@gmail.com
+SMTP_FROM_NAME=BIRVANA
 ```
+
+For Gmail delivery, create an App Password on the Google account and place it in `SMTP_PASS`. Regular Gmail account passwords will not work with SMTP.
 
 ## Recommended production hosting
 
