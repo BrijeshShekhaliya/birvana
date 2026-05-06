@@ -20,6 +20,7 @@ function getAllowedDevOrigins() {
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: getAllowedDevOrigins(),
+  output: "standalone",
   async headers() {
     return [
       {

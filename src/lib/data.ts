@@ -67,6 +67,8 @@ const TRACK_CARD_FIELDS = [
   "cover_path",
   "duration_seconds",
   "play_count",
+  "like_count",
+  "created_at",
 ].join(",");
 
 const PLAYLIST_CARD_FIELDS = [
@@ -541,12 +543,6 @@ export const getProfileOverview = cache(async (userId: string): Promise<ProfileO
 });
 
 export const getDiscoverData = cache(async (): Promise<DiscoverData> => {
-  const supabase = await getServerSupabase();
-
-  if (!supabase) {
-    return { tracks: [], playlists: [] };
-  }
-
   return getCachedDiscoverData();
 });
 
