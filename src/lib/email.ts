@@ -36,6 +36,15 @@ function splitOtp(otp: string) {
   return otp.replace(/\s+/g, "").split("");
 }
 
+function escapeXml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
 function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
   const intro =
     mode === "signup"
@@ -53,16 +62,30 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
       ? "Need help? Return to BIRVANA and request a fresh verification code."
       : "Need help? Return to BIRVANA and request a fresh sign-in code.";
   const codeLabel = mode === "signup" ? "Verify your email to continue" : "Use this code to sign in now";
-  const otpDigits = splitOtp(otp);
-  const otpCells = otpDigits
-    .map(
-      (digit) => `
-        <td align="center" valign="middle" width="28" height="42" style="width:28px;height:42px;border-radius:12px;background:#fff7f1;border:1px solid #d99879;font-family:Arial,sans-serif;font-size:22px;line-height:42px;font-weight:700;color:#171516;">
-          ${digit}
-        </td>
-      `,
-    )
-    .join('<td width="5" style="width:5px;font-size:0;line-height:0;">&nbsp;</td>');
+  const normalizedOtp = splitOtp(otp).join(" ");
+
+  const brandSvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="320" height="48" viewBox="0 0 320 48" role="img" aria-label="BIRVANA Secure access">
+      <defs>
+        <linearGradient id="brandFill" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#bf6a4b" />
+          <stop offset="100%" stop-color="#8d442f" />
+        </linearGradient>
+      </defs>
+      <circle cx="24" cy="24" r="24" fill="url(#brandFill)" />
+      <text x="64" y="30" fill="#171516" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="1">BIRVANA</text>
+      <rect x="166" y="6" width="146" height="36" rx="18" fill="#efe4d7" />
+      <text x="184" y="29" fill="#756d67" font-family="Arial, Helvetica, sans-serif" font-size="11" letter-spacing="3" textLength="110">SECURE ACCESS</text>
+    </svg>
+  `;
+
+  const codeSvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="380" height="70" viewBox="0 0 380 70" role="img" aria-label="Verification code ${escapeXml(otp)}">
+      <text x="190" y="47" text-anchor="middle" fill="#171516" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" letter-spacing="6">
+        ${escapeXml(normalizedOtp)}
+      </text>
+    </svg>
+  `;
 
   const html = `
     <!DOCTYPE html>
@@ -113,14 +136,6 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
           }
           .content-pad {
             padding: 32px;
-          }
-          .brand {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            color: #171516;
-            white-space: nowrap;
           }
           .badge {
             display: inline-block;
@@ -205,16 +220,15 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
               font-size: 15px !important;
               line-height: 1.7 !important;
             }
-            .badge {
-              font-size: 11px !important;
-              letter-spacing: 0.12em !important;
-              padding: 7px 11px !important;
+            .brand-art {
+              width: 100% !important;
+              max-width: 280px !important;
+              height: auto !important;
             }
-            .digit {
-              width: 24px !important;
-              height: 38px !important;
-              line-height: 38px !important;
-              font-size: 20px !important;
+            .code-art {
+              width: 100% !important;
+              max-width: 290px !important;
+              height: auto !important;
             }
           }
         </style>
@@ -229,26 +243,13 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
               <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="card" style="width:100%;max-width:640px;background:#fffaf2;border:1px solid #e5d7c8;border-radius:30px;overflow:hidden;">
                 <tr>
                   <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fff7ef 0%,#f4e7d8 58%,#f0ddd0 100%);border-bottom:1px solid #eadfce;">
-                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td align="left" valign="middle">
-                          <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="border-collapse:separate !important;">
-                            <tr>
-                              <td width="44" height="44" align="center" valign="middle" style="width:44px;height:44px;">
-                                <div style="display:block;width:44px;height:44px;border-radius:22px;background:#a75439;background-image:linear-gradient(135deg,#bf6a4b,#8d442f);font-size:0;line-height:0;">&nbsp;</div>
-                              </td>
-                              <td width="16" style="width:16px;font-size:0;line-height:0;">&nbsp;</td>
-                              <td class="brand" valign="middle" style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;color:#171516;white-space:nowrap;line-height:44px;">
-                                BIRVANA
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                        <td align="right" valign="middle">
-                          <span class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#efe4d7;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#756d67;">Secure access</span>
-                        </td>
-                      </tr>
-                    </table>
+                    <img
+                      src="cid:birvana-brand@birvana"
+                      alt="BIRVANA Secure access"
+                      width="280"
+                      class="brand-art"
+                      style="display:block;width:280px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;"
+                    />
                   </td>
                 </tr>
                 <tr>
@@ -280,11 +281,13 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                             <tr>
                               <td align="center" style="padding:22px 16px 24px;">
                                 <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#8a4e3a;">Verification code</div>
-                                <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" style="margin:0 auto;">
-                                  <tr>
-                                    ${otpCells.replace(/<td align="center"/g, '<td class="digit" align="center"')}
-                                  </tr>
-                                </table>
+                                <img
+                                  src="cid:birvana-code@birvana"
+                                  alt="Verification code ${escapeXml(otp)}"
+                                  width="300"
+                                  class="code-art"
+                                  style="display:block;width:300px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;margin:0 auto;"
+                                />
                                 <div class="body-copy" style="padding-top:10px;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#6b625d;">
                                   ${codeLabel}
                                 </div>
@@ -341,7 +344,24 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
     `Requested for: ${email}`,
   ].join("\n");
 
-  return { html, text };
+  return {
+    attachments: [
+      {
+        cid: "birvana-brand@birvana",
+        content: brandSvg,
+        contentType: "image/svg+xml",
+        filename: "birvana-brand.svg",
+      },
+      {
+        cid: "birvana-code@birvana",
+        content: codeSvg,
+        contentType: "image/svg+xml",
+        filename: "birvana-code.svg",
+      },
+    ],
+    html,
+    text,
+  };
 }
 
 export async function sendOtpEmail(input: SendOtpEmailInput) {
@@ -350,9 +370,10 @@ export async function sendOtpEmail(input: SendOtpEmailInput) {
   }
 
   const transporter = getTransport();
-  const { html, text } = renderOtpEmail(input);
+  const { attachments, html, text } = renderOtpEmail(input);
 
   await transporter.sendMail({
+    attachments,
     from: getFromAddress(),
     to: input.email,
     subject: getSubject(input.mode),
