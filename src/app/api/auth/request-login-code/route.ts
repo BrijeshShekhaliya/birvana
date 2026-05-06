@@ -1,0 +1,70 @@
+import { NextResponse, type NextRequest } from "next/server";
+import {
+  clearLoginOtpChallenge,
+  createLoginOtpChallenge,
+  createLoginOtpCode,
+  writeLoginOtpChallenge,
+} from "@/lib/auth/login-otp";
+import { sendOtpEmail } from "@/lib/email";
+import { hasSupabaseEnv, hasSmtpEnv } from "@/lib/env";
+import { getAdminSupabase } from "@/lib/supabase/server";
+
+export async function POST(request: NextRequest) {
+  if (!hasSupabaseEnv() || !hasSmtpEnv()) {
+    return NextResponse.json({ error: "Authentication is not available right now." }, { status: 500 });
+  }
+
+  const { email } = (await request.json().catch(() => ({}))) as {
+    email?: string;
+  };
+
+  if (!email) {
+    return NextResponse.json({ error: "Enter your email first." }, { status: 400 });
+  }
+
+  const adminSupabase = await getAdminSupabase();
+  if (!adminSupabase) {
+    return NextResponse.json({ error: "Authentication is not available right now." }, { status: 500 });
+  }
+
+  const userPage = await adminSupabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  if (userPage.error) {
+    return NextResponse.json({ error: userPage.error.message }, { status: 400 });
+  }
+
+  const existingUser = userPage.data.users.find((user) => user.email?.toLowerCase() === email.toLowerCase());
+  if (!existingUser) {
+    return NextResponse.json({ error: "No account was found for that email address." }, { status: 404 });
+  }
+
+  const otp = createLoginOtpCode();
+  const challenge = createLoginOtpChallenge(email, otp);
+  const response = NextResponse.json({ ok: true });
+  writeLoginOtpChallenge(response, challenge);
+
+  try {
+    await sendOtpEmail({
+      email,
+      otp,
+      mode: "login",
+      displayName:
+        typeof existingUser.user_metadata?.display_name === "string"
+          ? existingUser.user_metadata.display_name
+          : undefined,
+    });
+  } catch (sendError) {
+    const errorResponse = NextResponse.json(
+      {
+        error:
+          sendError instanceof Error
+            ? sendError.message
+            : "Unable to send the sign-in code right now.",
+      },
+      { status: 500 },
+    );
+    clearLoginOtpChallenge(errorResponse);
+    return errorResponse;
+  }
+
+  return response;
+}

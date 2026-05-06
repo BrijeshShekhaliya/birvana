@@ -24,10 +24,13 @@ export default function LoginPage() {
   const router = useRouter();
   const { enabled, user } = useAuth();
   const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
-  const [pending, setPending] = useState(false);
-  const [otpPending, setOtpPending] = useState(false);
+  const [pending, setPending] = useState<"send-code" | "verify-code" | "sign-in" | null>(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [otpRequested, setOtpRequested] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const configurationError = "Authentication is not available right now.";
 
   useEffect(() => {
@@ -41,13 +44,19 @@ export default function LoginPage() {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (!otpVerified) {
+      setError("Verify the sign-in code from your email first.");
+      return;
+    }
+
     if (!email || !password) {
       setError("Enter your email and password.");
       return;
     }
 
-    setPending(true);
+    setPending("sign-in");
     setError("");
+    setNotice("");
 
     const response = await fetch("/api/auth/login", {
       method: "POST",
@@ -66,11 +75,11 @@ export default function LoginPage() {
 
     if (!response.ok) {
       setError(payload.error || "Unable to sign in.");
-      setPending(false);
+      setPending(null);
       return;
     }
 
-    setPending(false);
+    setPending(null);
     window.location.href = getSafeRedirectTarget();
   };
 
@@ -80,17 +89,17 @@ export default function LoginPage() {
       return;
     }
 
-    setOtpPending(true);
+    setPending("send-code");
     setError("");
+    setNotice("");
 
-    const response = await fetch("/api/auth/request-otp", {
+    const response = await fetch("/api/auth/request-login-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         email,
-        mode: "login",
       }),
     });
 
@@ -100,17 +109,51 @@ export default function LoginPage() {
 
     if (!response.ok) {
       setError(payload.error || "Unable to send the sign-in code.");
-      setOtpPending(false);
+      setPending(null);
       return;
     }
 
-    setOtpPending(false);
-    const params = new URLSearchParams({
-      email,
-      mode: "login",
-      next: getSafeRedirectTarget(),
+    setPending(null);
+    setOtpRequested(true);
+    setOtpVerified(false);
+    setToken("");
+    setNotice("Your sign-in code has been sent. Enter it below to unlock password sign-in.");
+  };
+
+  const verifyCode = async () => {
+    if (!email || !token) {
+      setError("Enter your email and the verification code.");
+      return;
+    }
+
+    setPending("verify-code");
+    setError("");
+    setNotice("");
+
+    const response = await fetch("/api/auth/verify-login-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        token,
+      }),
     });
-    router.push(`/verify-email?${params.toString()}`);
+
+    const payload = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    };
+
+    if (!response.ok) {
+      setError(payload.error || "Unable to verify the code.");
+      setPending(null);
+      return;
+    }
+
+    setPending(null);
+    setOtpVerified(true);
+    setNotice("Email verified. Enter your password to finish signing in.");
   };
 
   return (
@@ -125,8 +168,8 @@ export default function LoginPage() {
         <h1 className={styles.title}>Pick up where you left off.</h1>
         <p className={styles.subtitle}>
           Open your library, continue listening, and manage your studio from one account in the
-          same dark or light theme you already chose. OTP emails are sent from
-          {" "}birvana.official.in@gmail.com.
+          same dark or light theme you already chose. OTP emails are sent from{" "}
+          birvana.official.in@gmail.com.
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>
@@ -140,10 +183,58 @@ export default function LoginPage() {
               autoComplete="email"
               placeholder="name@example.com"
               value={email}
-              onChange={(event) => setEmail(event.target.value.trim())}
+              onChange={(event) => {
+                setEmail(event.target.value.trim());
+                setOtpRequested(false);
+                setOtpVerified(false);
+                setToken("");
+                setError("");
+                setNotice("");
+              }}
               required
             />
           </label>
+
+          <div className={styles.buttonRow}>
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              onClick={requestCode}
+              disabled={pending !== null || !enabled}
+            >
+              {pending === "send-code" ? "Sending code..." : otpRequested ? "Send a fresh code" : "Email me a sign-in code"}
+            </button>
+          </div>
+
+          {otpRequested ? (
+            <>
+              <label className={styles.field}>
+                <span className={styles.label}>Verification code</span>
+                <input
+                  name="token"
+                  className={styles.input}
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  placeholder="6-digit code"
+                  value={token}
+                  onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
+                  required
+                />
+              </label>
+
+              <div className={styles.buttonRow}>
+                <button
+                  className={styles.secondaryButton}
+                  type="button"
+                  onClick={verifyCode}
+                  disabled={pending !== null || !enabled || otpVerified}
+                >
+                  {pending === "verify-code" ? "Verifying..." : otpVerified ? "Code verified" : "Verify email code"}
+                </button>
+              </div>
+            </>
+          ) : null}
 
           <label className={styles.field}>
             <span className={styles.label}>Password</span>
@@ -155,34 +246,23 @@ export default function LoginPage() {
               placeholder="Enter your password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              disabled={!otpVerified}
               required
             />
           </label>
 
-          {error ? <p className={styles.error}>{error}</p> : null}
-          {!enabled ? <p className={styles.error}>{configurationError}</p> : null}
+          {error ? <p className={`${styles.status} ${styles.statusError}`}>{error}</p> : null}
+          {notice ? <p className={`${styles.status} ${styles.statusSuccess}`}>{notice}</p> : null}
+          {!enabled ? <p className={`${styles.status} ${styles.statusError}`}>{configurationError}</p> : null}
 
           <button
             className={styles.button}
             type="submit"
-            disabled={pending || !enabled}
+            disabled={pending !== null || !enabled || !otpVerified}
           >
-            {pending ? "Signing in..." : enabled ? "Sign in" : "Auth unavailable"}
+            {pending === "sign-in" ? "Signing in..." : enabled ? "Sign in" : "Auth unavailable"}
           </button>
         </form>
-
-        <div className={styles.divider}>
-          <span>or</span>
-        </div>
-
-        <button
-          className={styles.secondaryButton}
-          type="button"
-          onClick={requestCode}
-          disabled={otpPending || pending || !enabled}
-        >
-          {otpPending ? "Sending code..." : "Email me a sign-in code"}
-        </button>
 
         <p className={styles.footer}>
           No account yet? <Link href="/register">Create one</Link>

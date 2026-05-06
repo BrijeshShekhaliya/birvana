@@ -34,6 +34,7 @@ R2_BUCKET=
 R2_PUBLIC_BASE_URL=
 FFMPEG_PATH=
 FFPROBE_PATH=
+AUTH_OTP_SECRET=
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_SECURE=true
@@ -44,6 +45,7 @@ SMTP_FROM_NAME=BIRVANA
 ```
 
 For Gmail delivery, create an App Password on the Google account and place it in `SMTP_PASS`. Regular Gmail account passwords will not work with SMTP.
+Set `AUTH_OTP_SECRET` to a long random string so the login OTP challenge cookie is signed independently from your other secrets.
 
 ## Recommended production hosting
 
