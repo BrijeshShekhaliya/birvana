@@ -57,12 +57,12 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
   const otpCells = otpDigits
     .map(
       (digit) => `
-        <td align="center" valign="middle" width="42" height="52" style="width:42px;height:52px;border-radius:14px;background:#fff7f1;border:1px solid #d99879;font-family:Arial,sans-serif;font-size:28px;line-height:52px;font-weight:700;color:#171516;">
+        <td align="center" valign="middle" width="28" height="42" style="width:28px;height:42px;border-radius:12px;background:#fff7f1;border:1px solid #d99879;font-family:Arial,sans-serif;font-size:22px;line-height:42px;font-weight:700;color:#171516;">
           ${digit}
         </td>
       `,
     )
-    .join('<td width="8" style="width:8px;font-size:0;line-height:0;">&nbsp;</td>');
+    .join('<td width="5" style="width:5px;font-size:0;line-height:0;">&nbsp;</td>');
 
   const html = `
     <!DOCTYPE html>
@@ -116,17 +116,11 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
           }
           .brand {
             font-family: Arial, sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.04em;
             color: #171516;
-          }
-          .brand-sub {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #8a5a48;
+            white-space: nowrap;
           }
           .badge {
             display: inline-block;
@@ -214,29 +208,13 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             .badge {
               font-size: 11px !important;
               letter-spacing: 0.12em !important;
+              padding: 7px 11px !important;
             }
             .digit {
-              width: 34px !important;
-              height: 46px !important;
-              line-height: 46px !important;
-              font-size: 24px !important;
-            }
-            .mobile-stack,
-            .mobile-stack tbody,
-            .mobile-stack tr,
-            .mobile-stack td {
-              display: block !important;
-              width: 100% !important;
-            }
-            .hero-row,
-            .hero-row tbody,
-            .hero-row tr,
-            .hero-row td {
-              display: table !important;
-              width: auto !important;
-            }
-            .hero-badge {
-              padding-top: 10px !important;
+              width: 24px !important;
+              height: 38px !important;
+              line-height: 38px !important;
+              font-size: 20px !important;
             }
           }
         </style>
@@ -253,27 +231,20 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                   <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fff7ef 0%,#f4e7d8 58%,#f0ddd0 100%);border-bottom:1px solid #eadfce;">
                     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td align="left" valign="top">
-                          <table role="presentation" border="0" cellspacing="0" cellpadding="0" class="hero-row" style="border-collapse:separate !important;">
+                        <td align="left" valign="middle">
+                          <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="border-collapse:separate !important;">
                             <tr>
-                              <td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;border-radius:24px;background:#a75439;background-image:linear-gradient(135deg,#bf6a4b,#8d442f);">
-                                <div style="width:48px;height:48px;line-height:48px;font-size:0;">&nbsp;</div>
+                              <td width="44" height="44" align="center" valign="middle" style="width:44px;height:44px;">
+                                <div style="display:block;width:44px;height:44px;border-radius:22px;background:#a75439;background-image:linear-gradient(135deg,#bf6a4b,#8d442f);font-size:0;line-height:0;">&nbsp;</div>
                               </td>
-                              <td width="14" style="width:14px;font-size:0;line-height:0;">&nbsp;</td>
-                              <td valign="middle">
-                                <div class="brand" style="font-family:Arial,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#171516;">
-                                  BIRVANA
-                                </div>
-                                <div class="brand-sub" style="padding-top:4px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#8a5a48;">
-                                  Music platform
-                                </div>
+                              <td width="16" style="width:16px;font-size:0;line-height:0;">&nbsp;</td>
+                              <td class="brand" valign="middle" style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;color:#171516;white-space:nowrap;line-height:44px;">
+                                BIRVANA
                               </td>
                             </tr>
                           </table>
                         </td>
-                      </tr>
-                      <tr>
-                        <td align="left" valign="middle" class="hero-badge" style="padding-top:14px;">
+                        <td align="right" valign="middle">
                           <span class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#efe4d7;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#756d67;">Secure access</span>
                         </td>
                       </tr>
