@@ -40,11 +40,9 @@ export function PlaybackHistoryWorkspace() {
           <Clock3 size={24} strokeWidth={2} />
         </div>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>History</p>
-          <h1>Pick up where you left off.</h1>
+          <h1>History</h1>
           <p>
-            Your last 10 played songs stay on this device with their saved position, so a refresh or
-            page change does not reset the listening flow.
+            Resume your recent songs from the saved position on this device without losing the listening flow.
           </p>
         </div>
         {history.length ? (
