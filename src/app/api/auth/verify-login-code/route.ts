@@ -1,10 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  clearLoginOtpChallenge,
-  verifyLoginOtpChallenge,
-  writeLoginOtpChallenge,
-} from "@/lib/auth/login-otp";
+import { createServerClient } from "@supabase/ssr";
 import { hasSupabaseEnv, hasSmtpEnv } from "@/lib/env";
+import { getPublicSupabaseEnv } from "@/lib/env";
 
 export async function POST(request: NextRequest) {
   if (!hasSupabaseEnv() || !hasSmtpEnv()) {
@@ -20,20 +17,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Enter your email and the verification code." }, { status: 400 });
   }
 
-  const result = verifyLoginOtpChallenge(request, email, token);
-  if (!result.ok) {
-    const response = NextResponse.json({ error: result.error }, { status: result.status });
+  const response = NextResponse.json({ ok: true });
+  const { url, anonKey } = getPublicSupabaseEnv();
 
-    if (result.state) {
-      writeLoginOtpChallenge(response, result.state);
-    } else {
-      clearLoginOtpChallenge(response);
-    }
+  const supabase = createServerClient(url!, anonKey!, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          response.cookies.set(name, value, options);
+        });
+      },
+    },
+  });
 
-    return response;
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: "magiclink",
+  });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  const response = NextResponse.json({ ok: true });
-  writeLoginOtpChallenge(response, result.state);
   return response;
 }

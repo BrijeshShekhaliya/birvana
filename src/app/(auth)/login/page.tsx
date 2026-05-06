@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
 import { useAuth } from "@/components/auth/AuthProvider";
 
+type SignInMethod = "password" | "otp";
+
 function getSafeRedirectTarget() {
   if (typeof window === "undefined") {
     return "/discover";
@@ -23,14 +25,14 @@ function getSafeRedirectTarget() {
 export default function LoginPage() {
   const router = useRouter();
   const { enabled, user } = useAuth();
+  const [method, setMethod] = useState<SignInMethod>("password");
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
-  const [pending, setPending] = useState<"send-code" | "verify-code" | "sign-in" | null>(null);
+  const [pending, setPending] = useState<"send-code" | "verify-code" | "password-sign-in" | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [otpRequested, setOtpRequested] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
   const configurationError = "Authentication is not available right now.";
 
   useEffect(() => {
@@ -44,17 +46,12 @@ export default function LoginPage() {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!otpVerified) {
-      setError("Verify the sign-in code from your email first.");
-      return;
-    }
-
     if (!email || !password) {
       setError("Enter your email and password.");
       return;
     }
 
-    setPending("sign-in");
+    setPending("password-sign-in");
     setError("");
     setNotice("");
 
@@ -115,9 +112,8 @@ export default function LoginPage() {
 
     setPending(null);
     setOtpRequested(true);
-    setOtpVerified(false);
     setToken("");
-    setNotice("Your sign-in code has been sent. Enter it below to unlock password sign-in.");
+    setNotice("Your sign-in code has been sent. Enter it below to sign in directly.");
   };
 
   const verifyCode = async () => {
@@ -152,8 +148,7 @@ export default function LoginPage() {
     }
 
     setPending(null);
-    setOtpVerified(true);
-    setNotice("Email verified. Enter your password to finish signing in.");
+    window.location.href = getSafeRedirectTarget();
   };
 
   return (
@@ -167,12 +162,36 @@ export default function LoginPage() {
         <p className={styles.eyebrow}>Sign in</p>
         <h1 className={styles.title}>Pick up where you left off.</h1>
         <p className={styles.subtitle}>
-          Open your library, continue listening, and manage your studio from one account in the
-          same dark or light theme you already chose. OTP emails are sent from{" "}
-          birvana.official.in@gmail.com.
+          Open your library, continue listening, and manage your studio from one account. Sign in
+          with your password or use a one-time code sent from birvana.official.in@gmail.com.
         </p>
 
-        <form className={styles.form} onSubmit={onSubmit}>
+        <div className={styles.methodSwitcher} role="tablist" aria-label="Sign-in method">
+          <button
+            className={`${styles.methodButton} ${method === "password" ? styles.methodButtonActive : ""}`}
+            type="button"
+            onClick={() => {
+              setMethod("password");
+              setError("");
+              setNotice("");
+            }}
+          >
+            Password
+          </button>
+          <button
+            className={`${styles.methodButton} ${method === "otp" ? styles.methodButtonActive : ""}`}
+            type="button"
+            onClick={() => {
+              setMethod("otp");
+              setError("");
+              setNotice("");
+            }}
+          >
+            Email OTP
+          </button>
+        </div>
+
+        <div className={styles.form}>
           <label className={styles.field}>
             <span className={styles.label}>Email</span>
             <input
@@ -186,7 +205,6 @@ export default function LoginPage() {
               onChange={(event) => {
                 setEmail(event.target.value.trim());
                 setOtpRequested(false);
-                setOtpVerified(false);
                 setToken("");
                 setError("");
                 setNotice("");
@@ -195,74 +213,87 @@ export default function LoginPage() {
             />
           </label>
 
-          <div className={styles.buttonRow}>
-            <button
-              className={styles.secondaryButton}
-              type="button"
-              onClick={requestCode}
-              disabled={pending !== null || !enabled}
-            >
-              {pending === "send-code" ? "Sending code..." : otpRequested ? "Send a fresh code" : "Email me a sign-in code"}
-            </button>
-          </div>
-
-          {otpRequested ? (
-            <>
+          {method === "password" ? (
+            <form className={styles.form} onSubmit={onSubmit}>
               <label className={styles.field}>
-                <span className={styles.label}>Verification code</span>
+                <span className={styles.label}>Password</span>
                 <input
-                  name="token"
+                  name="password"
                   className={styles.input}
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  placeholder="6-digit code"
-                  value={token}
-                  onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   required
                 />
               </label>
+
+              <p className={styles.helper}>
+                Use this if you already know your account password.
+              </p>
+
+              <button
+                className={styles.button}
+                type="submit"
+                disabled={pending !== null || !enabled}
+              >
+                {pending === "password-sign-in" ? "Signing in..." : enabled ? "Sign in with password" : "Auth unavailable"}
+              </button>
+            </form>
+          ) : null}
+
+          {method === "otp" ? (
+            <div className={styles.form}>
+              <p className={styles.helper}>
+                We&apos;ll email a six-digit code and sign you in as soon as it is verified.
+              </p>
 
               <div className={styles.buttonRow}>
                 <button
                   className={styles.secondaryButton}
                   type="button"
-                  onClick={verifyCode}
-                  disabled={pending !== null || !enabled || otpVerified}
+                  onClick={requestCode}
+                  disabled={pending !== null || !enabled}
                 >
-                  {pending === "verify-code" ? "Verifying..." : otpVerified ? "Code verified" : "Verify email code"}
+                  {pending === "send-code" ? "Sending code..." : otpRequested ? "Send a fresh code" : "Email me a sign-in code"}
                 </button>
               </div>
-            </>
-          ) : null}
 
-          <label className={styles.field}>
-            <span className={styles.label}>Password</span>
-            <input
-              name="password"
-              className={styles.input}
-              type="password"
-              autoComplete="current-password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              disabled={!otpVerified}
-              required
-            />
-          </label>
+              {otpRequested ? (
+                <>
+                  <label className={styles.field}>
+                    <span className={styles.label}>Verification code</span>
+                    <input
+                      name="token"
+                      className={styles.input}
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      placeholder="6-digit code"
+                      value={token}
+                      onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
+                      required
+                    />
+                  </label>
+
+                  <button
+                    className={styles.button}
+                    type="button"
+                    onClick={verifyCode}
+                    disabled={pending !== null || !enabled}
+                  >
+                    {pending === "verify-code" ? "Verifying..." : "Sign in with email code"}
+                  </button>
+                </>
+              ) : null}
+            </div>
+          ) : null}
 
           {error ? <p className={`${styles.status} ${styles.statusError}`}>{error}</p> : null}
           {notice ? <p className={`${styles.status} ${styles.statusSuccess}`}>{notice}</p> : null}
           {!enabled ? <p className={`${styles.status} ${styles.statusError}`}>{configurationError}</p> : null}
-
-          <button
-            className={styles.button}
-            type="submit"
-            disabled={pending !== null || !enabled || !otpVerified}
-          >
-            {pending === "sign-in" ? "Signing in..." : enabled ? "Sign in" : "Auth unavailable"}
-          </button>
-        </form>
+        </div>
 
         <p className={styles.footer}>
           No account yet? <Link href="/register">Create one</Link>

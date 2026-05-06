@@ -1,10 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import {
-  clearLoginOtpChallenge,
-  requireVerifiedLoginOtp,
-  writeLoginOtpChallenge,
-} from "@/lib/auth/login-otp";
 import { getPublicSupabaseEnv, hasSupabaseEnv } from "@/lib/env";
 
 export async function POST(request: NextRequest) {
@@ -23,19 +18,6 @@ export async function POST(request: NextRequest) {
 
   const response = NextResponse.json({ ok: true });
   const { url, anonKey } = getPublicSupabaseEnv();
-  const otpGate = requireVerifiedLoginOtp(request, email);
-
-  if (!otpGate.ok) {
-    const errorResponse = NextResponse.json({ error: otpGate.error }, { status: otpGate.status });
-
-    if (otpGate.state) {
-      writeLoginOtpChallenge(errorResponse, otpGate.state);
-    } else {
-      clearLoginOtpChallenge(errorResponse);
-    }
-
-    return errorResponse;
-  }
 
   const supabase = createServerClient(url!, anonKey!, {
     cookies: {
@@ -59,6 +41,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  clearLoginOtpChallenge(response);
   return response;
 }

@@ -45,7 +45,6 @@ SMTP_FROM_NAME=BIRVANA
 ```
 
 For Gmail delivery, create an App Password on the Google account and place it in `SMTP_PASS`. Regular Gmail account passwords will not work with SMTP.
-Set `AUTH_OTP_SECRET` to a long random string so the login OTP challenge cookie is signed independently from your other secrets.
 
 ## Recommended production hosting
 

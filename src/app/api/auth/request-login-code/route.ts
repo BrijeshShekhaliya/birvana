@@ -1,10 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  clearLoginOtpChallenge,
-  createLoginOtpChallenge,
-  createLoginOtpCode,
-  writeLoginOtpChallenge,
-} from "@/lib/auth/login-otp";
 import { sendOtpEmail } from "@/lib/email";
 import { hasSupabaseEnv, hasSmtpEnv } from "@/lib/env";
 import { getAdminSupabase } from "@/lib/supabase/server";
@@ -37,15 +31,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No account was found for that email address." }, { status: 404 });
   }
 
-  const otp = createLoginOtpCode();
-  const challenge = createLoginOtpChallenge(email, otp);
-  const response = NextResponse.json({ ok: true });
-  writeLoginOtpChallenge(response, challenge);
+  const generated = await adminSupabase.auth.admin.generateLink({
+    type: "magiclink",
+    email,
+  });
+
+  if (generated.error || !generated.data?.properties.email_otp) {
+    return NextResponse.json(
+      { error: generated.error?.message || "Unable to generate the sign-in code." },
+      { status: 400 },
+    );
+  }
 
   try {
     await sendOtpEmail({
       email,
-      otp,
+      otp: generated.data.properties.email_otp,
       mode: "login",
       displayName:
         typeof existingUser.user_metadata?.display_name === "string"
@@ -62,9 +63,8 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 },
     );
-    clearLoginOtpChallenge(errorResponse);
     return errorResponse;
   }
 
-  return response;
+  return NextResponse.json({ ok: true });
 }
