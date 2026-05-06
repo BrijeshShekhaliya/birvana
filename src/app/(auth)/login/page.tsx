@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { BrandLockup } from "@/components/shared/BrandLockup";
 
 type SignInMethod = "password" | "otp";
+const OTP_SLOT_COUNT = 8;
 
 function getSafeRedirectTarget() {
   if (typeof window === "undefined") {
@@ -36,6 +37,8 @@ export default function LoginPage() {
   const [otpRequested, setOtpRequested] = useState(false);
   const configurationError = "Authentication is not available right now.";
   const emailLocked = method === "otp" && otpRequested;
+  const normalizedToken = token.replace(/\D/g, "").slice(0, OTP_SLOT_COUNT);
+  const otpSlots = Array.from({ length: OTP_SLOT_COUNT }, (_, index) => normalizedToken[index] ?? "");
 
   useEffect(() => {
     if (!user) {
@@ -162,11 +165,11 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.storyCopyWrap}>
-            <p className={styles.storyEyebrow}>Sign in</p>
-            <h1 className={styles.storyTitle}>Choose password or email code and get back in fast.</h1>
+            <p className={styles.storyEyebrow}>Welcome back</p>
+            <h1 className={styles.storyTitle}>Sign in with your password or a one-time email code.</h1>
             <p className={styles.storyCopy}>
-              Password stays available for regular sign-in, and the email code path gives you a
-              quick secure fallback from birvana.official.in@gmail.com.
+              Password stays available for regular sign-in, and the email code path gives you a quick
+              fallback from birvana.official.in@gmail.com.
             </p>
           </div>
 
@@ -177,7 +180,7 @@ export default function LoginPage() {
             </article>
             <article className={styles.storyCard}>
               <p className={styles.storyCardTitle}>Two ways to access</p>
-              <p className={styles.storyCardBody}>Use your password when you know it, or request an email code when you need a safer quick entry.</p>
+              <p className={styles.storyCardBody}>Use your password when you know it, or request an email code when you need a cleaner mobile-friendly sign-in.</p>
             </article>
           </div>
         </aside>
@@ -189,7 +192,7 @@ export default function LoginPage() {
             </div>
             <p className={styles.eyebrow}>Account access</p>
             <h2 className={styles.title}>Sign in to BIRVANA.</h2>
-            <p className={styles.subtitle}>Use your password, or request a one-time code for this email.</p>
+            <p className={styles.subtitle}>Choose password or email OTP. The code flow locks the address after send so verification stays on one inbox.</p>
           </div>
 
           <div className={styles.methodSwitcher} role="tablist" aria-label="Sign-in method">
@@ -294,21 +297,37 @@ export default function LoginPage() {
 
               {otpRequested ? (
                 <>
-                  <label className={styles.field}>
+                  <label className={`${styles.field} ${styles.otpGroup}`}>
                     <span className={styles.label}>Verification code</span>
-                    <input
-                      name="token"
-                      className={styles.input}
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      pattern="[0-9]{6,8}"
-                      maxLength={8}
-                      placeholder="Enter the code from your email"
-                      value={token}
-                      onChange={(event) => setToken(event.target.value.replace(/\s+/g, ""))}
-                      required
-                    />
+                    <div className={styles.otpEntry}>
+                      <input
+                        name="token"
+                        className={styles.otpInput}
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        pattern="[0-9]{6,8}"
+                        maxLength={OTP_SLOT_COUNT}
+                        placeholder="Enter the code from your email"
+                        value={normalizedToken}
+                        onChange={(event) => setToken(event.target.value.replace(/\D/g, "").slice(0, OTP_SLOT_COUNT))}
+                        required
+                      />
+                      <div className={styles.otpSlots} aria-hidden="true">
+                        {otpSlots.map((digit, index) => {
+                          const isCurrent = index === Math.min(normalizedToken.length, OTP_SLOT_COUNT - 1) && normalizedToken.length < OTP_SLOT_COUNT;
+                          return (
+                            <span
+                              key={`otp-slot-${index}`}
+                              className={`${styles.otpSlot} ${digit ? styles.otpSlotFilled : ""} ${isCurrent && !digit ? styles.otpSlotCurrent : ""}`}
+                            >
+                              {digit}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <p className={styles.otpHint}>Paste the code from the email or type it once. The slots fill automatically.</p>
                   </label>
 
                   <button className={styles.button} type="button" onClick={verifyCode} disabled={pending !== null || !enabled}>

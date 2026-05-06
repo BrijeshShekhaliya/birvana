@@ -3,8 +3,8 @@
   display: grid;
   overflow-x: clip;
   background:
-    radial-gradient(circle at top left, var(--accent-soft), transparent 18rem),
-    radial-gradient(circle at 85% 12%, rgba(90, 113, 255, 0.08), transparent 24rem),
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 92%, transparent), transparent 18rem),
+    radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--paper) 54%, transparent), transparent 24rem),
     linear-gradient(180deg, var(--canvas) 0%, color-mix(in srgb, var(--canvas) 84%, var(--paper)) 100%);
 }
 
@@ -26,8 +26,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.85rem 0.95rem;
-  background: color-mix(in srgb, var(--canvas) 88%, transparent);
-  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--canvas) 90%, transparent);
+  border-bottom: 1px solid var(--app-border-strong);
   backdrop-filter: blur(18px);
 }
 
@@ -58,12 +58,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border: 1px solid rgba(15, 18, 22, 0.1);
+  border: 1px solid var(--app-border-strong);
   border-radius: 999px;
   padding: 0.62rem 0.92rem;
-  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  background: var(--app-surface-strong);
   color: var(--ink);
   cursor: pointer;
+  box-shadow: var(--app-shadow-soft);
 }
 
 .content {
@@ -87,8 +88,8 @@
   grid-template-columns: repeat(var(--bottom-nav-count, 5), minmax(0, 1fr));
   gap: 0.45rem;
   padding: 0.45rem 0.65rem calc(0.58rem + env(safe-area-inset-bottom));
-  background: color-mix(in srgb, var(--canvas) 72%, transparent);
-  border-top: 1px solid rgba(15, 18, 22, 0.08);
+  background: color-mix(in srgb, var(--canvas) 80%, transparent);
+  border-top: 1px solid var(--app-border-strong);
   backdrop-filter: blur(24px);
   transition:
     opacity 180ms ease,
@@ -109,8 +110,8 @@
   place-items: center;
   min-height: 54px;
   border-radius: 0.9rem;
-  background: color-mix(in srgb, var(--paper) 84%, transparent);
-  border: 1px solid var(--line);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border-strong);
   font-size: 0.74rem;
   color: var(--muted);
   backdrop-filter: blur(20px);
@@ -123,9 +124,10 @@
 }
 
 .bottomActive {
-  background: linear-gradient(180deg, #17191d, #0f1216);
-  color: white;
+  background: var(--app-pill-active-bg);
+  color: var(--app-pill-active-ink);
   transform: translateY(-2px);
+  box-shadow: var(--app-shadow-soft);
 }
 
 .bottomLink:active {
@@ -142,14 +144,14 @@
     grid-template-rows: auto 1fr auto;
     gap: 1.35rem;
     padding: 1.2rem 1rem;
-    border-right: 1px solid rgba(15, 18, 22, 0.08);
+    border-right: 1px solid var(--app-border-strong);
     position: sticky;
     top: 0;
     height: 100vh;
     background: linear-gradient(
       180deg,
       color-mix(in srgb, var(--canvas) 96%, transparent),
-      color-mix(in srgb, var(--paper) 72%, transparent)
+      color-mix(in srgb, var(--paper) 76%, transparent)
     );
     backdrop-filter: blur(28px);
   }
@@ -184,9 +186,9 @@
   }
 
   .active {
-    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    background: var(--app-surface-strong);
     color: var(--ink);
-    box-shadow: 0 20px 50px rgba(18, 18, 20, 0.08);
+    box-shadow: var(--app-shadow-soft);
   }
 
   .sidebarFooter {
@@ -197,10 +199,11 @@
   .userPanel {
     display: grid;
     gap: 0.3rem;
-    border: 1px solid rgba(15, 18, 22, 0.08);
+    border: 1px solid var(--app-border-strong);
     border-radius: 1rem;
     padding: 0.8rem 0.9rem;
-    background: color-mix(in srgb, var(--paper) 58%, transparent);
+    background: var(--app-surface);
+    box-shadow: var(--app-shadow-soft);
   }
 
   .userEyebrow {

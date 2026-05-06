@@ -20,6 +20,21 @@
   --category-slot-surface:
     linear-gradient(135deg, color-mix(in srgb, var(--accent) 34%, transparent), rgba(23, 21, 22, 0.12)),
     rgba(250, 248, 243, 0.9);
+  --app-surface: color-mix(in srgb, var(--paper) 90%, transparent);
+  --app-surface-strong: color-mix(in srgb, var(--paper) 97%, transparent);
+  --app-surface-soft: color-mix(in srgb, var(--paper) 80%, transparent);
+  --app-surface-accent:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-soft) 92%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, var(--paper) 98%, transparent), color-mix(in srgb, var(--canvas) 92%, var(--paper)));
+  --app-border-strong: color-mix(in srgb, var(--ink) 8%, transparent);
+  --app-shadow-soft: 0 18px 48px rgba(24, 19, 16, 0.08);
+  --app-shadow-strong: 0 26px 72px rgba(24, 19, 16, 0.12);
+  --app-button-solid: linear-gradient(180deg, #17191d, #0f1216);
+  --app-button-solid-ink: #fffaf1;
+  --app-pill-active-bg: linear-gradient(180deg, #17191d, #0f1216);
+  --app-pill-active-ink: #fffaf1;
+  --app-title-xl: clamp(2.2rem, 4.2vw, 4rem);
+  --app-title-lg: clamp(1.65rem, 2.6vw, 2.55rem);
 }
 
 html[data-theme="dark"] {
@@ -42,6 +57,19 @@ html[data-theme="dark"] {
   --category-slot-surface:
     linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), rgba(255, 255, 255, 0.04)),
     color-mix(in srgb, var(--paper) 66%, #08090b);
+  --app-surface: color-mix(in srgb, var(--paper) 86%, transparent);
+  --app-surface-strong: color-mix(in srgb, var(--paper) 94%, #0b0d10);
+  --app-surface-soft: rgba(255, 255, 255, 0.08);
+  --app-surface-accent:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-soft) 90%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, var(--paper) 92%, #0d1014), color-mix(in srgb, var(--paper) 76%, #090b0e));
+  --app-border-strong: rgba(255, 255, 255, 0.1);
+  --app-shadow-soft: 0 18px 52px rgba(0, 0, 0, 0.28);
+  --app-shadow-strong: 0 26px 76px rgba(0, 0, 0, 0.42);
+  --app-button-solid: linear-gradient(180deg, color-mix(in srgb, var(--accent) 68%, white), color-mix(in srgb, var(--accent-deep) 88%, #2c170d));
+  --app-button-solid-ink: #171516;
+  --app-pill-active-bg: color-mix(in srgb, var(--accent) 18%, transparent);
+  --app-pill-active-ink: #f5f2ea;
 }
 
 * {

@@ -6,9 +6,9 @@
 .hero,
 .historyRow,
 .empty {
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--paper) 86%, transparent);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-soft);
 }
 
 .hero {
@@ -53,7 +53,7 @@
 }
 
 .hero h1 {
-  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-size: var(--app-title-xl);
   line-height: 0.95;
 }
 
@@ -73,8 +73,8 @@
   gap: 0.45rem;
   min-height: 2.52rem;
   border-radius: 999px;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-surface-strong);
   color: var(--ink);
   font-weight: 800;
   cursor: pointer;
@@ -104,7 +104,7 @@
   border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
   background:
     radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 58%),
-    color-mix(in srgb, var(--paper) 88%, transparent);
+    var(--app-surface-strong);
 }
 
 .coverButton {
@@ -214,7 +214,7 @@
 :global(html[data-theme="dark"]) .hero,
 :global(html[data-theme="dark"]) .historyRow,
 :global(html[data-theme="dark"]) .empty {
-  background: color-mix(in srgb, var(--paper) 84%, transparent);
+  background: var(--app-surface);
 }
 
 :global(html[data-theme="dark"]) .heroIcon {

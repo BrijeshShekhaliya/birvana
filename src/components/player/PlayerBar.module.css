@@ -1090,6 +1090,117 @@
     0 18px 34px rgba(0, 0, 0, 0.24);
 }
 
+:global(html[data-theme="light"]) .mobilePanel {
+  background:
+    radial-gradient(circle at 16% 18%, color-mix(in srgb, rgb(var(--artwork-rgb)) 18%, #fff8f1), transparent 34%),
+    radial-gradient(circle at 84% 16%, color-mix(in srgb, rgb(var(--artwork-rgb)) 14%, #fffdf9), transparent 30%),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.96), rgba(242, 236, 227, 0.98));
+  color: var(--player-ink);
+}
+
+:global(html[data-theme="light"]) .mobilePanel::before {
+  background:
+    radial-gradient(circle at 28% 18%, rgb(var(--artwork-rgb) / 0.22), transparent 34%),
+    radial-gradient(circle at 78% 78%, rgb(var(--artwork-rgb) / 0.14), transparent 32%);
+  filter: blur(28px) saturate(1.08);
+  opacity: 0.78;
+}
+
+:global(html[data-theme="light"]) .mobilePanel::after {
+  background:
+    radial-gradient(circle at 50% 7%, rgb(var(--artwork-rgb) / 0.18), transparent 28%),
+    radial-gradient(circle at 16% 72%, rgb(var(--artwork-rgb) / 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(244, 239, 230, 0.7) 52%, rgba(236, 229, 219, 0.96) 100%);
+}
+
+:global(html[data-theme="light"]) .mobilePanel .slider,
+:global(html[data-theme="light"]) .mobilePanel .volumeSlider {
+  --slider-fill: rgb(var(--artwork-rgb));
+  --slider-track: rgba(23, 21, 22, 0.14);
+  --slider-thumb: #171516;
+  --slider-shadow: rgb(var(--artwork-rgb) / 0.22);
+}
+
+:global(html[data-theme="light"]) .mobilePanelInner {
+  border-color: rgba(23, 21, 22, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.12) 18%),
+    linear-gradient(180deg, rgb(var(--artwork-rgb) / 0.12), color-mix(in srgb, var(--paper) 94%, var(--canvas)));
+  color: var(--player-ink);
+  box-shadow:
+    0 30px 90px rgba(41, 31, 24, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+:global(html[data-theme="light"]) .panelKicker,
+:global(html[data-theme="light"]) .mobileArtist,
+:global(html[data-theme="light"]) .mobilePanel .mobileTimes,
+:global(html[data-theme="light"]) .mobilePanel .statePill,
+:global(html[data-theme="light"]) .mobilePanel .modePill,
+:global(html[data-theme="light"]) .mobilePanel .sourceChip {
+  color: var(--player-ink-soft);
+}
+
+:global(html[data-theme="light"]) .panelKicker::before {
+  background: rgba(23, 21, 22, 0.16);
+}
+
+:global(html[data-theme="light"]) .mobileArtworkFrame {
+  border-color: rgba(23, 21, 22, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 26px 70px rgba(43, 31, 25, 0.16),
+    0 0 0 10px rgba(255, 255, 255, 0.24);
+}
+
+:global(html[data-theme="light"]) .mobileTitle {
+  color: var(--player-ink);
+  text-shadow: 0 14px 36px rgba(255, 255, 255, 0.35);
+}
+
+:global(html[data-theme="light"]) .mobilePanel .mobileControlSection {
+  border-color: rgba(23, 21, 22, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.52)),
+    radial-gradient(circle at 50% 34%, rgb(var(--artwork-rgb) / 0.14), transparent 46%);
+  box-shadow:
+    0 18px 42px rgba(43, 31, 25, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+:global(html[data-theme="light"]) .mobilePanel .statePill,
+:global(html[data-theme="light"]) .mobilePanel .modePill,
+:global(html[data-theme="light"]) .mobilePanel .sourceChip,
+:global(html[data-theme="light"]) .mobilePanel .iconButton {
+  border-color: rgba(23, 21, 22, 0.08);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--player-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 10px 24px rgba(43, 31, 25, 0.08);
+}
+
+:global(html[data-theme="light"]) .mobilePanel .sourceChip {
+  color: var(--player-ink);
+}
+
+:global(html[data-theme="light"]) .mobilePanel .modeActive,
+:global(html[data-theme="light"]) .mobilePanel .modePill.modeActive,
+:global(html[data-theme="light"]) .mobilePanel .iconButton.modeActive,
+:global(html[data-theme="light"]) .mobilePanel .primaryButton {
+  border-color: rgb(var(--artwork-rgb) / 0.24);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, rgb(var(--artwork-rgb)) 78%, white),
+      color-mix(in srgb, rgb(var(--artwork-rgb)) 62%, #171516)
+    );
+  color: #171516;
+  box-shadow:
+    0 18px 34px rgb(var(--artwork-rgb) / 0.18),
+    0 10px 24px rgba(43, 31, 25, 0.12);
+}
+
 @media (min-width: 960px) {
   .desktopShell {
     left: 250px;
@@ -1400,6 +1511,68 @@
   :global(html[data-desktop-effects="off"]) .desktopListeningDot,
   :global(html[data-desktop-effects="off"]) .desktopAmbient span {
     animation: none;
+  }
+
+  :global(html[data-theme="light"]) .mobilePanel {
+    background:
+      radial-gradient(circle at 18% 22%, color-mix(in srgb, rgb(var(--artwork-rgb)) 20%, #fff6ec), transparent 32%),
+      radial-gradient(circle at 82% 18%, color-mix(in srgb, rgb(var(--artwork-rgb)) 14%, #fffdf8), transparent 30%),
+      linear-gradient(135deg, #fbf7f0, #f2ebe1 52%, #ece4d8);
+  }
+
+  :global(html[data-theme="light"]) .mobilePanel::before {
+    background:
+      linear-gradient(90deg, rgba(255, 250, 241, 0.74), rgba(255, 250, 241, 0.34), rgba(255, 250, 241, 0.68)),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(241, 235, 225, 0.76)),
+      var(--artwork-image);
+    filter: blur(34px) saturate(1.08);
+    opacity: 0.36;
+  }
+
+  :global(html[data-theme="light"]) .mobilePanel::after {
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.22), transparent 30%, rgba(255, 255, 255, 0.18)),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(235, 228, 216, 0.62) 72%);
+  }
+
+  :global(html[data-theme="light"]) .mobilePanelInner {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.72), transparent 20%),
+      radial-gradient(circle at 88% 0%, rgb(var(--artwork-rgb) / 0.12), transparent 32%),
+      linear-gradient(135deg, rgba(255, 252, 247, 0.9), rgba(241, 234, 225, 0.86));
+    box-shadow:
+      0 38px 110px rgba(42, 31, 25, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  :global(html[data-theme="light"]) .mobileArtworkFrame {
+    box-shadow:
+      0 42px 110px rgba(43, 31, 25, 0.18),
+      0 0 0 12px rgba(255, 255, 255, 0.26),
+      0 0 120px rgb(var(--artwork-rgb) / 0.18);
+  }
+
+  :global(html[data-theme="light"]) .mobileArtworkFrame::before {
+    background:
+      conic-gradient(from 90deg, transparent, rgb(var(--artwork-rgb) / 0.22), transparent 42%, rgb(var(--artwork-rgb) / 0.1), transparent);
+    opacity: 0.62;
+  }
+
+  :global(html[data-theme="light"]) .mobilePanel .mobileControlSection {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.44)),
+      radial-gradient(circle at 50% 34%, rgb(var(--artwork-rgb) / 0.14), transparent 44%),
+      linear-gradient(135deg, rgba(255, 252, 247, 0.92), rgba(244, 238, 229, 0.88));
+  }
+
+  :global(html[data-theme="light"]) .desktopListeningCard {
+    border-color: rgba(23, 21, 22, 0.08);
+    background: rgba(255, 255, 255, 0.58);
+    color: var(--muted);
+  }
+
+  :global(html[data-theme="light"]) .desktopAmbient span {
+    background: rgb(var(--artwork-rgb) / 0.12);
   }
 }
 

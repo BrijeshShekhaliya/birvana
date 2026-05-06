@@ -83,7 +83,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
     .map(
       (digit) => `
         <td class="otp-gap" style="padding:0 4px;">
-          <div class="otp-cell" style="width:34px;height:44px;line-height:44px;border-radius:12px;background:#f5ede4;border:1px solid #e7d9c8;text-align:center;font-family:Arial,sans-serif;font-size:24px;font-weight:700;color:#171516;">
+          <div class="otp-cell" style="width:34px;height:44px;line-height:44px;border-radius:12px;background:#f7f3ec;border:1px solid #e3dacf;text-align:center;font-family:Arial,sans-serif;font-size:24px;font-weight:700;color:#171516;">
             ${escapeXml(digit)}
           </div>
         </td>
@@ -119,7 +119,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             padding: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            background: #f4efe6;
+            background: #f5f0e7;
           }
           .shell {
             padding: 32px 16px;
@@ -128,12 +128,12 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             width: 100%;
             max-width: 640px;
             background: #fffaf1;
-            border: 1px solid #e8dfd3;
+            border: 1px solid #e5dccf;
             border-radius: 30px;
             overflow: hidden;
           }
           .hero {
-            background: linear-gradient(135deg, #fffdf8 0%, #f7f1e8 58%, #f0e6da 100%);
+            background: linear-gradient(135deg, #fffdf9 0%, #f8f5ef 56%, #efe8df 100%);
           }
           .hero-pad {
             padding: 28px 32px 24px;
@@ -145,19 +145,19 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             display: inline-block;
             padding: 8px 14px;
             border-radius: 999px;
-            background: #f1ebe2;
+            background: #f2ece4;
             font-family: Arial, sans-serif;
             font-size: 12px;
             letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: #6d6660;
+            color: #625d58;
           }
           .eyebrow {
             font-family: Arial, sans-serif;
             font-size: 12px;
             letter-spacing: 0.24em;
             text-transform: uppercase;
-            color: #7c736b;
+            color: #6f6964;
           }
           .title {
             font-family: Arial, sans-serif;
@@ -170,11 +170,11 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             font-family: Arial, sans-serif;
             font-size: 16px;
             line-height: 1.7;
-            color: #4f4945;
+            color: #4c4641;
           }
           .code-card {
-            background: linear-gradient(135deg, #fffaf4 0%, #f7efe5 100%);
-            border: 1px solid #eadfce;
+            background: linear-gradient(135deg, #fffdfa 0%, #f8f4ee 100%);
+            border: 1px solid #e6ddd1;
             border-radius: 26px;
           }
           .code-label {
@@ -182,15 +182,15 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
             font-size: 12px;
             letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: #6d6660;
+            color: #5d5954;
           }
           .detail-card {
-            background: #f6f0e8;
-            border: 1px solid #eadfce;
+            background: #f7f2eb;
+            border: 1px solid #e6ddd1;
             border-radius: 22px;
           }
           .divider {
-            border-top: 1px solid #eadfce;
+            border-top: 1px solid #e6ddd1;
           }
           .footer-title {
             font-family: Arial, sans-serif;
@@ -229,16 +229,16 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
           }
         </style>
       </head>
-      <body style="margin:0;padding:0;background:#f4efe6;">
+      <body style="margin:0;padding:0;background:#f5f0e7;">
         <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
           ${title} - ${otp}
         </div>
-        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#f4efe6;">
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#f5f0e7;">
           <tr>
             <td align="center" class="shell" style="padding:32px 16px;">
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="card" style="width:100%;max-width:640px;background:#fffaf1;border:1px solid #e8dfd3;border-radius:30px;overflow:hidden;">
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="card" style="width:100%;max-width:640px;background:#fffaf1;border:1px solid #e5dccf;border-radius:30px;overflow:hidden;">
                 <tr>
-                  <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fffdf8 0%,#f7f1e8 58%,#f0e6da 100%);border-bottom:1px solid #eadfce;">
+                  <td class="hero hero-pad" style="padding:28px 32px 24px;background:linear-gradient(135deg,#fffdf9 0%,#f8f5ef 56%,#efe8df 100%);border-bottom:1px solid #e6ddd1;">
                     <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td valign="middle" style="width:44px;">
@@ -256,7 +256,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                         </td>
                         <td style="width:12px;"></td>
                         <td valign="middle">
-                          <div class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#f1ebe2;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#6d6660;">
+                          <div class="badge" style="display:inline-block;padding:8px 14px;border-radius:999px;background:#f2ece4;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#625d58;">
                             Secure access
                           </div>
                         </td>
@@ -268,7 +268,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                   <td class="content-pad" style="padding:32px;">
                     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td class="eyebrow" style="padding-bottom:12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#7c736b;">
+                        <td class="eyebrow" style="padding-bottom:12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#6f6964;">
                           One-time code
                         </td>
                       </tr>
@@ -278,21 +278,21 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                         </td>
                       </tr>
                       <tr>
-                        <td class="body-copy" style="padding-bottom:8px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4f4945;">
+                        <td class="body-copy" style="padding-bottom:8px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4c4641;">
                           ${greeting}
                         </td>
                       </tr>
                       <tr>
-                        <td class="body-copy" style="padding-bottom:22px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4f4945;">
+                        <td class="body-copy" style="padding-bottom:22px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4c4641;">
                           ${intro}
                         </td>
                       </tr>
                       <tr>
                         <td style="padding-bottom:18px;">
-                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="code-card" style="background:linear-gradient(135deg,#fffaf4 0%,#f7efe5 100%);border:1px solid #eadfce;border-radius:26px;">
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="code-card" style="background:linear-gradient(135deg,#fffdfa 0%,#f8f4ee 100%);border:1px solid #e6ddd1;border-radius:26px;">
                             <tr>
                               <td align="center" style="padding:22px 16px 24px;">
-                                <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#6d6660;">Verification code</div>
+                                <div class="code-label" style="padding-bottom:10px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:#5d5954;">Verification code</div>
                                 <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center">
                                   <tr>
                                     ${otpCells}
@@ -308,7 +308,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                       </tr>
                       <tr>
                         <td style="padding-bottom:22px;">
-                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="detail-card" style="background:#f6f0e8;border:1px solid #eadfce;border-radius:22px;">
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" class="detail-card" style="background:#f7f2eb;border:1px solid #e6ddd1;border-radius:22px;">
                             <tr>
                               <td style="padding:18px 18px 16px;">
                                 <div class="body-copy" style="font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#5f5853;">
@@ -323,7 +323,7 @@ function renderOtpEmail({ email, otp, mode, displayName }: SendOtpEmailInput) {
                         </td>
                       </tr>
                       <tr>
-                        <td class="divider" style="padding-top:20px;border-top:1px solid #eadfce;">
+                        <td class="divider" style="padding-top:20px;border-top:1px solid #e6ddd1;">
                           <div class="footer-title" style="padding-bottom:8px;font-family:Arial,sans-serif;font-size:18px;line-height:1.4;font-weight:700;color:#171516;">
                             ${actionLabel}
                           </div>
