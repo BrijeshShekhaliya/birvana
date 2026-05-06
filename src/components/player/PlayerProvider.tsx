@@ -155,13 +155,67 @@ const maxQueueResumeItems = 80;
 const positionPersistIntervalMs = 2800;
 const sourceTransitionUnmuteDelayMs = 120;
 const seekTransitionUnmuteDelayMs = 90;
+const maxWarmedPlaybackSources = 2;
+const warmedPlaybackSources = new Map<string, HTMLAudioElement>();
 
 function getStreamUrl(url?: string | null) {
   if (!url) {
     return "";
   }
 
+  try {
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.protocol === "https:" || parsedUrl.protocol === "http:" || parsedUrl.protocol === "blob:") {
+      return parsedUrl.toString();
+    }
+  } catch {
+    // Fall back to the streaming proxy when the stored value is not a browser-safe URL.
+  }
+
   return `/api/stream?url=${encodeURIComponent(url)}`;
+}
+
+function releaseWarmedPlaybackSource(audio: HTMLAudioElement) {
+  audio.pause();
+  audio.removeAttribute("src");
+  audio.load();
+}
+
+function warmPlaybackSource(source: string) {
+  if (typeof window === "undefined" || !source || warmedPlaybackSources.has(source)) {
+    return;
+  }
+
+  const audio = new Audio();
+  audio.preload = "metadata";
+  audio.src = source;
+  audio.load();
+  warmedPlaybackSources.set(source, audio);
+
+  while (warmedPlaybackSources.size > maxWarmedPlaybackSources) {
+    const oldestEntry = warmedPlaybackSources.entries().next().value as [string, HTMLAudioElement] | undefined;
+
+    if (!oldestEntry) {
+      break;
+    }
+
+    warmedPlaybackSources.delete(oldestEntry[0]);
+    releaseWarmedPlaybackSource(oldestEntry[1]);
+  }
+}
+
+function pruneWarmedPlaybackSources(keepSources: string[]) {
+  const keep = new Set(keepSources.filter(Boolean));
+
+  for (const [source, audio] of warmedPlaybackSources.entries()) {
+    if (keep.has(source)) {
+      continue;
+    }
+
+    warmedPlaybackSources.delete(source);
+    releaseWarmedPlaybackSource(audio);
+  }
 }
 
 function inferQueueContext(queueKey: string | null): QueueContext | null {
@@ -416,6 +470,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const currentIndex = playhead >= 0 ? (playOrder[playhead] ?? -1) : -1;
   const currentTrack = currentIndex >= 0 ? queue[currentIndex] ?? null : null;
+  const nextTrackIndex =
+    playhead >= 0 && playhead < playOrder.length - 1 ? (playOrder[playhead + 1] ?? -1) : -1;
+  const nextTrack = nextTrackIndex >= 0 ? queue[nextTrackIndex] ?? null : null;
 
   const clearAudioTransitionTimeout = useCallback(() => {
     if (audioTransitionTimeoutRef.current === null) {
@@ -683,8 +740,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const audio = new Audio();
-    audio.crossOrigin = "anonymous";
-    audio.preload = "none";
+    audio.preload = "auto";
     audio.volume = 0.82;
     audioRef.current = audio;
 
@@ -880,6 +936,22 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [volume]);
 
   useEffect(() => {
+    if (!currentTrack?.audio_url) {
+      pruneWarmedPlaybackSources(nextTrack?.audio_url ? [getStreamUrl(nextTrack.audio_url)] : []);
+      return;
+    }
+
+    const activeSource = getStreamUrl(currentTrack.audio_url);
+    const upcomingSource = nextTrack?.audio_url ? getStreamUrl(nextTrack.audio_url) : "";
+
+    if (upcomingSource && upcomingSource !== activeSource) {
+      warmPlaybackSource(upcomingSource);
+    }
+
+    pruneWarmedPlaybackSources([activeSource, upcomingSource]);
+  }, [currentTrack?.audio_url, nextTrack?.audio_url]);
+
+  useEffect(() => {
     const audio = audioRef.current;
 
     if (!audio) {
@@ -913,8 +985,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       sourceRef.current = nextSource;
       muteAudioForTransition(audio);
       audio.pause();
-      audio.removeAttribute("src");
-      audio.load();
+      audio.preload = "auto";
       audio.src = nextSource;
       audio.load();
       window.requestAnimationFrame(() => {
@@ -1239,7 +1310,21 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           : buildSequentialOrder(tracks.length);
         const nextPlayhead = shuffleRef.current ? 0 : safeStartIndex;
         const selectedTrack = tracks[safeStartIndex];
+        const nextQueuedTrack =
+          nextPlayhead >= 0 && nextPlayhead < nextOrder.length - 1 ? tracks[nextOrder[nextPlayhead + 1] ?? -1] : null;
         const nextQueueContext = options?.queueContext ?? inferQueueContext(nextQueueKey);
+        const activeSource = selectedTrack?.audio_url ? getStreamUrl(selectedTrack.audio_url) : "";
+        const upcomingSource = nextQueuedTrack?.audio_url ? getStreamUrl(nextQueuedTrack.audio_url) : "";
+
+        if (activeSource) {
+          warmPlaybackSource(activeSource);
+        }
+
+        if (upcomingSource && upcomingSource !== activeSource) {
+          warmPlaybackSource(upcomingSource);
+        }
+
+        pruneWarmedPlaybackSources([activeSource, upcomingSource]);
 
         pendingSeekRef.current = savedProgress > 0 ? savedProgress : null;
         setQueue(tracks);
@@ -1405,6 +1490,21 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         const safeIndex = queueIndex >= 0 ? queueIndex : Math.min(Math.max(item.index, 0), itemQueue.length - 1);
         const nextOrder = buildSequentialOrder(itemQueue.length);
         const nextProgress = normalizeSavedProgress(item.progress, item.duration || item.track.duration_seconds || 0);
+        const selectedTrack = itemQueue[safeIndex];
+        const nextQueuedTrack =
+          safeIndex >= 0 && safeIndex < itemQueue.length - 1 ? itemQueue[safeIndex + 1] : null;
+        const activeSource = selectedTrack?.audio_url ? getStreamUrl(selectedTrack.audio_url) : "";
+        const upcomingSource = nextQueuedTrack?.audio_url ? getStreamUrl(nextQueuedTrack.audio_url) : "";
+
+        if (activeSource) {
+          warmPlaybackSource(activeSource);
+        }
+
+        if (upcomingSource && upcomingSource !== activeSource) {
+          warmPlaybackSource(upcomingSource);
+        }
+
+        pruneWarmedPlaybackSources([activeSource, upcomingSource]);
 
         pendingSeekRef.current = nextProgress;
         setQueue(itemQueue);
