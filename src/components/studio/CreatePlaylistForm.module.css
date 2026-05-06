@@ -1,0 +1,153 @@
+.form {
+  display: grid;
+  grid-template-columns: auto minmax(12rem, 1fr) auto;
+  gap: 0.72rem;
+  align-items: end;
+  padding: 0;
+}
+
+.intro {
+  display: grid;
+  gap: 0.22rem;
+  min-width: 9rem;
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.24rem;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+.editor {
+  display: grid;
+  gap: 0;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.field input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 0.82rem 0.9rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.field input::placeholder {
+  color: rgba(82, 77, 70, 0.58);
+}
+
+.message {
+  grid-column: 1 / -1;
+  margin: 0;
+  min-height: 2.55rem;
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.62rem 0.88rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.success {
+  border: 1px solid rgba(18, 118, 68, 0.18);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: #127644;
+}
+
+.error {
+  border: 1px solid rgba(141, 47, 34, 0.16);
+  background: rgba(194, 47, 47, 0.1);
+  color: #8d2f22;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 1.15rem;
+  background: var(--ink);
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.button:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+}
+
+:global(html[data-theme="dark"]) .field input {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+:global(html[data-theme="dark"]) .field input::placeholder {
+  color: rgba(245, 242, 234, 0.48);
+}
+
+:global(html[data-theme="dark"]) .button {
+  background: color-mix(in srgb, var(--accent) 90%, transparent);
+  color: #20150b;
+}
+
+:global(html[data-theme="dark"]) .button:disabled {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(245, 242, 234, 0.48);
+}
+
+:global(html[data-theme="dark"]) .success {
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: #89f4ad;
+}
+
+:global(html[data-theme="dark"]) .error {
+  border-color: rgba(255, 156, 143, 0.26);
+  color: #ff9c8f;
+}
+
+@media (min-width: 760px) {
+  .button {
+    min-width: 12rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .form {
+    grid-template-columns: 1fr;
+    gap: 0.62rem;
+  }
+
+  .title {
+    font-size: 1.28rem;
+  }
+
+  .button {
+    width: 100%;
+  }
+}

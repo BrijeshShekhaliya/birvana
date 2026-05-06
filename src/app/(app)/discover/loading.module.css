@@ -1,0 +1,182 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.search,
+.categoryCard,
+.trackCard,
+.playlistCard,
+.eyebrow,
+.title,
+.text,
+.sectionTitle,
+.metaPill,
+.actionPill {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero,
+.categoryCard,
+.trackCard,
+.playlistCard {
+  border: 1px solid var(--skeleton-border);
+  background: var(--skeleton-surface);
+  box-shadow: var(--shadow);
+}
+
+.hero,
+.categoryCard,
+.trackCard,
+.playlistCard,
+.search,
+.eyebrow,
+.title,
+.text,
+.sectionTitle,
+.metaPill,
+.actionPill {
+  border-radius: 1.5rem;
+}
+
+.hero::after,
+.search::after,
+.categoryCard::after,
+.trackCard::after,
+.playlistCard::after,
+.eyebrow::after,
+.title::after,
+.text::after,
+.sectionTitle::after,
+.metaPill::after,
+.actionPill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: var(--skeleton-sheen);
+  animation: shimmer 1.15s linear infinite;
+}
+
+.hero {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+}
+
+.heroCopy,
+.shelfCopy {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.eyebrow {
+  width: 6rem;
+  height: 0.85rem;
+}
+
+.title {
+  width: min(15rem, 72%);
+  height: 2.8rem;
+}
+
+.text {
+  width: min(24rem, 100%);
+  height: 1rem;
+}
+
+.search {
+  height: 3.5rem;
+  background: var(--skeleton-surface);
+}
+
+.categoryDeck {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.categoryCard {
+  min-height: 8.25rem;
+}
+
+.shelf {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.shelfHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  width: 12rem;
+  height: 2rem;
+}
+
+.metaPill,
+.actionPill {
+  width: 6.25rem;
+  height: 2.5rem;
+  background: var(--skeleton-surface);
+}
+
+.trackRail,
+.playlistRail {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.trackRail {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.playlistRail {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.trackCard {
+  min-height: 16rem;
+}
+
+.playlistCard {
+  min-height: 13.75rem;
+}
+
+@media (max-width: 639px) {
+  .categoryDeck > :nth-child(n + 3),
+  .trackRail > :nth-child(n + 3),
+  .playlistRail > :nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
+    align-items: end;
+  }
+
+  .categoryDeck {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .trackRail {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .playlistRail {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}

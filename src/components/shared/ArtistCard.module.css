@@ -1,0 +1,78 @@
+.card {
+  display: grid;
+  gap: 0.9rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 250, 241, 0.92));
+  border-radius: 1.5rem;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 70px rgba(17, 21, 27, 0.1);
+}
+
+.linkArea {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.avatarWrap {
+  width: 84px;
+  aspect-ratio: 1 / 1;
+}
+
+.avatar,
+.avatarFallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.avatar {
+  object-fit: cover;
+}
+
+.avatarFallback {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #d8d0c0, #f8f4ec);
+  color: #5b554f;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 2rem;
+}
+
+.body {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.name {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.meta {
+  margin: 0;
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+:global(html[data-theme="dark"]) .card {
+  background: linear-gradient(180deg, rgba(25, 28, 33, 0.86), rgba(14, 16, 20, 0.94));
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(html[data-theme="dark"]) .avatarFallback {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  color: var(--ink);
+}

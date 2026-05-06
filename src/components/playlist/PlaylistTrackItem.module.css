@@ -1,0 +1,280 @@
+.row {
+  content-visibility: auto;
+  contain-intrinsic-size: 76px;
+  display: grid;
+  grid-template-columns: 4.2rem minmax(0, 1fr) auto;
+  gap: 0.82rem;
+  align-items: center;
+  padding: 0.58rem;
+  border: 1px solid rgba(23, 21, 22, 0.06);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.62);
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.rowActive {
+  border-color: rgba(23, 21, 22, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.coverWrap {
+  position: relative;
+  width: 4.2rem;
+  height: 4.2rem;
+  overflow: hidden;
+  border-radius: 0.78rem;
+  background: linear-gradient(135deg, #ddd4c5, #f7f2e9);
+}
+
+.cover,
+.coverFallback {
+  width: 100%;
+  height: 100%;
+}
+
+.cover {
+  object-fit: cover;
+}
+
+.coverFallback {
+  display: grid;
+  place-items: center;
+  color: #5b554f;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.25rem;
+}
+
+.playButton {
+  position: absolute;
+  right: 0.18rem;
+  bottom: 0.18rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(10, 12, 15, 0.88);
+  color: white;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+}
+
+.playingBars {
+  width: 0.78rem;
+  height: 0.86rem;
+  display: inline-flex;
+  align-items: end;
+  justify-content: center;
+  gap: 0.12rem;
+}
+
+.playingBars span {
+  width: 0.15rem;
+  border-radius: 999px;
+  background: currentColor;
+  animation: playlistBarBounce 900ms ease-in-out infinite;
+}
+
+.playingBars span:nth-child(1) {
+  height: 0.36rem;
+}
+
+.playingBars span:nth-child(2) {
+  height: 0.72rem;
+  animation-delay: 120ms;
+}
+
+.playingBars span:nth-child(3) {
+  height: 0.5rem;
+  animation-delay: 240ms;
+}
+
+.main {
+  display: grid;
+  gap: 0.36rem;
+  min-width: 0;
+}
+
+.copy {
+  min-width: 0;
+}
+
+.name,
+.artist {
+  margin: 0;
+}
+
+.name {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.08;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.artist {
+  margin-top: 0.18rem;
+  color: var(--muted);
+  line-height: 1.32;
+  font-size: 0.86rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 0.48rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.order {
+  color: #4f4944;
+  font-weight: 700;
+}
+
+.plays {
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.42rem;
+}
+
+:global(html[data-theme="dark"]) .row {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+:global(html[data-theme="dark"]) .rowActive {
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+:global(html[data-theme="dark"]) .order {
+  color: rgba(245, 242, 234, 0.7);
+}
+
+@keyframes playlistBarBounce {
+  0%,
+  100% {
+    transform: scaleY(0.65);
+    opacity: 0.78;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    transform: translateY(-1px);
+    border-color: rgba(23, 21, 22, 0.1);
+    background: rgba(255, 255, 255, 0.78);
+  }
+
+  .playButton:hover {
+    transform: scale(1.04);
+    background: rgba(10, 12, 15, 0.96);
+  }
+
+  :global(html[data-theme="dark"]) .row:hover {
+    border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .row,
+  .playButton {
+    transition: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .row {
+    grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    gap: 0.7rem;
+    padding: 0.52rem;
+  }
+
+  .coverWrap {
+    width: 3.75rem;
+    height: 3.75rem;
+  }
+
+  .name {
+    font-size: 0.96rem;
+  }
+
+  .artist {
+    font-size: 0.82rem;
+  }
+
+  .metaRow {
+    font-size: 0.76rem;
+  }
+
+  .plays {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .row {
+    grid-template-columns: 3.35rem minmax(0, 1fr) auto;
+    gap: 0.62rem;
+    padding: 0.5rem;
+    border-radius: 0.92rem;
+  }
+
+  .coverWrap {
+    width: 3.35rem;
+    height: 3.35rem;
+    border-radius: 0.72rem;
+  }
+
+  .playButton {
+    width: 1.45rem;
+    height: 1.45rem;
+  }
+
+  .main {
+    gap: 0.24rem;
+  }
+
+  .name {
+    font-size: 0.92rem;
+  }
+
+  .artist {
+    margin-top: 0.12rem;
+    font-size: 0.78rem;
+  }
+
+  .metaRow {
+    gap: 0.38rem;
+    font-size: 0.72rem;
+  }
+
+  .actions {
+    gap: 0.3rem;
+  }
+}

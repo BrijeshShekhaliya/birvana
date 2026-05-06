@@ -1,0 +1,49 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.stats span,
+.panel {
+  border-radius: 1.25rem;
+  background:
+    var(--skeleton-sheen),
+    var(--skeleton-surface);
+  background-size: 220% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.hero {
+  min-height: 12rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.stats span {
+  min-height: 6rem;
+}
+
+.panel {
+  min-height: 18rem;
+}
+
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}

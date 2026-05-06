@@ -1,0 +1,399 @@
+.page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.hero > div:first-child {
+  display: grid;
+  gap: 0.48rem;
+  max-width: 48rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: clamp(2.35rem, 4.8vw, 4.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.075em;
+}
+
+.copy {
+  margin: 0;
+  max-width: 54ch;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.accessBadge,
+.stat,
+.health,
+.panel,
+.trackRow,
+.playlistCard,
+.artistRow {
+  border: 1px solid rgba(23, 21, 22, 0.07);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.accessBadge {
+  min-height: 2.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.55rem 0.82rem;
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.stat {
+  display: grid;
+  gap: 0.34rem;
+  border-radius: 1.2rem;
+  padding: 0.9rem;
+}
+
+.stat svg {
+  color: var(--muted);
+}
+
+.stat span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.stat strong {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.85rem;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.health {
+  display: grid;
+  gap: 0.9rem;
+  border-radius: 1.35rem;
+  padding: 1rem;
+}
+
+.healthCopy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.health h2,
+.panelHeader h2 {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  letter-spacing: -0.055em;
+}
+
+.health h2 {
+  font-size: clamp(1.65rem, 3vw, 2.55rem);
+  line-height: 0.98;
+}
+
+.health p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.progressTrack {
+  height: 0.62rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(23, 21, 22, 0.08);
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #121416, var(--accent));
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.panel {
+  display: grid;
+  gap: 0.85rem;
+  border-radius: 1.35rem;
+  padding: 1rem;
+}
+
+.artistsPanel {
+  grid-column: 1 / -1;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.panelHeader > div {
+  display: grid;
+  gap: 0.22rem;
+}
+
+.panelHeader h2 {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.panelHeader span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.rows,
+.artistList {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.trackRow {
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.72rem;
+  border-radius: 1rem;
+  padding: 0.45rem 0.6rem 0.45rem 0.45rem;
+}
+
+.cover,
+.coverFallback,
+.avatar {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 0.78rem;
+}
+
+.cover,
+.avatar img {
+  object-fit: cover;
+}
+
+.coverFallback,
+.avatar {
+  display: grid;
+  place-items: center;
+  background: rgba(227, 218, 204, 0.78);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.rowText,
+.rowMeta,
+.status,
+.artistRow > div {
+  min-width: 0;
+}
+
+.rowText,
+.artistRow > div {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.rowText strong,
+.playlistCard strong,
+.artistRow strong {
+  overflow: hidden;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowText span,
+.rowMeta,
+.playlistCard p,
+.playlistTop,
+.playlistStats,
+.artistRow span {
+  color: var(--muted);
+}
+
+.rowText span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowMeta {
+  display: grid;
+  gap: 0.12rem;
+  justify-items: end;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.status,
+.visibility {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  text-transform: capitalize;
+}
+
+.status {
+  min-height: 1.8rem;
+  border-radius: 999px;
+  padding: 0.18rem 0.52rem;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: #127644;
+  font-size: 0.75rem;
+}
+
+.playlistGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.playlistCard {
+  display: grid;
+  gap: 0.46rem;
+  min-width: 0;
+  border-radius: 1rem;
+  padding: 0.78rem;
+}
+
+.playlistTop,
+.playlistStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+}
+
+.playlistCard p {
+  margin: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.artistRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.avatar {
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1000px) {
+  .statsGrid,
+  .workspace {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    display: grid;
+  }
+
+  .statsGrid,
+  .workspace,
+  .playlistGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .trackRow {
+    grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+  }
+
+  .rowMeta {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .page {
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: clamp(2rem, 11vw, 2.9rem);
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .stat {
+    border-radius: 1rem;
+    padding: 0.75rem;
+  }
+
+  .stat strong {
+    font-size: 1.45rem;
+  }
+
+  .panel,
+  .health {
+    padding: 0.82rem;
+    border-radius: 1.15rem;
+  }
+
+  .trackRow {
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    gap: 0.58rem;
+  }
+
+  .cover,
+  .coverFallback,
+  .avatar {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .status span {
+    display: none;
+  }
+}

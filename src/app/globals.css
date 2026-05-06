@@ -1,26 +1,202 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #f4efe6;
+  --paper: #fffaf1;
+  --ink: #171516;
+  --muted: #6e6762;
+  --line: rgba(23, 21, 22, 0.08);
+  --accent: #b86244;
+  --accent-deep: #7d3d2c;
+  --accent-soft: rgba(184, 98, 68, 0.12);
+  --shadow: 0 24px 80px rgba(24, 19, 16, 0.08);
+  --skeleton-surface: color-mix(in srgb, var(--paper) 88%, transparent);
+  --skeleton-surface-strong: color-mix(in srgb, var(--paper) 96%, transparent);
+  --skeleton-border: rgba(23, 21, 22, 0.08);
+  --skeleton-sheen: linear-gradient(90deg, rgba(23, 21, 22, 0.04), rgba(255, 255, 255, 0.38), rgba(23, 21, 22, 0.04));
+  --media-slot-surface:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
+    color-mix(in srgb, var(--paper) 82%, #ede5d8);
+  --category-slot-surface:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 34%, transparent), rgba(23, 21, 22, 0.12)),
+    rgba(250, 248, 243, 0.9);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html[data-theme="dark"] {
+  --canvas: #0d0f12;
+  --paper: #171a1f;
+  --ink: #f5f2ea;
+  --muted: #aaa39a;
+  --line: rgba(255, 255, 255, 0.1);
+  --accent: #d7a466;
+  --accent-deep: #a8643f;
+  --accent-soft: rgba(215, 164, 102, 0.16);
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  --skeleton-surface: color-mix(in srgb, var(--paper) 58%, #050608);
+  --skeleton-surface-strong: color-mix(in srgb, var(--paper) 68%, #050608);
+  --skeleton-border: rgba(255, 255, 255, 0.08);
+  --skeleton-sheen: linear-gradient(90deg, rgba(255, 255, 255, 0.016), rgba(215, 164, 102, 0.09), rgba(255, 255, 255, 0.016));
+  --media-slot-surface:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
+    color-mix(in srgb, var(--paper) 64%, #08090b);
+  --category-slot-surface:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), rgba(255, 255, 255, 0.04)),
+    color-mix(in srgb, var(--paper) 66%, #08090b);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
+  background-color: #f4efe6;
+  background:
+    radial-gradient(circle at top left, rgba(184, 98, 68, 0.09), transparent 24%),
+    linear-gradient(180deg, #f8f4ed 0%, #f4efe6 55%, #efe8de 100%),
+    #f4efe6;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  background-color: #08090b;
+  background:
+    radial-gradient(circle at top left, rgba(215, 164, 102, 0.11), transparent 24%),
+    linear-gradient(180deg, #0f1115 0%, #101216 55%, #08090b 100%),
+    #08090b;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html:not([data-theme]) {
+    --canvas: #0d0f12;
+    --paper: #171a1f;
+    --ink: #f5f2ea;
+    --muted: #aaa39a;
+    --line: rgba(255, 255, 255, 0.1);
+    --accent: #d7a466;
+    --accent-deep: #a8643f;
+    --accent-soft: rgba(215, 164, 102, 0.16);
+    --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+    --skeleton-surface: color-mix(in srgb, var(--paper) 58%, #050608);
+    --skeleton-surface-strong: color-mix(in srgb, var(--paper) 68%, #050608);
+    --skeleton-border: rgba(255, 255, 255, 0.08);
+    --skeleton-sheen: linear-gradient(90deg, rgba(255, 255, 255, 0.016), rgba(215, 164, 102, 0.09), rgba(255, 255, 255, 0.016));
+    --media-slot-surface:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
+      color-mix(in srgb, var(--paper) 64%, #08090b);
+    --category-slot-surface:
+      linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), rgba(255, 255, 255, 0.04)),
+      color-mix(in srgb, var(--paper) 66%, #08090b);
+    color-scheme: dark;
+    background-color: #08090b;
+    background:
+      radial-gradient(circle at top left, rgba(215, 164, 102, 0.11), transparent 24%),
+      linear-gradient(180deg, #0f1115 0%, #101216 55%, #08090b 100%),
+      #08090b;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-inter), sans-serif;
+  background: transparent;
+  overflow-x: clip;
+}
+
+@media (min-width: 1440px) {
+  html {
+    font-size: 15.5px;
+  }
+}
+
+@media (max-width: 959px) {
+  html {
+    font-size: 14.5px;
+  }
+
+  html,
+  body {
+    scrollbar-width: none;
+  }
+
+  body::-webkit-scrollbar,
+  html::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+img[data-loading="true"] {
+  background:
+    var(--skeleton-sheen),
+    var(--skeleton-surface);
+  background-size: 220% 100%;
+  animation: birvana-image-loading 1.1s ease-in-out infinite;
+}
+
+html[data-theme="dark"] img[data-loading="true"] {
+  background:
+    var(--skeleton-sheen),
+    var(--skeleton-surface);
+  background-size: 220% 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) img[data-loading="true"] {
+    background:
+      var(--skeleton-sheen),
+      var(--skeleton-surface);
+    background-size: 220% 100%;
+  }
+}
+
+@keyframes birvana-image-loading {
+  from {
+    background-position: 120% 0;
+  }
+
+  to {
+    background-position: -120% 0;
+  }
+}
+
+::selection {
+  background: rgba(184, 98, 68, 0.24);
+}
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  scroll-behavior: auto !important;
+  transition-duration: 120ms !important;
+  transition-timing-function: steps(6, end) !important;
+  animation-timing-function: steps(45, end) !important;
+}
+
+html[data-motion="reduced"] img[data-loading="true"] {
+  animation-duration: 1.45s;
 }

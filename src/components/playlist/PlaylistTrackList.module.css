@@ -1,0 +1,93 @@
+.list {
+  display: grid;
+  gap: 0.52rem;
+}
+
+.listPending {
+  opacity: 0.76;
+}
+
+.item {
+  content-visibility: auto;
+  contain-intrinsic-size: 78px;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.itemDragging {
+  z-index: 4;
+  box-shadow: 0 24px 60px rgba(23, 21, 22, 0.12);
+}
+
+.rowUtilities {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.dragHandle {
+  width: 2.8rem;
+  height: 2.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+:global(html[data-theme="dark"]) .dragHandle {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover {
+    background: transparent;
+  }
+
+  .dragHandle:hover {
+    transform: translateY(-1px);
+    border-color: rgba(23, 21, 22, 0.14);
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  :global(html[data-theme="dark"]) .dragHandle:hover {
+    border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+    background: color-mix(in srgb, var(--accent) 11%, transparent);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .item,
+  .dragHandle {
+    transition: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .rowUtilities {
+    justify-content: flex-end;
+  }
+
+  .dragHandle {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+}

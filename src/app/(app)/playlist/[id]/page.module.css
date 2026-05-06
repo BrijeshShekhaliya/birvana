@@ -1,0 +1,14 @@
+.page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.emptyState {
+  display: grid;
+}
+
+@media (max-width: 640px) {
+  .page {
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,105 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(23, 21, 22, 0.42);
+  backdrop-filter: blur(10px);
+  overscroll-behavior: none;
+}
+
+.modal {
+  width: min(980px, 100%);
+  height: min(80vh, 760px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1.8rem;
+  background: rgba(255, 250, 241, 0.92);
+  box-shadow: 0 28px 90px rgba(23, 21, 22, 0.24);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1rem 0.8rem;
+  border-bottom: 1px solid rgba(23, 21, 22, 0.08);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.18rem;
+  letter-spacing: -0.04em;
+}
+
+.close {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.body {
+  min-height: 0;
+  overflow: hidden;
+  padding: 1rem;
+  overscroll-behavior: contain;
+  display: grid;
+}
+
+:global(html[data-theme="dark"]) .overlay {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+:global(html[data-theme="dark"]) .modal {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(14, 16, 20, 0.96);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+}
+
+:global(html[data-theme="dark"]) .header {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(html[data-theme="dark"]) .close {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .overlay {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .modal {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .header {
+    padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1rem 0.9rem;
+  }
+
+  .body {
+    padding:
+      0.95rem
+      1rem
+      calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+}

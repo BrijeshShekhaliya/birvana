@@ -1,0 +1,417 @@
+.form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.formHero {
+  display: grid;
+  gap: 1rem;
+  padding: 1.3rem;
+  border: 1px solid var(--line);
+  border-radius: 1.8rem;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 244, 236, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.formHeroCopy {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 46rem;
+}
+
+.kicker,
+.sectionEyebrow,
+.statLabel {
+  margin: 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 58ch;
+}
+
+.formHeroStats {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.statCard,
+.sectionCard,
+.infoRail,
+.footerBar {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(250, 245, 236, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.statCard {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1.25rem;
+}
+
+.statValue {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: capitalize;
+}
+
+.statMeta {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.editorShell,
+.mainColumn,
+.fieldGrid,
+.visibilityGrid,
+.uploadGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.sectionCard {
+  gap: 0.95rem;
+  padding: 1.2rem;
+  border-radius: 1.7rem;
+}
+
+.sectionHead {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field span {
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.field input {
+  min-height: 50px;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 0.8rem 0.95rem;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+}
+
+.field input::placeholder {
+  color: rgba(82, 77, 70, 0.58);
+}
+
+.visibilityCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  padding: 1rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.visibilityCard:hover {
+  transform: translateY(-1px);
+}
+
+.visibilityCardActive {
+  border-color: rgba(23, 21, 22, 0.16);
+  background: linear-gradient(180deg, rgba(23, 21, 22, 0.06), color-mix(in srgb, var(--accent) 8%, transparent));
+  box-shadow: 0 18px 48px rgba(17, 21, 27, 0.08);
+}
+
+.visibilityInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.visibilityIcon {
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(23, 21, 22, 0.06);
+}
+
+.visibilityCopy {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.visibilityCopy strong {
+  font-size: 0.98rem;
+}
+
+.visibilityCopy span {
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.88rem;
+}
+
+.uploadCard {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem;
+  border-radius: 1.2rem;
+  border: 1px dashed rgba(23, 21, 22, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.uploadIcon {
+  width: 2.9rem;
+  height: 2.9rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1rem;
+  background: rgba(23, 21, 22, 0.06);
+}
+
+.uploadCopy {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.uploadCopy strong {
+  font-size: 1rem;
+}
+
+.uploadCopy span,
+.uploadMeta,
+.infoItem span,
+.footerCopy span {
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.88rem;
+}
+
+.uploadCard input[type="file"] {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.uploadCard input[type="file"]::file-selector-button {
+  margin-right: 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.7rem 0.9rem;
+  background: #18191c;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.infoRail {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  border-radius: 1.6rem;
+}
+
+.infoItem {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.infoItem strong,
+.footerCopy strong {
+  font-size: 0.95rem;
+}
+
+.message {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.94rem;
+}
+
+.success {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: #0f6a35;
+}
+
+.error {
+  background: rgba(194, 47, 47, 0.1);
+  color: #8f1f1f;
+}
+
+.footerBar {
+  display: grid;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 1rem 1.15rem;
+  border-radius: 1.5rem;
+}
+
+.footerCopy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.button {
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.1rem;
+  background: #17181b;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+:global(html[data-theme="dark"]) .formHero,
+:global(html[data-theme="dark"]) .statCard,
+:global(html[data-theme="dark"]) .sectionCard,
+:global(html[data-theme="dark"]) .infoRail,
+:global(html[data-theme="dark"]) .footerBar {
+  background: linear-gradient(180deg, rgba(25, 28, 33, 0.88), rgba(14, 16, 20, 0.94));
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(html[data-theme="dark"]) .field input,
+:global(html[data-theme="dark"]) .visibilityCard,
+:global(html[data-theme="dark"]) .visibilityIcon,
+:global(html[data-theme="dark"]) .uploadCard,
+:global(html[data-theme="dark"]) .uploadIcon,
+:global(html[data-theme="dark"]) .uploadCard input[type="file"] {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+}
+
+:global(html[data-theme="dark"]) .visibilityCardActive {
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+:global(html[data-theme="dark"]) .uploadCard input[type="file"]::file-selector-button,
+:global(html[data-theme="dark"]) .button {
+  background: color-mix(in srgb, var(--accent) 90%, transparent);
+  color: #20150b;
+}
+
+:global(html[data-theme="dark"]) .success {
+  color: #89f4ad;
+}
+
+:global(html[data-theme="dark"]) .error {
+  color: #ff9c8f;
+}
+
+.spinner {
+  animation: studio-spin 1s linear infinite;
+}
+
+@media (min-width: 760px) {
+  .fieldGrid,
+  .uploadGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .formHeroStats,
+  .infoRail {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .footerBar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .formHero,
+  .sectionCard,
+  .infoRail,
+  .footerBar {
+    padding: 1rem;
+    border-radius: 1.35rem;
+  }
+
+  .title {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+  }
+
+  .sectionTitle {
+    font-size: 1.15rem;
+  }
+
+  .visibilityCard {
+    grid-template-columns: 1fr;
+  }
+
+  .visibilityIcon {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
+
+@keyframes studio-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

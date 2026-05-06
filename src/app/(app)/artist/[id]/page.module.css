@@ -1,0 +1,53 @@
+.page,
+.tracks,
+.albums {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero {
+  display: grid;
+  gap: 0.9rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 241, 0.82);
+  border-radius: 2rem;
+  padding: 1.25rem;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: clamp(2rem, 8vw, 4rem);
+  letter-spacing: -0.07em;
+}
+
+.bio {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.albumCard {
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 241, 0.82);
+  border-radius: 1.4rem;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.albumTitle {
+  margin: 0;
+  font-weight: 700;
+}
+
+.albumMeta {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}

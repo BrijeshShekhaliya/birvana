@@ -1,0 +1,409 @@
+.page {
+  position: relative;
+  display: grid;
+  gap: 1.4rem;
+  min-width: 0;
+  min-height: 100%;
+  padding-bottom: 0.8rem;
+  background:
+    radial-gradient(circle at 8% -4%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 26rem),
+    radial-gradient(circle at 92% 10%, rgba(20, 20, 20, 0.08), transparent 24rem);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 25rem);
+  align-items: end;
+  gap: 1rem;
+  min-width: 0;
+  padding: 0.9rem 0 0.1rem;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 0.32rem;
+  min-width: 0;
+}
+
+.heroTitle {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.heroText {
+  margin: 0;
+  max-width: 31rem;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3.12rem;
+  width: 100%;
+  border: 1px solid rgba(23, 21, 22, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 0 0.95rem;
+  box-shadow: 0 14px 34px rgba(17, 21, 27, 0.06);
+}
+
+.searchField input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.searchField button,
+.textButton {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.searchField button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgba(23, 21, 22, 0.06);
+  color: var(--ink);
+}
+
+.categoryDeck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.8rem), 1fr));
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.categoryCard {
+  min-width: 0;
+  min-height: 5.2rem;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.78);
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.72rem;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(17, 21, 27, 0.05);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.categoryCardActive {
+  border-color: rgba(23, 21, 22, 0.28);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(245, 255, 247, 0.88));
+}
+
+.categoryArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 0.78rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 34%, transparent), rgba(23, 21, 22, 0.12)),
+    rgba(250, 248, 243, 0.9);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: var(--ink);
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.categoryImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.categoryBody {
+  display: grid;
+  gap: 0.16rem;
+  min-width: 0;
+}
+
+.categoryTitle {
+  overflow: hidden;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.categoryMeta,
+.sectionMeta {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.shelf,
+.searchResults,
+.categoryShelves {
+  display: grid;
+  gap: 0.82rem;
+  min-width: 0;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 24rem;
+}
+
+.searchResults,
+.categoryShelves {
+  gap: 1.15rem;
+}
+
+.sectionHeader,
+.resultsHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.sectionMeta {
+  margin: 0.22rem 0 0;
+}
+
+.textButton {
+  flex: 0 0 auto;
+  min-height: 2.25rem;
+  border: 1px solid rgba(23, 21, 22, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0 0.82rem;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(17, 21, 27, 0.05);
+}
+
+.railViewport {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.02rem 0 0.3rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
+  scroll-padding-inline: 0.04rem;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: stretch;
+  gap: 0.62rem;
+  min-width: 100%;
+  padding-right: 0.1rem;
+}
+
+.railViewport::-webkit-scrollbar {
+  display: none;
+}
+
+.railViewport {
+  grid-auto-columns: minmax(10.25rem, 10.25rem);
+}
+
+.playlistRailViewport {
+  grid-auto-columns: minmax(10.25rem, 10.25rem);
+}
+
+:global(html[data-theme="dark"]) .page {
+  background:
+    radial-gradient(circle at 8% -4%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 26rem),
+    radial-gradient(circle at 92% 10%, rgba(255, 255, 255, 0.08), transparent 24rem);
+}
+
+:global(html[data-theme="dark"]) .searchField,
+:global(html[data-theme="dark"]) .categoryCard,
+:global(html[data-theme="dark"]) .textButton {
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+}
+
+:global(html[data-theme="dark"]) .categoryArt {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), rgba(255, 255, 255, 0.04)),
+    color-mix(in srgb, var(--paper) 66%, #08090b);
+}
+
+:global(html[data-theme="dark"]) .categoryCardActive {
+  background: linear-gradient(145deg, rgba(24, 32, 26, 0.96), rgba(18, 20, 24, 0.9));
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .categoryCard:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 42px rgba(17, 21, 27, 0.08);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .categoryCard {
+    transition: none;
+  }
+}
+
+.playlistRailViewport :global(article) {
+  align-self: stretch;
+}
+
+@media (min-width: 720px) {
+  .page {
+    gap: 1.65rem;
+  }
+
+  .railViewport {
+    overflow: visible;
+    padding: 0;
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-columns: initial;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.95rem;
+    width: 100%;
+  }
+
+  .playlistRailViewport {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 12.4rem));
+    justify-content: start;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1080px) {
+  .railViewport {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .playlistRailViewport {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.8rem), 12.8rem));
+  }
+}
+
+@media (max-width: 719px) {
+  .page {
+    gap: 1rem;
+    margin-inline: 0;
+    padding: 0.05rem 0 0.2rem;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 0.72rem;
+    padding: 0.15rem 0 0;
+  }
+
+  .heroTitle {
+    font-size: 2.05rem;
+  }
+
+  .heroText {
+    max-width: none;
+    font-size: 0.92rem;
+  }
+
+  .searchField {
+    min-height: 2.92rem;
+    border-radius: 0.95rem;
+    padding-inline: 0.86rem;
+    box-shadow: 0 10px 24px rgba(17, 21, 27, 0.05);
+  }
+
+  .categoryDeck {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.16rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+  }
+
+  .categoryDeck::-webkit-scrollbar {
+    display: none;
+  }
+
+  .categoryCard {
+    flex: 0 0 10.7rem;
+    min-height: 4.9rem;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 0.62rem;
+    padding: 0.62rem;
+    border-radius: 0.95rem;
+  }
+
+  .categoryArt {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.72rem;
+  }
+
+  .shelf {
+    gap: 0.62rem;
+  }
+
+  .searchResults,
+  .categoryShelves {
+    gap: 0.95rem;
+  }
+
+  .sectionHeader,
+  .resultsHeader {
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.34rem;
+  }
+
+  .sectionMeta {
+    font-size: 0.82rem;
+  }
+
+  .railViewport,
+  .playlistRailViewport {
+    gap: 0.48rem;
+  }
+}

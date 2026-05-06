@@ -1,0 +1,66 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.65rem 0.95rem;
+  background: rgba(255, 250, 241, 0.92);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+:global(html[data-theme="dark"]) .button {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(245, 242, 234, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+:global(html[data-theme="dark"]) .button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 36%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+:global(html[data-theme="dark"]) .active {
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: #f5f2ea;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(23, 21, 22, 0.18);
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.active {
+  border-color: rgba(23, 21, 22, 0.14);
+  background: rgba(23, 21, 22, 0.08);
+  color: var(--ink);
+}
+
+.compact {
+  min-height: 2.2rem;
+  padding: 0.55rem 0.8rem;
+}
+
+.label {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.icon {
+  flex: 0 0 auto;
+}

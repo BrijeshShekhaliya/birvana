@@ -1,0 +1,160 @@
+.panel {
+  display: grid;
+  gap: 1rem;
+  min-height: 0;
+  height: 100%;
+}
+
+.feedback,
+.error {
+  margin: 0;
+}
+
+.form,
+.fields {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.form {
+  min-height: 0;
+  height: 100%;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+
+.fields {
+  min-height: 0;
+  overflow: auto;
+  align-content: start;
+  padding-right: 0.15rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field span {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 0.85rem 0.95rem;
+  color: var(--ink);
+  outline: none;
+}
+
+.field textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+
+.coverRow,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.uploadButton,
+.secondaryButton,
+.primaryButton,
+.deleteButton {
+  min-height: 2.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.uploadButton,
+.secondaryButton {
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--ink);
+}
+
+.uploadButton input {
+  display: none;
+}
+
+.primaryButton {
+  border: 0;
+  background: var(--ink);
+  color: white;
+}
+
+.deleteButton {
+  border: 1px solid rgba(141, 47, 34, 0.14);
+  background: rgba(141, 47, 34, 0.06);
+  color: #8d2f22;
+}
+
+.feedback {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.error {
+  color: #8d2f22;
+  font-size: 0.92rem;
+}
+
+:global(html[data-theme="dark"]) .field input,
+:global(html[data-theme="dark"]) .field textarea,
+:global(html[data-theme="dark"]) .field select,
+:global(html[data-theme="dark"]) .uploadButton,
+:global(html[data-theme="dark"]) .secondaryButton {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+:global(html[data-theme="dark"]) .field input::placeholder,
+:global(html[data-theme="dark"]) .field textarea::placeholder {
+  color: rgba(245, 242, 234, 0.48);
+}
+
+:global(html[data-theme="dark"]) .primaryButton {
+  background: color-mix(in srgb, var(--accent) 90%, transparent);
+  color: #20150b;
+}
+
+:global(html[data-theme="dark"]) .deleteButton {
+  border-color: rgba(255, 156, 143, 0.26);
+  background: rgba(255, 156, 143, 0.1);
+  color: #ff9c8f;
+}
+
+:global(html[data-theme="dark"]) .error {
+  color: #ff9c8f;
+}
+
+.uploadMeta {
+  display: grid;
+  gap: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .actions {
+    display: grid;
+  }
+
+  .primaryButton,
+  .deleteButton,
+  .uploadButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

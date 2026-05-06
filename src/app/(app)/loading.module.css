@@ -1,0 +1,61 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.row,
+.card,
+.list {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--skeleton-border);
+  border-radius: 1.8rem;
+  background: var(--skeleton-surface);
+}
+
+.hero {
+  min-height: 10rem;
+}
+
+.row {
+  min-height: 5.5rem;
+}
+
+.panelGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card {
+  min-height: 12rem;
+}
+
+.list {
+  min-height: 18rem;
+}
+
+.hero::after,
+.row::after,
+.card::after,
+.list::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: var(--skeleton-sheen);
+  animation: shimmer 1.2s linear infinite;
+}
+
+@media (max-width: 639px) {
+  .panelGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}

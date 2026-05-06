@@ -1,0 +1,585 @@
+.card {
+  position: relative;
+  content-visibility: auto;
+  contain-intrinsic-size: 340px;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  border-radius: 1.6rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 8%, transparent), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 249, 240, 0.97));
+  box-shadow: 0 22px 60px rgba(17, 21, 27, 0.08);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.18), transparent 38%);
+  pointer-events: none;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 80px rgba(17, 21, 27, 0.12);
+  border-color: rgba(23, 21, 22, 0.14);
+}
+
+.withAction {
+  padding-top: 0.15rem;
+}
+
+.saveDock {
+  position: absolute;
+  top: 0.82rem;
+  right: 0.82rem;
+  z-index: 2;
+}
+
+.saveDock :global(button) {
+  min-width: 2.6rem;
+  min-height: 2.6rem;
+  padding: 0;
+  justify-content: center;
+  background: rgba(255, 250, 241, 0.84);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 28px rgba(17, 21, 27, 0.12);
+}
+
+.linkArea {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.9rem;
+  min-height: 100%;
+  padding: 0.85rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.linkAreaCompact {
+  grid-template-columns: 6.4rem minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.78rem;
+  padding: 0.72rem;
+}
+
+.linkAreaDiscover {
+  gap: 0.72rem;
+  padding: 0.76rem;
+}
+
+.linkAreaLibrary {
+  gap: 0.7rem;
+  padding: 0.72rem;
+}
+
+.coverWrap {
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+  border-radius: 1.28rem;
+  overflow: hidden;
+}
+
+.linkAreaCompact .coverWrap {
+  aspect-ratio: auto;
+  min-height: 100%;
+  border-radius: 1rem;
+}
+
+.coverOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 34%),
+    linear-gradient(180deg, transparent 38%, rgba(17, 17, 19, 0.36) 100%);
+  pointer-events: none;
+}
+
+.coverMeta {
+  position: absolute;
+  left: 0.72rem;
+  right: 0.72rem;
+  bottom: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.coverTag,
+.coverStat {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 250, 241, 0.16);
+  backdrop-filter: blur(10px);
+  color: white;
+  box-shadow: 0 10px 28px rgba(17, 21, 27, 0.12);
+}
+
+.coverTag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.coverStat {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.body {
+  display: grid;
+  gap: 0.82rem;
+  align-content: space-between;
+  min-width: 0;
+}
+
+.copy {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.kickerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem 0.75rem;
+}
+
+.kicker,
+.kickerValue {
+  color: var(--muted);
+}
+
+.kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.kickerValue {
+  font-size: 0.78rem;
+}
+
+.name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.metaPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.9rem;
+  padding: 0.28rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 21, 22, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.metaPill svg {
+  color: var(--ink);
+  opacity: 0.72;
+  flex: 0 0 auto;
+}
+
+.compact {
+  border-radius: 1.38rem;
+  contain-intrinsic-size: 180px;
+}
+
+.compact .body {
+  gap: 0.62rem;
+}
+
+.compact .coverMeta {
+  left: 0.56rem;
+  right: 0.56rem;
+  bottom: 0.56rem;
+}
+
+.compact .coverTag,
+.compact .coverStat {
+  min-height: 1.55rem;
+  padding: 0.22rem 0.5rem;
+}
+
+.compact .coverTag {
+  font-size: 0.62rem;
+}
+
+.compact .coverStat {
+  font-size: 0.72rem;
+}
+
+.compact .kicker {
+  font-size: 0.68rem;
+}
+
+.compact .kickerValue {
+  font-size: 0.74rem;
+}
+
+.compact .name {
+  font-size: 0.98rem;
+  -webkit-line-clamp: 2;
+}
+
+.compact .description {
+  font-size: 0.82rem;
+  line-height: 1.38;
+  -webkit-line-clamp: 2;
+}
+
+.compact .metaRow {
+  gap: 0.35rem;
+}
+
+.compact .metaPill {
+  min-height: 1.72rem;
+  padding: 0.22rem 0.52rem;
+  font-size: 0.74rem;
+}
+
+.compact .saveDock {
+  top: 0.64rem;
+  right: 0.64rem;
+}
+
+.compact .saveDock :global(button) {
+  min-width: 2.3rem;
+  min-height: 2.3rem;
+}
+
+.discover {
+  contain-intrinsic-size: 218px;
+  border-radius: 1.22rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 250, 241, 0.94));
+  box-shadow: none;
+  border-color: rgba(23, 21, 22, 0.06);
+}
+
+.discover::before {
+  display: none;
+}
+
+.library {
+  contain-intrinsic-size: 196px;
+  border-radius: 1.16rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 249, 239, 0.95));
+  box-shadow: none;
+  border-color: rgba(23, 21, 22, 0.06);
+}
+
+.library::before {
+  display: none;
+}
+
+.library .coverWrap {
+  aspect-ratio: 1 / 0.92;
+  border-radius: 0.9rem;
+}
+
+.library .coverMeta {
+  left: 0.58rem;
+  right: 0.58rem;
+  bottom: 0.58rem;
+}
+
+.library .coverTag,
+.library .coverStat {
+  min-height: 1.46rem;
+  padding: 0.18rem 0.44rem;
+}
+
+.library .coverTag {
+  font-size: 0.63rem;
+}
+
+.library .coverStat {
+  font-size: 0.71rem;
+}
+
+.library .body {
+  gap: 0.42rem;
+}
+
+.library .kicker {
+  font-size: 0.67rem;
+}
+
+.library .kickerValue {
+  font-size: 0.73rem;
+}
+
+.library .name {
+  font-size: 0.88rem;
+}
+
+.library .description {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  -webkit-line-clamp: 1;
+}
+
+.library .metaRow {
+  gap: 0.32rem;
+}
+
+.library .metaPill {
+  min-height: 1.56rem;
+  padding: 0.14rem 0.4rem;
+  font-size: 0.67rem;
+}
+
+.library .saveDock {
+  top: 0.62rem;
+  right: 0.62rem;
+}
+
+.library .saveDock :global(button) {
+  min-width: 2.22rem;
+  min-height: 2.22rem;
+}
+
+.discover .coverWrap {
+  aspect-ratio: 1 / 0.93;
+  border-radius: 0.96rem;
+}
+
+.discover .coverMeta {
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.6rem;
+}
+
+.discover .coverTag,
+.discover .coverStat {
+  min-height: 1.58rem;
+  padding: 0.22rem 0.5rem;
+}
+
+.discover .coverTag {
+  font-size: 0.64rem;
+}
+
+.discover .coverStat {
+  font-size: 0.72rem;
+}
+
+.discover .body {
+  gap: 0.48rem;
+}
+
+.discover .kicker {
+  font-size: 0.68rem;
+}
+
+.discover .kickerValue {
+  font-size: 0.74rem;
+}
+
+.discover .name {
+  font-size: 0.9rem;
+}
+
+.discover .description {
+  font-size: 0.76rem;
+  line-height: 1.34;
+  -webkit-line-clamp: 1;
+}
+
+.discover .metaRow {
+  gap: 0.35rem;
+}
+
+.discover .metaPill {
+  min-height: 1.66rem;
+  padding: 0.16rem 0.44rem;
+  font-size: 0.69rem;
+}
+
+:global(html[data-theme="dark"]) .card,
+:global(html[data-theme="dark"]) .discover,
+:global(html[data-theme="dark"]) .library {
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 8%, transparent), transparent 32%),
+    linear-gradient(180deg, rgba(25, 28, 33, 0.88), rgba(14, 16, 20, 0.94));
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+}
+
+:global(html[data-theme="dark"]) .metaPill {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.discover .saveDock {
+  top: 0.66rem;
+  right: 0.66rem;
+}
+
+.discover .saveDock :global(button) {
+  min-width: 2.28rem;
+  min-height: 2.28rem;
+}
+
+@media (max-width: 640px) {
+  .card {
+    border-radius: 1.35rem;
+  }
+
+  .linkArea {
+    gap: 0.76rem;
+    padding: 0.72rem;
+  }
+
+  .coverWrap {
+    border-radius: 1.08rem;
+  }
+
+  .name {
+    font-size: 0.98rem;
+  }
+
+  .description {
+    font-size: 0.83rem;
+    line-height: 1.38;
+  }
+
+  .metaPill {
+    min-height: 1.76rem;
+    padding: 0.22rem 0.52rem;
+    font-size: 0.74rem;
+  }
+
+  .saveDock {
+    top: 0.68rem;
+    right: 0.68rem;
+  }
+
+  .saveDock :global(button) {
+    min-width: 2.34rem;
+    min-height: 2.34rem;
+  }
+
+  .linkAreaCompact {
+    grid-template-columns: 1fr;
+    gap: 0.62rem;
+    padding: 0.68rem;
+  }
+
+  .linkAreaCompact .coverWrap {
+    aspect-ratio: 1.22 / 1;
+    min-height: auto;
+    border-radius: 1.05rem;
+  }
+
+  .compact .body {
+    gap: 0.55rem;
+  }
+
+  .compact .metaRow {
+    gap: 0.3rem;
+  }
+
+  .compact .metaPill {
+    min-height: 1.68rem;
+    font-size: 0.72rem;
+  }
+
+  .discover {
+    width: 100%;
+    max-width: 10.25rem;
+  }
+
+  .library {
+    width: 100%;
+    min-width: 0;
+    border-radius: 1.14rem;
+  }
+
+  .library .linkAreaLibrary {
+    gap: 0.46rem;
+    padding: 0.54rem;
+  }
+
+  .library .coverWrap {
+    aspect-ratio: 1 / 0.98;
+    border-radius: 0.9rem;
+  }
+
+  .library .kickerValue {
+    display: none;
+  }
+
+  .library .name {
+    font-size: 0.87rem;
+  }
+
+  .library .description {
+    font-size: 0.73rem;
+    -webkit-line-clamp: 1;
+  }
+
+  .library .metaPill {
+    min-height: 1.56rem;
+    padding: 0.14rem 0.4rem;
+    font-size: 0.67rem;
+  }
+
+  .library .metaRow > :nth-child(3) {
+    display: none;
+  }
+
+  .discover .linkAreaDiscover {
+    gap: 0.48rem;
+    padding: 0.56rem;
+  }
+
+  .discover .coverWrap {
+    aspect-ratio: 1.05 / 1;
+  }
+
+  .discover .description {
+    -webkit-line-clamp: 1;
+  }
+}

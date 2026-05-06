@@ -1,0 +1,258 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.historyRow,
+.empty {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  border-radius: 1.35rem;
+  padding: 1rem;
+}
+
+.heroIcon {
+  width: 3.3rem;
+  height: 3.3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1.05rem;
+  background: linear-gradient(180deg, #1b1918, #0f0e0e);
+  color: white;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 0.34rem;
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero h1,
+.empty h2 {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  color: var(--ink);
+  letter-spacing: -0.06em;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.95;
+}
+
+.hero p,
+.empty p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.clearButton,
+.resumeButton,
+.empty a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.52rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  color: var(--ink);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.clearButton {
+  padding: 0 0.9rem;
+}
+
+.historyList {
+  display: grid;
+  gap: 0.68rem;
+}
+
+.historyRow {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: center;
+  border-radius: 1.15rem;
+  padding: 0.64rem;
+  overflow: hidden;
+}
+
+.activeRow {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 58%),
+    color-mix(in srgb, var(--paper) 88%, transparent);
+}
+
+.coverButton {
+  position: relative;
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 0;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: #211f1d;
+  color: white;
+  cursor: pointer;
+}
+
+.coverButton img,
+.coverButton > span:first-child {
+  width: 100%;
+  height: 100%;
+}
+
+.coverButton img {
+  object-fit: cover;
+}
+
+.coverButton > span:first-child {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+.playBadge {
+  position: absolute;
+  right: 0.3rem;
+  bottom: 0.3rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(10, 12, 15, 0.84);
+  color: white;
+}
+
+.rowCopy {
+  display: grid;
+  gap: 0.42rem;
+  min-width: 0;
+}
+
+.trackTitle,
+.trackMeta {
+  margin: 0;
+}
+
+.trackTitle {
+  color: var(--ink);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+
+.trackMeta,
+.rowMeta {
+  color: var(--muted);
+}
+
+.rowMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.resumeButton {
+  padding: 0 0.84rem;
+}
+
+.index {
+  position: absolute;
+  right: 0.72rem;
+  top: 0.5rem;
+  color: color-mix(in srgb, var(--muted) 42%, transparent);
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.empty {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+  border-radius: 1.2rem;
+  padding: 1.25rem;
+}
+
+.empty svg {
+  color: var(--accent);
+}
+
+.empty a {
+  margin-top: 0.25rem;
+  padding: 0 1rem;
+}
+
+:global(html[data-theme="dark"]) .hero,
+:global(html[data-theme="dark"]) .historyRow,
+:global(html[data-theme="dark"]) .empty {
+  background: color-mix(in srgb, var(--paper) 84%, transparent);
+}
+
+:global(html[data-theme="dark"]) .heroIcon {
+  background: linear-gradient(180deg, rgba(245, 242, 234, 0.96), rgba(215, 208, 194, 0.94));
+  color: #171516;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 0.95rem;
+  }
+
+  .heroIcon {
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+
+  .clearButton {
+    width: 100%;
+  }
+
+  .historyRow {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 0.68rem;
+    padding: 0.58rem;
+  }
+
+  .coverButton {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .resumeButton {
+    grid-column: 1 / -1;
+  }
+
+  .index {
+    display: none;
+  }
+}

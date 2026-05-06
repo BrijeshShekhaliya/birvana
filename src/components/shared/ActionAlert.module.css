@@ -1,0 +1,64 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(18, 18, 20, 0.32);
+  backdrop-filter: blur(14px);
+}
+
+.card {
+  width: min(100%, 24rem);
+  display: grid;
+  gap: 0.8rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(23, 21, 22, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 249, 240, 0.98));
+  box-shadow: 0 28px 60px rgba(17, 21, 27, 0.18);
+  padding: 1.15rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.35rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.message {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.button {
+  min-height: 2.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+:global(html[data-theme="dark"]) .card {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, rgba(25, 28, 33, 0.96), rgba(14, 16, 20, 0.98));
+}
+
+:global(html[data-theme="dark"]) .button {
+  background: color-mix(in srgb, var(--accent) 90%, transparent);
+  color: #20150b;
+}
