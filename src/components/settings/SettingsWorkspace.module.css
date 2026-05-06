@@ -83,9 +83,10 @@
   padding: 0 0.78rem;
   border: 1px solid var(--app-border-strong);
   border-radius: 999px;
-  background: var(--app-surface-strong);
-  color: var(--muted);
+  background: var(--app-surface-soft);
+  color: var(--ink);
   font-size: 0.78rem;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -152,7 +153,7 @@
 
 .switchControlOn {
   border-color: color-mix(in srgb, var(--ink) 12%, transparent);
-  background: var(--app-button-solid);
+  background: linear-gradient(180deg, #17191d, #0f1216);
   color: var(--app-button-solid-ink);
   box-shadow: var(--app-shadow-soft);
 }

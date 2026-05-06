@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { startTransition, useDeferredValue, useMemo, useState } from "react";
+import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./DiscoverWorkspace.module.css";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PlaylistCard } from "@/components/shared/PlaylistCard";
@@ -213,6 +213,8 @@ export function DiscoverWorkspace({
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<DiscoverCategory>("all");
   const deferredQuery = useDeferredValue(query);
+  const detailSectionRef = useRef<HTMLDivElement | null>(null);
+  const shouldScrollToDetailRef = useRef(false);
   const likedSet = useMemo(() => new Set(likedSongIds), [likedSongIds]);
   const savedSet = useMemo(() => new Set(savedPlaylistIds), [savedPlaylistIds]);
   const normalizedQuery = deferredQuery.trim();
@@ -285,11 +287,21 @@ export function DiscoverWorkspace({
   );
 
   const selectCategory = (categoryId: DiscoverCategory) => {
+    shouldScrollToDetailRef.current = true;
     startTransition(() => {
       setQuery("");
       setActiveCategory(categoryId);
     });
   };
+
+  useEffect(() => {
+    if (!shouldScrollToDetailRef.current || searching) {
+      return;
+    }
+
+    shouldScrollToDetailRef.current = false;
+    detailSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [activeCategory, searching]);
 
   return (
     <div className={styles.page}>
@@ -343,7 +355,7 @@ export function DiscoverWorkspace({
       </section>
 
       {searching ? (
-        <section className={styles.searchResults} aria-label="Search results">
+        <section ref={detailSectionRef} className={styles.searchResults} aria-label="Search results">
           <div className={styles.resultsHeader}>
             <div>
               <h2 className={styles.sectionTitle}>Search results</h2>
@@ -385,16 +397,18 @@ export function DiscoverWorkspace({
           ) : null}
         </section>
       ) : activeCategory !== "all" ? (
-        <TrackShelf
-          title={`${getCategoryLabel(activeCategory)} songs`}
-          meta={`${selectedCategoryTracks.length} available tracks`}
-          tracks={selectedCategoryTracks}
-          queueKey={`discover-category:${activeCategory}`}
-          likedSet={likedSet}
-          canEngage={canEngage}
-          actionLabel="All songs"
-          onAction={() => selectCategory("all")}
-        />
+        <div ref={detailSectionRef}>
+          <TrackShelf
+            title={`${getCategoryLabel(activeCategory)} songs`}
+            meta={`${selectedCategoryTracks.length} available tracks`}
+            tracks={selectedCategoryTracks}
+            queueKey={`discover-category:${activeCategory}`}
+            likedSet={likedSet}
+            canEngage={canEngage}
+            actionLabel="All songs"
+            onAction={() => selectCategory("all")}
+          />
+        </div>
       ) : (
         <>
           <TrackShelf
@@ -423,7 +437,7 @@ export function DiscoverWorkspace({
             currentUserId={currentUserId}
           />
 
-          <section className={styles.categoryShelves} aria-label="Songs by category">
+          <section ref={detailSectionRef} className={styles.categoryShelves} aria-label="Songs by category">
             <div className={styles.sectionHeader}>
               <div>
                 <h2 className={styles.sectionTitle}>Browse by sound</h2>
