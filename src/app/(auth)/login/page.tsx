@@ -1,40 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { BrandLockup } from "@/components/shared/BrandLockup";
+import { normalizeRedirectTarget } from "@/lib/auth/redirects";
 
 type SignInMethod = "password" | "otp";
 const OTP_SLOT_COUNT = 8;
 
-function getSafeRedirectTarget() {
-  if (typeof window === "undefined") {
-    return "/discover";
-  }
-
-  const target = new URLSearchParams(window.location.search).get("next");
-
-  if (!target || !target.startsWith("/") || target.startsWith("//")) {
-    return "/discover";
-  }
-
-  return target;
-}
-
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { enabled, user } = useAuth();
-  const [method, setMethod] = useState<SignInMethod>("password");
-  const [email, setEmail] = useState("");
+  const signupSucceeded = searchParams.get("signup") === "success";
+  const requestedMethod = searchParams.get("mode");
+  const requestedEmail = searchParams.get("email")?.trim() ?? "";
+  const safeRedirectTarget = normalizeRedirectTarget(searchParams.get("next"));
+  const googleAuthHref = `/auth/google?from=login&next=${encodeURIComponent(safeRedirectTarget)}`;
+  const redirectedError = searchParams.get("error")?.trim() ?? "";
+  const [method, setMethod] = useState<SignInMethod>(() => (requestedMethod === "otp" ? "otp" : "password"));
+  const [email, setEmail] = useState(() => requestedEmail);
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState<"send-code" | "verify-code" | "password-sign-in" | null>(null);
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const [otpRequested, setOtpRequested] = useState(false);
+  const [error, setError] = useState(() => redirectedError);
+  const [notice, setNotice] = useState(() =>
+    signupSucceeded ? "Account created. Use the code from your email to finish signing in." : "",
+  );
+  const [otpRequested, setOtpRequested] = useState(() => signupSucceeded);
   const configurationError = "Authentication is not available right now.";
   const emailLocked = method === "otp" && otpRequested;
   const normalizedToken = token.replace(/\D/g, "").slice(0, OTP_SLOT_COUNT);
@@ -45,8 +42,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.replace(getSafeRedirectTarget());
-  }, [router, user]);
+    router.replace(safeRedirectTarget);
+  }, [router, safeRedirectTarget, user]);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -82,7 +79,7 @@ export default function LoginPage() {
     }
 
     setPending(null);
-    window.location.href = getSafeRedirectTarget();
+    window.location.href = safeRedirectTarget;
   };
 
   const requestCode = async () => {
@@ -153,7 +150,7 @@ export default function LoginPage() {
     }
 
     setPending(null);
-    window.location.href = getSafeRedirectTarget();
+    window.location.href = safeRedirectTarget;
   };
 
   return (
@@ -193,6 +190,15 @@ export default function LoginPage() {
             <p className={styles.eyebrow}>Account access</p>
             <h2 className={styles.title}>Sign in to BIRVANA.</h2>
             <p className={styles.subtitle}>Choose password or email OTP. The code flow locks the address after send so verification stays on one inbox.</p>
+          </div>
+
+          <div className={styles.oauthGroup}>
+            <GoogleAuthButton href={googleAuthHref} label="Continue with Google" />
+            <p className={styles.oauthHint}>Use Google for direct sign-in, or for a first-time Google account that lands straight in your music space.</p>
+          </div>
+
+          <div className={styles.divider}>
+            <span>Or use email</span>
           </div>
 
           <div className={styles.methodSwitcher} role="tablist" aria-label="Sign-in method">

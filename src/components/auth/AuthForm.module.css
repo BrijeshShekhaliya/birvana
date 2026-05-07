@@ -209,6 +209,81 @@
   gap: 0.75rem;
 }
 
+.oauthGroup {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.oauthButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  min-height: 54px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba(16, 17, 20, 0.08);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.oauthButton:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--ink) 12%, var(--line));
+  box-shadow: 0 18px 34px rgba(16, 17, 20, 0.12);
+}
+
+.oauthIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+}
+
+.oauthIcon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.oauthHint {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--app-copy-sm);
+  line-height: var(--app-copy-line);
+}
+
+.divider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  background: var(--line);
+}
+
+.divider span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .fieldHeader {
   display: flex;
   align-items: center;
@@ -380,6 +455,17 @@
 
 :global(html[data-theme="dark"]) .fieldAction {
   color: color-mix(in srgb, var(--accent) 82%, white);
+}
+
+:global(html[data-theme="dark"]) .oauthButton {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.22);
+}
+
+:global(html[data-theme="dark"]) .oauthButton:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.28);
 }
 
 :global(html[data-theme="dark"]) .otpEntry {

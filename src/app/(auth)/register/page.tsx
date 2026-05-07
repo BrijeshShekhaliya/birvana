@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { BrandLockup } from "@/components/shared/BrandLockup";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { enabled, user } = useAuth();
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => searchParams.get("error")?.trim() ?? "");
   const configurationError = "Authentication is not available right now.";
+  const googleAuthHref = "/auth/google?from=register";
 
   useEffect(() => {
     if (!user) {
@@ -65,9 +68,10 @@ export default function RegisterPage() {
       setPending(false);
       const params = new URLSearchParams({
         email: payload.email || email,
-        mode: "signup",
+        mode: "otp",
+        signup: "success",
       });
-      router.push(`/verify-email?${params.toString()}`);
+      router.push(`/login?${params.toString()}`);
       return;
     }
 
@@ -112,6 +116,15 @@ export default function RegisterPage() {
             <p className={styles.eyebrow}>Create account</p>
             <h2 className={styles.title}>Create your BIRVANA account.</h2>
             <p className={styles.subtitle}>Add your details once and finish with email verification.</p>
+          </div>
+
+          <div className={styles.oauthGroup}>
+            <GoogleAuthButton href={googleAuthHref} label="Continue with Google" />
+            <p className={styles.oauthHint}>Use your Google account to create the profile and continue straight into BIRVANA without a separate password setup.</p>
+          </div>
+
+          <div className={styles.divider}>
+            <span>Or create with email</span>
           </div>
 
           <form className={styles.form} onSubmit={onSubmit}>
