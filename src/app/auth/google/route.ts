@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
+      flowType: "pkce",
     },
   });
 
