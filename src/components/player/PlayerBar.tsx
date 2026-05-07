@@ -24,13 +24,6 @@ import { usePlayer } from "@/components/player/PlayerProvider";
 import type { QueueContext } from "@/components/player/PlayerProvider";
 import { LazyImage } from "@/components/shared/LazyImage";
 
-type AudioAnalyserBundle = {
-  analyser: AnalyserNode;
-  context: AudioContext;
-};
-
-const analyserBundles = new WeakMap<HTMLAudioElement, AudioAnalyserBundle>();
-const analyserUnavailable = new WeakSet<HTMLAudioElement>();
 const PLAYER_OVERLAY_HISTORY_KEY = "__birvanaPlayerOverlay";
 const VISUALIZER_BAR_COUNT = 64;
 const VISUALIZER_BANDS = Array.from({ length: VISUALIZER_BAR_COUNT }, (_, index) => {
@@ -184,47 +177,6 @@ function getAverageArtworkTone(url: string) {
   });
 }
 
-function getAnalyserBundle(audio: HTMLAudioElement) {
-  if (analyserUnavailable.has(audio)) {
-    return null;
-  }
-
-  const existingBundle = analyserBundles.get(audio);
-
-  if (existingBundle) {
-    return existingBundle;
-  }
-
-  const AudioContextCtor =
-    window.AudioContext ??
-    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-
-  if (!AudioContextCtor) {
-    return null;
-  }
-
-  const context = new AudioContextCtor();
-  const analyser = context.createAnalyser();
-  let source: MediaElementAudioSourceNode;
-
-  try {
-    source = context.createMediaElementSource(audio);
-  } catch {
-    analyserUnavailable.add(audio);
-    void context.close().catch(() => undefined);
-    return null;
-  }
-
-  analyser.fftSize = 512;
-  analyser.smoothingTimeConstant = 0.8;
-  source.connect(analyser);
-  analyser.connect(context.destination);
-
-  const bundle = { analyser, context };
-  analyserBundles.set(audio, bundle);
-  return bundle;
-}
-
 function parseCanvasRgb(color: string, fallback = "215, 164, 102") {
   const trimmed = color.trim();
 
@@ -289,39 +241,6 @@ function getVisualizerAccentRgb(canvas: HTMLCanvasElement, tone: string | null) 
   return parseCanvasRgb(accent, parseCanvasRgb(tone ?? ""));
 }
 
-function getBandLevel(
-  data: Uint8Array,
-  sampleRate: number,
-  lowHz: number,
-  highHz: number,
-  threshold: number,
-  gain: number,
-) {
-  const binWidth = sampleRate / 512;
-  const startBin = Math.max(1, Math.floor(lowHz / binWidth));
-  const endBin = Math.min(data.length - 1, Math.ceil(highHz / binWidth));
-  let total = 0;
-  let count = 0;
-
-  for (let index = startBin; index <= endBin; index += 1) {
-    total += data[index] ?? 0;
-    count += 1;
-  }
-
-  if (!count) {
-    return 0;
-  }
-
-  const average = total / count;
-
-  if (average < threshold) {
-    return 0;
-  }
-
-  const normalized = (average - threshold) / (255 - threshold);
-  return Math.min(1, normalized ** 0.92 * gain);
-}
-
 function drawIdleVisualizer(context: CanvasRenderingContext2D, width: number, height: number, accentRgb: string) {
   context.clearRect(0, 0, width, height);
 
@@ -352,11 +271,9 @@ function drawIdleVisualizer(context: CanvasRenderingContext2D, width: number, he
 }
 
 function DesktopWaveform({
-  getAudioElement,
   playing,
   tone,
 }: {
-  getAudioElement: () => HTMLAudioElement | null;
   playing: boolean;
   tone: string | null;
 }) {
@@ -392,8 +309,8 @@ function DesktopWaveform({
     let animationFrame = 0;
     let lastWidth = 0;
     let lastHeight = 0;
-    const frequencyData = new Uint8Array(256);
     const smoothBars = new Float32Array(VISUALIZER_BANDS.length);
+    let phase = 0;
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
@@ -414,62 +331,50 @@ function DesktopWaveform({
 
     const draw = () => {
       const { height, width } = resizeCanvas();
-      const audio = getAudioElement();
-      const bundle = audio ? getAnalyserBundle(audio) : null;
       const accentRgb = getVisualizerAccentRgb(canvas, tone);
 
-      if (bundle && playing) {
-        void bundle.context.resume().catch(() => undefined);
-        bundle.analyser.getByteFrequencyData(frequencyData);
-
-        const levels = VISUALIZER_BANDS.map((band) =>
-          getBandLevel(frequencyData, bundle.context.sampleRate, band.low, band.high, band.threshold, band.gain),
-        );
-        const hasSignal = levels.some((level) => level > 0.01);
-
-        if (!hasSignal) {
-          smoothBars.fill(0);
-          drawIdleVisualizer(context, width, height, accentRgb);
-          animationFrame = window.requestAnimationFrame(draw);
-          return;
-        }
-
-        context.clearRect(0, 0, width, height);
-        const bars = smoothBars.length;
-        const availableWidth = width * 0.85;
-        const gap = Math.max(2, availableWidth * 0.0042);
-        const barWidth = Math.max(2.4, (availableWidth - gap * (bars - 1)) / bars);
-        const startX = (width - availableWidth) / 2;
-        const centerY = height * 0.5;
-        const maxBarHeight = height * 0.82;
-
-        context.lineCap = "round";
-        context.lineWidth = barWidth;
-
-        for (let index = 0; index < bars; index += 1) {
-          const target = levels[index] ?? 0;
-          const smoothing = target > smoothBars[index] ? 0.32 : 0.13;
-          smoothBars[index] = smoothBars[index] * (1 - smoothing) + target * smoothing;
-
-          const ratio = index / Math.max(bars - 1, 1);
-          const edgePresence = Math.max(Math.exp(-((ratio - 0.08) ** 2) / 0.018), Math.exp(-((ratio - 0.92) ** 2) / 0.018));
-          const centerPresence = Math.sin(ratio * Math.PI);
-          const spatialLift = 0.82 + edgePresence * 0.18 + centerPresence * 0.08;
-          const barHeight = Math.max(2.6, maxBarHeight * smoothBars[index] * spatialLift);
-          const x = startX + barWidth / 2 + index * (barWidth + gap);
-          const opacity = Math.min(1, 0.38 + smoothBars[index] * 0.62);
-
-          context.strokeStyle = `rgba(${accentRgb}, ${opacity})`;
-          context.beginPath();
-          context.moveTo(x, centerY - barHeight / 2);
-          context.lineTo(x, centerY + barHeight / 2);
-          context.stroke();
-        }
-
-        context.globalAlpha = 1;
-      } else {
+      if (!playing) {
         smoothBars.fill(0);
         drawIdleVisualizer(context, width, height, accentRgb);
+        animationFrame = window.requestAnimationFrame(draw);
+        return;
+      }
+
+      context.clearRect(0, 0, width, height);
+      const bars = smoothBars.length;
+      const availableWidth = width * 0.85;
+      const gap = Math.max(2, availableWidth * 0.0042);
+      const barWidth = Math.max(2.4, (availableWidth - gap * (bars - 1)) / bars);
+      const startX = (width - availableWidth) / 2;
+      const centerY = height * 0.5;
+      const maxBarHeight = height * 0.82;
+
+      context.lineCap = "round";
+      context.lineWidth = barWidth;
+      phase += 0.09;
+
+      for (let index = 0; index < bars; index += 1) {
+        const ratio = index / Math.max(bars - 1, 1);
+        const mirrored = ratio <= 0.5 ? ratio * 2 : (1 - ratio) * 2;
+        const sweep = Math.sin(phase + ratio * 7.2) * 0.5 + 0.5;
+        const pulse = Math.sin(phase * 0.72 + ratio * 16) * 0.5 + 0.5;
+        const edgeLift = Math.max(
+          Math.exp(-((ratio - 0.08) ** 2) / 0.018),
+          Math.exp(-((ratio - 0.92) ** 2) / 0.018),
+        );
+        const target = 0.16 + sweep * 0.38 + pulse * 0.22 + edgeLift * 0.06 + mirrored * 0.08;
+        const smoothing = target > smoothBars[index] ? 0.28 : 0.12;
+        smoothBars[index] = smoothBars[index] * (1 - smoothing) + target * smoothing;
+
+        const barHeight = Math.max(3, maxBarHeight * smoothBars[index]);
+        const x = startX + barWidth / 2 + index * (barWidth + gap);
+        const opacity = Math.min(1, 0.36 + smoothBars[index] * 0.56);
+
+        context.strokeStyle = `rgba(${accentRgb}, ${opacity})`;
+        context.beginPath();
+        context.moveTo(x, centerY - barHeight / 2);
+        context.lineTo(x, centerY + barHeight / 2);
+        context.stroke();
       }
 
       animationFrame = window.requestAnimationFrame(draw);
@@ -478,7 +383,7 @@ function DesktopWaveform({
     animationFrame = window.requestAnimationFrame(draw);
 
     return () => window.cancelAnimationFrame(animationFrame);
-  }, [enabled, getAudioElement, playing, tone]);
+  }, [enabled, playing, tone]);
 
   return <canvas ref={canvasRef} className={styles.desktopWaveCanvas} aria-hidden="true" />;
 }
@@ -634,7 +539,6 @@ export function PlayerBar() {
     progress,
     duration,
     volume,
-    getAudioElement,
     shuffle,
     repeatMode,
     togglePlayback,
@@ -1015,7 +919,7 @@ export function PlayerBar() {
                 </div>
 
                 <div className={styles.desktopWaveBasin} aria-hidden="true">
-                <DesktopWaveform getAudioElement={getAudioElement} playing={playing} tone={effectiveArtworkTone} />
+                <DesktopWaveform playing={playing} tone={effectiveArtworkTone} />
                 </div>
 
                 <div className={styles.mobilePanelProgress}>
