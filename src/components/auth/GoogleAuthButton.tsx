@@ -1,16 +1,58 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import styles from "@/components/auth/AuthForm.module.css";
+import { getBrowserSupabase } from "@/lib/supabase/client";
 
 type GoogleAuthButtonProps = {
-  href: string;
+  from: "login" | "register";
   label: string;
+  next?: string;
 };
 
-export function GoogleAuthButton({ href, label }: GoogleAuthButtonProps) {
+export function GoogleAuthButton({ from, label, next = "/discover" }: GoogleAuthButtonProps) {
+  const [pending, setPending] = useState(false);
+
+  const startGoogleAuth = async () => {
+    const supabase = getBrowserSupabase();
+
+    if (!supabase || pending) {
+      return;
+    }
+
+    setPending(true);
+
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    callbackUrl.searchParams.set("from", from);
+    callbackUrl.searchParams.set("next", next);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: callbackUrl.toString(),
+        queryParams: {
+          prompt: "select_account",
+        },
+      },
+    });
+
+    if (error) {
+      setPending(false);
+      window.location.assign(
+        `${from === "register" ? "/register" : "/login"}?error=${encodeURIComponent(error.message)}${next !== "/discover" ? `&next=${encodeURIComponent(next)}` : ""}`,
+      );
+    }
+  };
+
   return (
-    <Link href={href} prefetch={false} className={styles.oauthButton}>
+    <button
+      type="button"
+      className={styles.oauthButton}
+      onClick={() => {
+        void startGoogleAuth();
+      }}
+      disabled={pending}
+    >
       <span className={styles.oauthIcon} aria-hidden="true">
         <svg viewBox="0 0 24 24" role="presentation" focusable="false">
           <path
@@ -31,7 +73,7 @@ export function GoogleAuthButton({ href, label }: GoogleAuthButtonProps) {
           />
         </svg>
       </span>
-      <span>{label}</span>
-    </Link>
+      <span>{pending ? "Redirecting to Google..." : label}</span>
+    </button>
   );
 }

@@ -15,7 +15,6 @@ export default function RegisterPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(() => searchParams.get("error")?.trim() ?? "");
   const configurationError = "Authentication is not available right now.";
-  const googleAuthHref = "/auth/google?from=register";
 
   useEffect(() => {
     if (!user) {
@@ -119,7 +118,7 @@ export default function RegisterPage() {
           </div>
 
           <div className={styles.oauthGroup}>
-            <GoogleAuthButton href={googleAuthHref} label="Continue with Google" />
+            <GoogleAuthButton from="register" label="Continue with Google" />
             <p className={styles.oauthHint}>Use your Google account to create the profile and continue straight into BIRVANA without a separate password setup.</p>
           </div>
 

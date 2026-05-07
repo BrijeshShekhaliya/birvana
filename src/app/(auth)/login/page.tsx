@@ -20,7 +20,6 @@ export default function LoginPage() {
   const requestedMethod = searchParams.get("mode");
   const requestedEmail = searchParams.get("email")?.trim() ?? "";
   const safeRedirectTarget = normalizeRedirectTarget(searchParams.get("next"));
-  const googleAuthHref = `/auth/google?from=login&next=${encodeURIComponent(safeRedirectTarget)}`;
   const redirectedError = searchParams.get("error")?.trim() ?? "";
   const [method, setMethod] = useState<SignInMethod>(() => (requestedMethod === "otp" ? "otp" : "password"));
   const [email, setEmail] = useState(() => requestedEmail);
@@ -193,7 +192,7 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.oauthGroup}>
-            <GoogleAuthButton href={googleAuthHref} label="Continue with Google" />
+            <GoogleAuthButton from="login" next={safeRedirectTarget} label="Continue with Google" />
             <p className={styles.oauthHint}>Use Google for direct sign-in, or for a first-time Google account that lands straight in your music space.</p>
           </div>
 
