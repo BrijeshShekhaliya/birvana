@@ -98,6 +98,74 @@ function splitArtistCredits(value: string | null | undefined) {
   return uniqueValues(artists.length ? artists : ["Unknown artist"]);
 }
 
+function buildWikipediaArtistSearchUrl(name: string) {
+  const params = new URLSearchParams({
+    action: "query",
+    format: "json",
+    generator: "search",
+    gsrlimit: "1",
+    gsrsearch: `${name} musician`,
+    prop: "pageimages|pageterms",
+    piprop: "thumbnail",
+    pithumbsize: "800",
+    wbptterms: "description",
+  });
+
+  return `https://en.wikipedia.org/w/api.php?${params.toString()}`;
+}
+
+async function fetchWikipediaArtistImage(name: string) {
+  const response = await fetch(buildWikipediaArtistSearchUrl(name), {
+    next: {
+      revalidate: 60 * 60 * 24 * 7,
+      tags: [DATA_CACHE_TAGS.artists],
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const payload = (await response.json()) as {
+    query?: {
+      pages?: Record<
+        string,
+        {
+          title?: string;
+          thumbnail?: {
+            source?: string;
+          };
+          terms?: {
+            description?: string[];
+          };
+        }
+      >;
+    };
+  };
+
+  const page = Object.values(payload.query?.pages ?? {})[0];
+  const description = page?.terms?.description?.[0]?.toLowerCase() ?? "";
+  const looksLikeArtist =
+    description.includes("singer") ||
+    description.includes("musician") ||
+    description.includes("rapper") ||
+    description.includes("band") ||
+    description.includes("composer") ||
+    description.includes("artist");
+
+  if (!page?.thumbnail?.source || !looksLikeArtist) {
+    return null;
+  }
+
+  return page.thumbnail.source;
+}
+
+const getCachedWikipediaArtistImage = unstable_cache(
+  async (name: string) => fetchWikipediaArtistImage(name),
+  ["wikipedia-artist-image"],
+  { tags: [DATA_CACHE_TAGS.artists], revalidate: 60 * 60 * 24 * 7 },
+);
+
 const TRACK_CARD_FIELDS = [
   "id",
   "artist_id",
@@ -481,11 +549,38 @@ function buildCatalogArtists(tracks: Track[], profileMap: Map<string, Profile>) 
     });
 }
 
+async function enrichArtistsWithInternetImages(
+  artists: Array<
+    CatalogArtist & {
+      tracks?: Track[];
+      trackIds?: Set<number>;
+      contributorIds?: Set<string>;
+    }
+  >,
+) {
+  const imageEntries = await Promise.all(
+    artists.map(async (artist) => [artist.id, await getCachedWikipediaArtistImage(artist.display_name)] as const),
+  );
+
+  const imageMap = new Map(imageEntries);
+
+  return artists.map((artist) => {
+    const internetImage = imageMap.get(artist.id) ?? null;
+
+    return {
+      ...artist,
+      avatar_url: internetImage ?? artist.avatar_url ?? artist.hero_image_url ?? null,
+      hero_image_url: internetImage ?? artist.hero_image_url ?? artist.avatar_url ?? null,
+    };
+  });
+}
+
 async function fetchArtists(supabase: SupabaseQueryClient) {
   const tracks = await fetchPublicCatalogTracks(supabase);
   const profiles = await fetchContributorProfiles(supabase, tracks);
+  const artists = await enrichArtistsWithInternetImages(buildCatalogArtists(tracks, profiles).slice(0, 24));
 
-  return buildCatalogArtists(tracks, profiles).slice(0, 24).map((artist) => ({
+  return artists.map((artist) => ({
     id: artist.id,
     display_name: artist.display_name,
     avatar_url: artist.avatar_url,
@@ -502,7 +597,7 @@ async function fetchArtists(supabase: SupabaseQueryClient) {
 async function fetchArtistDetail(supabase: SupabaseQueryClient, artistId: string) {
   const tracks = await fetchPublicCatalogTracks(supabase);
   const profiles = await fetchContributorProfiles(supabase, tracks);
-  const artists = buildCatalogArtists(tracks, profiles);
+  const artists = await enrichArtistsWithInternetImages(buildCatalogArtists(tracks, profiles));
   const match = artists.find((artist) => artist.id === artistId);
 
   if (!match) {

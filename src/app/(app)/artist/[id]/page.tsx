@@ -16,6 +16,7 @@ export default async function ArtistDetailPage({
 }) {
   const { id } = await params;
   const [user, { artist, tracks, albums }] = await Promise.all([getCurrentUser(), getArtistDetail(id)]);
+  const artistTracks = tracks ?? [];
 
   if (!artist) {
     notFound();
@@ -24,7 +25,7 @@ export default async function ArtistDetailPage({
   const engagement = user
     ? await getEngagementState({
         userId: user.id,
-        songIds: tracks.map((track) => track.id),
+        songIds: artistTracks.map((track) => track.id),
         artistIds: [artist.id],
       })
     : null;
@@ -70,14 +71,14 @@ export default async function ArtistDetailPage({
       </section>
 
       <section>
-        <SectionTitle eyebrow="Tracks" title="Available songs" meta={`${tracks.length} ready`} />
-        {tracks.length ? (
+        <SectionTitle eyebrow="Tracks" title="Available songs" meta={`${artistTracks.length} ready`} />
+        {artistTracks.length ? (
           <div className={styles.tracks}>
-            {tracks.map((track, index) => (
+            {artistTracks.map((track, index) => (
               <TrackCard
                 key={track.id}
                 track={track}
-                tracks={tracks}
+                tracks={artistTracks}
                 index={index}
                 variant="row"
                 queueKey={`artist:${artist.id}`}
