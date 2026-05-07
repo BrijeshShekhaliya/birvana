@@ -24,6 +24,13 @@ import { usePlayer } from "@/components/player/PlayerProvider";
 import type { QueueContext } from "@/components/player/PlayerProvider";
 import { LazyImage } from "@/components/shared/LazyImage";
 
+type AudioAnalyserBundle = {
+  analyser: AnalyserNode;
+  context: AudioContext;
+};
+
+const analyserBundles = new WeakMap<HTMLAudioElement, AudioAnalyserBundle>();
+const analyserUnavailable = new WeakSet<HTMLAudioElement>();
 const PLAYER_OVERLAY_HISTORY_KEY = "__birvanaPlayerOverlay";
 const VISUALIZER_BAR_COUNT = 64;
 const VISUALIZER_BANDS = Array.from({ length: VISUALIZER_BAR_COUNT }, (_, index) => {
@@ -241,54 +248,83 @@ function getVisualizerAccentRgb(canvas: HTMLCanvasElement, tone: string | null) 
   return parseCanvasRgb(accent, parseCanvasRgb(tone ?? ""));
 }
 
-function getTrackMotionSeed(key: string) {
-  let hash = 0;
-
-  for (let index = 0; index < key.length; index += 1) {
-    hash = (hash * 33 + key.charCodeAt(index)) % 1_000_003;
+function getAnalyserBundle(audio: HTMLAudioElement) {
+  if (analyserUnavailable.has(audio)) {
+    return null;
   }
 
-  return hash / 1_000_003;
+  const existingBundle = analyserBundles.get(audio);
+
+  if (existingBundle) {
+    return existingBundle;
+  }
+
+  const AudioContextCtor =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const captureAudio = audio as HTMLAudioElement & {
+    captureStream?: () => MediaStream;
+    mozCaptureStream?: () => MediaStream;
+  };
+  const captureStream =
+    captureAudio.captureStream?.bind(audio) ??
+    captureAudio.mozCaptureStream?.bind(audio);
+
+  if (!AudioContextCtor || !captureStream) {
+    analyserUnavailable.add(audio);
+    return null;
+  }
+
+  try {
+    const stream = captureStream();
+    const context = new AudioContextCtor();
+    const analyser = context.createAnalyser();
+    const source = context.createMediaStreamSource(stream);
+
+    analyser.fftSize = 512;
+    analyser.smoothingTimeConstant = 0.8;
+    source.connect(analyser);
+
+    const bundle = { analyser, context };
+    analyserBundles.set(audio, bundle);
+    return bundle;
+  } catch {
+    analyserUnavailable.add(audio);
+    return null;
+  }
 }
 
-function getProceduralBandLevel({
-  band,
-  elapsed,
-  index,
-  progressRatio,
-  seed,
-}: {
-  band: (typeof VISUALIZER_BANDS)[number];
-  elapsed: number;
-  index: number;
-  progressRatio: number;
-  seed: number;
-}) {
-  const bars = VISUALIZER_BANDS.length;
-  const ratio = index / Math.max(bars - 1, 1);
-  const mirrored = ratio <= 0.5 ? ratio * 2 : (1 - ratio) * 2;
-  const bandSeed = seed * (0.7 + band.gain * 0.18) + ratio * 1.37;
-  const sweep = Math.sin(elapsed * (1.2 + band.gain * 0.22) + bandSeed * 8.4 + ratio * 8.6) * 0.5 + 0.5;
-  const harmonic = Math.sin(elapsed * (2.35 + mirrored * 0.65) - bandSeed * 5.2 + ratio * 15.8) * 0.5 + 0.5;
-  const chatter = Math.sin(elapsed * (4.8 + ratio * 0.9) + bandSeed * 11.4 - ratio * 25.5) * 0.5 + 0.5;
-  const phrase = Math.sin(progressRatio * Math.PI * 2 + bandSeed * Math.PI * 1.2 + ratio * 4.4) * 0.5 + 0.5;
-  const edgeLift = Math.max(
-    Math.exp(-((ratio - 0.08) ** 2) / 0.014),
-    Math.exp(-((ratio - 0.92) ** 2) / 0.014),
-  );
-  const centerLift = Math.sin(ratio * Math.PI) ** 0.6;
-  const pulse = Math.max(0, Math.sin(elapsed * 0.86 + seed * 18 + ratio * 10.2));
-  const baseEnergy =
-    0.12 +
-    sweep * 0.24 +
-    harmonic * 0.2 +
-    chatter * 0.12 +
-    phrase * 0.12 +
-    centerLift * 0.08 +
-    edgeLift * 0.06 +
-    pulse * 0.1;
+function getBandLevel(
+  data: Uint8Array,
+  sampleRate: number,
+  lowHz: number,
+  highHz: number,
+  threshold: number,
+  gain: number,
+) {
+  const binWidth = sampleRate / 512;
+  const startBin = Math.max(1, Math.floor(lowHz / binWidth));
+  const endBin = Math.min(data.length - 1, Math.ceil(highHz / binWidth));
+  let total = 0;
+  let count = 0;
 
-  return Math.min(1, Math.max(0.04, baseEnergy * (0.76 + band.gain * 0.22)));
+  for (let index = startBin; index <= endBin; index += 1) {
+    total += data[index] ?? 0;
+    count += 1;
+  }
+
+  if (!count) {
+    return 0;
+  }
+
+  const average = total / count;
+
+  if (average < threshold) {
+    return 0;
+  }
+
+  const normalized = (average - threshold) / (255 - threshold);
+  return Math.min(1, normalized ** 0.92 * gain);
 }
 
 function drawIdleVisualizer(context: CanvasRenderingContext2D, width: number, height: number, accentRgb: string) {
@@ -321,23 +357,16 @@ function drawIdleVisualizer(context: CanvasRenderingContext2D, width: number, he
 }
 
 function DesktopWaveform({
-  motionKey,
-  progress,
-  duration,
+  getAudioElement,
   playing,
   tone,
 }: {
-  motionKey: string;
-  progress: number;
-  duration: number;
+  getAudioElement: () => HTMLAudioElement | null;
   playing: boolean;
   tone: string | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [enabled, setEnabled] = useState(false);
-  const progressRef = useRef(progress);
-  const durationRef = useRef(duration);
-  const seedRef = useRef(getTrackMotionSeed(motionKey));
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 960px)");
@@ -347,18 +376,6 @@ function DesktopWaveform({
     mediaQuery.addEventListener("change", updateEnabled);
     return () => mediaQuery.removeEventListener("change", updateEnabled);
   }, []);
-
-  useEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
-
-  useEffect(() => {
-    durationRef.current = duration;
-  }, [duration]);
-
-  useEffect(() => {
-    seedRef.current = getTrackMotionSeed(motionKey);
-  }, [motionKey]);
 
   useEffect(() => {
     if (!enabled) {
@@ -380,8 +397,8 @@ function DesktopWaveform({
     let animationFrame = 0;
     let lastWidth = 0;
     let lastHeight = 0;
+    const frequencyData = new Uint8Array(256);
     const smoothBars = new Float32Array(VISUALIZER_BANDS.length);
-    const startedAt = performance.now();
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
@@ -402,56 +419,65 @@ function DesktopWaveform({
 
     const draw = () => {
       const { height, width } = resizeCanvas();
+      const audio = getAudioElement();
+      const bundle = audio ? getAnalyserBundle(audio) : null;
       const accentRgb = getVisualizerAccentRgb(canvas, tone);
 
-      if (!playing) {
+      if (bundle && playing) {
+        void bundle.context.resume().catch(() => undefined);
+        bundle.analyser.getByteFrequencyData(frequencyData);
+
+        const levels = VISUALIZER_BANDS.map((band) =>
+          getBandLevel(frequencyData, bundle.context.sampleRate, band.low, band.high, band.threshold, band.gain),
+        );
+        const hasSignal = levels.some((level) => level > 0.01);
+
+        if (!hasSignal) {
+          smoothBars.fill(0);
+          drawIdleVisualizer(context, width, height, accentRgb);
+          animationFrame = window.requestAnimationFrame(draw);
+          return;
+        }
+
+        context.clearRect(0, 0, width, height);
+        const bars = smoothBars.length;
+        const availableWidth = width * 0.85;
+        const gap = Math.max(2, availableWidth * 0.0042);
+        const barWidth = Math.max(2.4, (availableWidth - gap * (bars - 1)) / bars);
+        const startX = (width - availableWidth) / 2;
+        const centerY = height * 0.5;
+        const maxBarHeight = height * 0.82;
+
+        context.lineCap = "round";
+        context.lineWidth = barWidth;
+
+        for (let index = 0; index < bars; index += 1) {
+          const target = levels[index] ?? 0;
+          const smoothing = target > smoothBars[index] ? 0.32 : 0.13;
+          smoothBars[index] = smoothBars[index] * (1 - smoothing) + target * smoothing;
+
+          const ratio = index / Math.max(bars - 1, 1);
+          const edgePresence = Math.max(
+            Math.exp(-((ratio - 0.08) ** 2) / 0.018),
+            Math.exp(-((ratio - 0.92) ** 2) / 0.018),
+          );
+          const centerPresence = Math.sin(ratio * Math.PI);
+          const spatialLift = 0.82 + edgePresence * 0.18 + centerPresence * 0.08;
+          const barHeight = Math.max(2.6, maxBarHeight * smoothBars[index] * spatialLift);
+          const x = startX + barWidth / 2 + index * (barWidth + gap);
+          const opacity = Math.min(1, 0.38 + smoothBars[index] * 0.62);
+
+          context.strokeStyle = `rgba(${accentRgb}, ${opacity})`;
+          context.beginPath();
+          context.moveTo(x, centerY - barHeight / 2);
+          context.lineTo(x, centerY + barHeight / 2);
+          context.stroke();
+        }
+
+        context.globalAlpha = 1;
+      } else {
         smoothBars.fill(0);
         drawIdleVisualizer(context, width, height, accentRgb);
-        animationFrame = window.requestAnimationFrame(draw);
-        return;
-      }
-
-      context.clearRect(0, 0, width, height);
-      const bars = smoothBars.length;
-      const availableWidth = width * 0.85;
-      const gap = Math.max(2, availableWidth * 0.0042);
-      const barWidth = Math.max(2.4, (availableWidth - gap * (bars - 1)) / bars);
-      const startX = (width - availableWidth) / 2;
-      const centerY = height * 0.5;
-      const maxBarHeight = height * 0.82;
-      const elapsed = (performance.now() - startedAt) / 1000 + progressRef.current * 0.72 + seedRef.current * 4.8;
-      const progressRatio = durationRef.current > 0 ? progressRef.current / durationRef.current : 0;
-
-      context.lineCap = "round";
-      context.lineWidth = barWidth;
-
-      for (let index = 0; index < bars; index += 1) {
-        const target = getProceduralBandLevel({
-          band: VISUALIZER_BANDS[index],
-          elapsed,
-          index,
-          progressRatio,
-          seed: seedRef.current,
-        });
-        const smoothing = target > smoothBars[index] ? 0.3 : 0.14;
-        smoothBars[index] = smoothBars[index] * (1 - smoothing) + target * smoothing;
-
-        const ratio = index / Math.max(bars - 1, 1);
-        const edgeLift = Math.max(
-          Math.exp(-((ratio - 0.08) ** 2) / 0.018),
-          Math.exp(-((ratio - 0.92) ** 2) / 0.018),
-        );
-        const centerPresence = Math.sin(ratio * Math.PI);
-        const spatialLift = 0.82 + edgeLift * 0.18 + centerPresence * 0.08;
-        const barHeight = Math.max(2.6, maxBarHeight * smoothBars[index] * spatialLift);
-        const x = startX + barWidth / 2 + index * (barWidth + gap);
-        const opacity = Math.min(1, 0.38 + smoothBars[index] * 0.62);
-
-        context.strokeStyle = `rgba(${accentRgb}, ${opacity})`;
-        context.beginPath();
-        context.moveTo(x, centerY - barHeight / 2);
-        context.lineTo(x, centerY + barHeight / 2);
-        context.stroke();
       }
 
       animationFrame = window.requestAnimationFrame(draw);
@@ -460,7 +486,7 @@ function DesktopWaveform({
     animationFrame = window.requestAnimationFrame(draw);
 
     return () => window.cancelAnimationFrame(animationFrame);
-  }, [enabled, playing, tone]);
+  }, [enabled, getAudioElement, playing, tone]);
 
   return <canvas ref={canvasRef} className={styles.desktopWaveCanvas} aria-hidden="true" />;
 }
@@ -616,6 +642,7 @@ export function PlayerBar() {
     progress,
     duration,
     volume,
+    getAudioElement,
     shuffle,
     repeatMode,
     togglePlayback,
@@ -773,7 +800,6 @@ export function PlayerBar() {
     return null;
   }
 
-  const waveformMotionKey = `${currentTrack.audio_url ?? currentTrack.title}:${currentTrack.artist_display}`;
   const transitionKey = currentTrack.audio_url ?? currentTrack.title;
 
   return (
@@ -998,9 +1024,7 @@ export function PlayerBar() {
 
                 <div className={styles.desktopWaveBasin} aria-hidden="true">
                   <DesktopWaveform
-                    motionKey={waveformMotionKey}
-                    progress={progress}
-                    duration={duration}
+                    getAudioElement={getAudioElement}
                     playing={playing}
                     tone={effectiveArtworkTone}
                   />
