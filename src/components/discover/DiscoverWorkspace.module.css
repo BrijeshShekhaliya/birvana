@@ -70,6 +70,11 @@
   outline: none;
 }
 
+.searchField input::-webkit-search-cancel-button,
+.searchField input::-webkit-search-decoration {
+  display: none;
+}
+
 .searchField button,
 .textButton {
   border: 0;
@@ -393,31 +398,18 @@
     gap: 1.65rem;
   }
 
+  .railViewport,
+  .playlistRailViewport {
+    gap: 0.85rem;
+    padding-bottom: 0.4rem;
+  }
+
   .railViewport {
-    overflow: visible;
-    padding: 0;
-    display: grid;
-    grid-auto-flow: row;
-    grid-auto-columns: initial;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.95rem;
-    width: 100%;
+    grid-auto-columns: minmax(11.2rem, 11.2rem);
   }
 
   .playlistRailViewport {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 12.4rem));
-    justify-content: start;
-    gap: 1rem;
-  }
-}
-
-@media (min-width: 1080px) {
-  .railViewport {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .playlistRailViewport {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.8rem), 12.8rem));
+    grid-auto-columns: minmax(11.2rem, 11.2rem);
   }
 }
 

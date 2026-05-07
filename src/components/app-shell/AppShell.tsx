@@ -23,11 +23,31 @@ const navItems = [
   { href: "/profile", label: "Profile", icon: UserRound, match: "/profile" },
 ];
 
+function getAccountLabel(email?: string | null) {
+  if (!email) {
+    return "Listener";
+  }
+
+  return email.split("@")[0] || "Listener";
+}
+
+function getAccountName(user: ReturnType<typeof useAuth>["user"]) {
+  const metadata = user?.user_metadata ?? {};
+
+  return (
+    (typeof metadata.display_name === "string" && metadata.display_name.trim()) ||
+    (typeof metadata.full_name === "string" && metadata.full_name.trim()) ||
+    (typeof metadata.name === "string" && metadata.name.trim()) ||
+    getAccountLabel(user?.email)
+  );
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
   const { resetPlayback } = usePlayerPlayback();
+  const accountName = getAccountName(user);
   const bottomNavItems = navItems.filter((item) => item.showInMobile !== false);
   const bottomNavStyle = { "--bottom-nav-count": String(bottomNavItems.length) } as CSSProperties;
 
@@ -95,12 +115,12 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           <div className={styles.sidebarFooter}>
             <Link href="/profile" className={styles.userPanel}>
-              <p className={styles.userEyebrow}>Signed in as</p>
-              <p className={styles.userLabel}>{user?.email ?? "Listener"}</p>
+              <p className={styles.userEyebrow}>Logged in as</p>
+              <p className={styles.userLabel}>{accountName}</p>
             </Link>
             <button type="button" className={styles.signOut} onClick={signOut}>
               <LogOut size={16} strokeWidth={1.9} />
-              Sign out
+              Logout
             </button>
           </div>
         </aside>

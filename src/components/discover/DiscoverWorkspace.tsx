@@ -316,7 +316,9 @@ export function DiscoverWorkspace({
         <label className={styles.searchField}>
           <Search size={17} strokeWidth={2.15} />
           <input
-            type="search"
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search songs or playlists"
