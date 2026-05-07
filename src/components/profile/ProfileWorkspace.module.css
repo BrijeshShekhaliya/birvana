@@ -14,6 +14,7 @@
 }
 
 .hero {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem;
@@ -21,7 +22,6 @@
   border-radius: 1.45rem;
   padding: 1.15rem;
   overflow: hidden;
-  position: relative;
 }
 
 .hero::before {
@@ -49,17 +49,16 @@
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--line));
+  border: 1px solid var(--app-border-strong);
   border-radius: 1.55rem;
   background:
-    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(135deg, #2a2623, #121111);
-  color: color-mix(in srgb, var(--accent) 68%, white);
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.32), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--ink) 12%, white), color-mix(in srgb, var(--ink) 4%, white));
+  color: var(--ink);
   font-family: var(--font-space-grotesk), sans-serif;
   font-size: 2rem;
   font-weight: 900;
   overflow: hidden;
-  box-shadow: 0 22px 48px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .avatar {
@@ -85,8 +84,8 @@
 .panelHeader h2,
 .empty h1 {
   margin: 0;
-  font-family: var(--font-space-grotesk), sans-serif;
   color: var(--ink);
+  font-family: var(--font-space-grotesk), sans-serif;
   letter-spacing: -0.05em;
 }
 
@@ -104,20 +103,19 @@
 
 .bio {
   max-width: 42rem;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .badges {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
-  margin-top: 0.78rem;
+  margin-top: 0.82rem;
 }
 
 .badges span,
 .secondaryAction,
-.primaryAction,
-.textLink {
+.primaryAction {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -144,10 +142,9 @@
 }
 
 .primaryAction,
-.secondaryAction,
-.textLink {
+.secondaryAction {
   min-height: 2.38rem;
-  padding: 0 0.78rem;
+  padding: 0 0.82rem;
   font-size: 0.88rem;
 }
 
@@ -159,8 +156,7 @@
   box-shadow: var(--app-shadow-soft);
 }
 
-.secondaryAction,
-.textLink {
+.secondaryAction {
   border: 1px solid var(--app-border-strong);
   background: var(--app-surface-strong);
   color: var(--ink);
@@ -202,7 +198,6 @@
 
 .statItem {
   display: grid;
-  grid-template-rows: auto auto 1fr;
   gap: 0.08rem;
   border-radius: 0.9rem;
   padding: 0.74rem 0.82rem;
@@ -229,15 +224,9 @@
   letter-spacing: -0.05em;
 }
 
-.statItem small {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .contentGrid {
   display: grid;
-  grid-template-columns: minmax(17rem, 0.78fr) minmax(0, 1fr);
+  grid-template-columns: minmax(19rem, 1fr) minmax(0, 0.9fr);
   gap: 1rem;
   align-items: start;
 }
@@ -246,10 +235,6 @@
 .empty {
   border-radius: 1.25rem;
   padding: 1rem;
-}
-
-.accountPanel {
-  width: 100%;
 }
 
 .panelHeader {
@@ -265,14 +250,8 @@
   font-size: 1.35rem;
 }
 
-.quickLinks {
-  display: grid;
-  gap: 0.6rem;
-}
-
 .detailList {
   display: grid;
-  grid-template-columns: 1fr;
   gap: 0;
   overflow: hidden;
   border: 1px solid var(--app-border-strong);
@@ -283,7 +262,7 @@
 .detailItem,
 .detailItemWide {
   display: grid;
-  grid-template-columns: minmax(7rem, 0.36fr) minmax(0, 1fr);
+  grid-template-columns: minmax(7rem, 0.42fr) minmax(0, 1fr);
   gap: 0.8rem;
   align-items: center;
   min-height: 3.18rem;
@@ -312,50 +291,10 @@
   word-break: break-word;
 }
 
-.studioBanner {
+.quickLinks {
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.72rem;
-  margin-bottom: 0.72rem;
-  border: 1px solid var(--app-border-strong);
-  border-radius: 1.15rem;
-  padding: 0.82rem;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 64%),
-    var(--app-surface-soft);
-}
-
-.studioBanner svg {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.95rem;
-  padding: 0.64rem;
-  background: linear-gradient(180deg, #1b1918, #0f0e0e);
-  color: white;
-}
-
-.studioBanner span {
-  display: grid;
-  gap: 0.16rem;
-}
-
-.studioBanner strong {
-  color: var(--ink);
-}
-
-.studioBanner small {
-  color: var(--muted);
-  line-height: 1.35;
-}
-
-.studioBanner > svg:last-child {
-  width: 1.1rem;
-  height: 1.1rem;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--muted);
+  gap: 0.62rem;
+  margin-top: 0.9rem;
 }
 
 .quickLinks a {
@@ -388,49 +327,18 @@
   color: var(--muted);
 }
 
-.trackList {
-  display: grid;
-  gap: 0.66rem;
-}
-
-.playlistGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-
-:global(html[data-theme="dark"]) .hero,
-:global(html[data-theme="dark"]) .panel,
-:global(html[data-theme="dark"]) .statsStrip,
-:global(html[data-theme="dark"]) .notice,
-:global(html[data-theme="dark"]) .empty {
-  background: var(--app-surface);
-}
-
-:global(html[data-theme="dark"]) .primaryAction,
-:global(html[data-theme="dark"]) .studioBanner svg {
-  color: var(--app-button-solid-ink);
-}
-
-:global(html[data-theme="dark"]) .studioBanner > svg:last-child {
-  background: transparent;
-  color: var(--muted);
-}
-
-@media (max-width: 860px) {
-  .hero {
+@media (max-width: 980px) {
+  .hero,
+  .contentGrid {
     grid-template-columns: 1fr;
   }
 
   .heroActions {
     justify-content: flex-start;
   }
+}
 
-  .contentGrid,
-  .playlistGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
+@media (max-width: 720px) {
   .statsStrip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -459,64 +367,15 @@
     font-size: clamp(1.86rem, 9vw, 2.72rem);
   }
 
-  .contentGrid,
-  .playlistGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .contentGrid {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .studioPanel {
-    order: -1;
-  }
-
-  .statsStrip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.1rem;
-    padding: 0.26rem;
-  }
-
-  .statItem {
-    padding: 0.62rem 0.68rem;
-  }
-
   .detailItem,
   .detailItemWide {
-    grid-template-columns: minmax(5.7rem, 0.42fr) minmax(0, 1fr);
-    gap: 0.56rem;
-    min-height: 2.95rem;
-    padding: 0.62rem 0.72rem;
+    grid-template-columns: 1fr;
+    gap: 0.32rem;
+    min-height: auto;
   }
 
-  .detailItem span,
-  .detailItemWide span {
-    font-size: 0.66rem;
-    letter-spacing: 0.13em;
-  }
-
-  .primaryAction,
-  .secondaryAction,
-  .textLink {
-    min-height: 2.44rem;
-  }
-
-  .heroActions {
-    width: 100%;
-  }
-
-  .primaryAction,
-  .secondaryAction {
-    flex: 1 1 8.5rem;
-  }
-
-  .statItem strong {
-    font-size: 1.36rem;
-  }
-
-  .statItem small {
-    font-size: 0.74rem;
+  .detailItem strong,
+  .detailItemWide strong {
+    text-align: left;
   }
 }

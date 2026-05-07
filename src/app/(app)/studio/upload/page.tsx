@@ -1,8 +1,23 @@
 import styles from "./page.module.css";
+import { StudioAccessGate } from "@/components/studio/StudioAccessGate";
+import { getCreatorAccessState } from "@/lib/auth/account-state";
 import { StudioNav } from "@/components/studio/StudioNav";
 import { UploadSongForm } from "@/components/studio/UploadSongForm";
+import { getCurrentUser } from "@/lib/data";
 
-export default function StudioUploadPage() {
+export default async function StudioUploadPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const creatorAccess = getCreatorAccessState(user);
+
+  if (!creatorAccess.isApproved) {
+    return <StudioAccessGate email={user.email ?? "listener@birvana.app"} creatorAccess={creatorAccess} />;
+  }
+
   return (
     <div className={styles.page}>
       <StudioNav />

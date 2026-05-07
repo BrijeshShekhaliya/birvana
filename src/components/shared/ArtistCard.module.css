@@ -1,19 +1,20 @@
 .card {
   display: grid;
   gap: 0.9rem;
-  border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 250, 241, 0.92));
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-surface);
   border-radius: 1.5rem;
   padding: 1rem;
-  box-shadow: var(--shadow);
+  box-shadow: var(--app-shadow-soft);
   transition:
     transform 180ms ease,
-    box-shadow 180ms ease;
+    box-shadow 180ms ease,
+    border-color 180ms ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 24px 70px rgba(17, 21, 27, 0.1);
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--app-border-strong));
 }
 
 .linkArea {
@@ -21,8 +22,50 @@
   gap: 0.9rem;
 }
 
+.hero {
+  position: relative;
+  min-height: 10.75rem;
+  border-radius: 1.22rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 88%, transparent), transparent 38%),
+    linear-gradient(135deg, color-mix(in srgb, var(--paper) 86%, white), color-mix(in srgb, var(--canvas) 24%, white));
+}
+
+.heroImage,
+.heroShade {
+  position: absolute;
+  inset: 0;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroShade {
+  background: linear-gradient(180deg, rgba(9, 10, 12, 0.12), rgba(9, 10, 12, 0.58));
+}
+
+.kicker {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.95rem;
+  z-index: 1;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
 .avatarWrap {
-  width: 84px;
+  position: absolute;
+  left: 0.95rem;
+  bottom: 0.95rem;
+  z-index: 1;
+  width: 72px;
   aspect-ratio: 1 / 1;
 }
 
@@ -31,17 +74,20 @@
   width: 100%;
   height: 100%;
   border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 18px 42px rgba(9, 10, 12, 0.26);
 }
 
 .avatar {
   object-fit: cover;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .avatarFallback {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #d8d0c0, #f8f4ec);
-  color: #5b554f;
+  background: rgba(12, 13, 16, 0.82);
+  color: white;
   font-family: var(--font-space-grotesk), sans-serif;
   font-size: 2rem;
 }
@@ -53,26 +99,33 @@
 
 .name {
   margin: 0;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: -0.04em;
 }
 
-.meta {
+.meta,
+.supporting {
   margin: 0;
   color: var(--muted);
+}
+
+.supporting {
+  line-height: 1.5;
+}
+
+.detailLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.1rem;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 .actions {
   display: flex;
   justify-content: flex-start;
-}
-
-:global(html[data-theme="dark"]) .card {
-  background: linear-gradient(180deg, rgba(25, 28, 33, 0.86), rgba(14, 16, 20, 0.94));
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-:global(html[data-theme="dark"]) .avatarFallback {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-  color: var(--ink);
 }

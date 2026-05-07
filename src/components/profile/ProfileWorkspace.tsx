@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { CalendarDays, ChevronRight, Disc3, Gauge, Music2, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
+import { ArrowRight, CalendarDays, Heart, Library, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { CreatorAccessRequestCard } from "@/components/profile/CreatorAccessRequestCard";
 import { ProfileEditModal } from "@/components/profile/ProfileEditModal";
 import { LazyImage } from "@/components/shared/LazyImage";
 import { compactNumber } from "@/lib/format";
-import type { ProfileOverview } from "@/types/models";
+import type { CreatorAccessState, ProfileOverview } from "@/types/models";
 import styles from "./ProfileWorkspace.module.css";
 
 function formatDate(value?: string | null) {
@@ -27,7 +28,29 @@ function getInitials(name: string) {
     .join("") || "B";
 }
 
-export function ProfileWorkspace({ overview, email }: { overview: ProfileOverview; email: string }) {
+function getAccountType(creatorAccess: CreatorAccessState) {
+  if (creatorAccess.isApproved) {
+    return "Creator access approved";
+  }
+
+  if (creatorAccess.isPending) {
+    return "Creator request pending";
+  }
+
+  return "Listener account";
+}
+
+export function ProfileWorkspace({
+  overview,
+  email,
+  creatorAccess,
+  followedArtistCount,
+}: {
+  overview: ProfileOverview;
+  email: string;
+  creatorAccess: CreatorAccessState;
+  followedArtistCount: number;
+}) {
   const { profile, stats } = overview;
 
   if (!profile) {
@@ -40,10 +63,11 @@ export function ProfileWorkspace({ overview, email }: { overview: ProfileOvervie
   }
 
   const identity = profile.username ? `@${profile.username}` : email;
-  const totalActivity = stats.uploadedTracks + stats.ownedPlaylists + stats.likedSongs + stats.savedPlaylists;
   const displayNameNeedsReview = profile.display_name.includes(",") && !profile.username;
   const displayName = displayNameNeedsReview ? "Your Birvana profile" : profile.display_name;
-  const accountType = profile.verified_artist ? "Verified artist" : profile.is_artist ? "Artist account" : "Listener";
+  const totalActivity = stats.ownedPlaylists + stats.likedSongs + stats.savedPlaylists + followedArtistCount;
+  const accountType = getAccountType(creatorAccess);
+  const creatorActionLabel = creatorAccess.hasRequest ? "View Studio status" : "Request creator access";
 
   return (
     <div className={styles.page}>
@@ -76,9 +100,9 @@ export function ProfileWorkspace({ overview, email }: { overview: ProfileOvervie
         </div>
 
         <div className={styles.heroActions}>
-          <Link href="/studio/upload" className={styles.primaryAction}>
-            <UploadCloud size={17} strokeWidth={2} />
-            Studio
+          <Link href="/studio" className={styles.primaryAction}>
+            {creatorActionLabel}
+            <ArrowRight size={16} strokeWidth={2} />
           </Link>
           <ProfileEditModal profile={profile} triggerClassName={styles.secondaryAction} />
         </div>
@@ -89,21 +113,21 @@ export function ProfileWorkspace({ overview, email }: { overview: ProfileOvervie
           <Sparkles size={18} strokeWidth={2} />
           <div>
             <strong>Profile name needs review</strong>
-            <p>Your display name looks like song artist metadata. Update it below so the account looks correct.</p>
+            <p>Your display name looks like imported artist metadata. Update it so the listener profile reads clearly.</p>
           </div>
         </section>
       ) : null}
 
       <section className={styles.statsStrip} aria-label="Profile stats">
         <div className={styles.statItem}>
-          <span>Tracks uploaded</span>
-          <strong>{compactNumber(stats.uploadedTracks)}</strong>
-          <small>{compactNumber(stats.publicTracks)} public</small>
+          <span>Followed artists</span>
+          <strong>{compactNumber(followedArtistCount)}</strong>
+          <small>Artists you keep close</small>
         </div>
         <div className={styles.statItem}>
-          <span>Total plays</span>
-          <strong>{compactNumber(stats.totalPlays)}</strong>
-          <small>{compactNumber(stats.totalLikes)} likes on uploads</small>
+          <span>Liked songs</span>
+          <strong>{compactNumber(stats.likedSongs)}</strong>
+          <small>Saved for fast replay</small>
         </div>
         <div className={styles.statItem}>
           <span>Playlists</span>
@@ -113,40 +137,25 @@ export function ProfileWorkspace({ overview, email }: { overview: ProfileOvervie
         <div className={styles.statItem}>
           <span>Library</span>
           <strong>{compactNumber(totalActivity)}</strong>
-          <small>{compactNumber(stats.likedSongs)} liked, {compactNumber(stats.savedPlaylists)} saved</small>
+          <small>{compactNumber(stats.savedPlaylists)} saved playlists</small>
         </div>
       </section>
 
       <div className={styles.contentGrid}>
-        <section className={`${styles.panel} ${styles.studioPanel}`}>
+        <section className={`${styles.panel} ${styles.accessPanel}`}>
           <div className={styles.panelHeader}>
             <div>
               <p className={styles.panelEyebrow}>Studio</p>
-              <h2>Creator workspace</h2>
+              <h2>Creator access</h2>
             </div>
           </div>
 
-          <Link href="/studio/upload" className={styles.studioBanner}>
-            <Gauge size={20} strokeWidth={2} />
-            <span>
-              <strong>Open Studio</strong>
-              <small>Upload music, manage covers, and organize your public catalog.</small>
-            </span>
-            <ChevronRight size={18} strokeWidth={2.2} />
-          </Link>
-
-          <div className={styles.quickLinks}>
-            <Link href="/studio/tracks">
-              <Music2 size={18} strokeWidth={2} />
-              <span>Track manager</span>
-              <small>{compactNumber(stats.readyTracks)} ready tracks</small>
-            </Link>
-            <Link href="/studio/playlists">
-              <Disc3 size={18} strokeWidth={2} />
-              <span>Playlist studio</span>
-              <small>{compactNumber(stats.publicPlaylists)} public collections</small>
-            </Link>
-          </div>
+          <CreatorAccessRequestCard
+            email={email}
+            initialRequest={creatorAccess.request}
+            title="Apply to open Studio"
+            description="Studio is not open by default. Send your details once and BIRVANA will review whether the profile should get creator tools."
+          />
         </section>
 
         <section className={`${styles.panel} ${styles.accountPanel}`}>
@@ -161,6 +170,10 @@ export function ProfileWorkspace({ overview, email }: { overview: ProfileOvervie
             <div className={styles.detailItem}>
               <span>Display name</span>
               <strong>{displayName}</strong>
+            </div>
+            <div className={styles.detailItem}>
+              <span>Email</span>
+              <strong>{email}</strong>
             </div>
             <div className={styles.detailItem}>
               <span>Identity</span>
@@ -178,6 +191,24 @@ export function ProfileWorkspace({ overview, email }: { overview: ProfileOvervie
               <span>Bio</span>
               <strong>{profile.bio || "No bio added yet."}</strong>
             </div>
+          </div>
+
+          <div className={styles.quickLinks}>
+            <Link href="/artists">
+              <Users size={18} strokeWidth={2} />
+              <span>Artists you follow</span>
+              <small>{compactNumber(followedArtistCount)} saved in your listening graph</small>
+            </Link>
+            <Link href="/liked">
+              <Heart size={18} strokeWidth={2} />
+              <span>Liked songs</span>
+              <small>{compactNumber(stats.likedSongs)} tracks ready to replay</small>
+            </Link>
+            <Link href="/library">
+              <Library size={18} strokeWidth={2} />
+              <span>Playlist library</span>
+              <small>{compactNumber(stats.ownedPlaylists)} playlists from this account</small>
+            </Link>
           </div>
         </section>
       </div>

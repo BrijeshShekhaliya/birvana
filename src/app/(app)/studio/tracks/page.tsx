@@ -1,4 +1,6 @@
 import styles from "./page.module.css";
+import { getCreatorAccessState } from "@/lib/auth/account-state";
+import { StudioAccessGate } from "@/components/studio/StudioAccessGate";
 import { StudioNav } from "@/components/studio/StudioNav";
 import { StudioTracksWorkspace } from "@/components/studio/StudioTracksWorkspace";
 import { getCurrentUser, getStudioTracks } from "@/lib/data";
@@ -8,6 +10,12 @@ export default async function StudioTracksPage() {
 
   if (!user) {
     return null;
+  }
+
+  const creatorAccess = getCreatorAccessState(user);
+
+  if (!creatorAccess.isApproved) {
+    return <StudioAccessGate email={user.email ?? "listener@birvana.app"} creatorAccess={creatorAccess} />;
   }
 
   const tracks = await getStudioTracks(user.id);

@@ -18,6 +18,24 @@ export interface Profile {
   updated_at?: string;
 }
 
+export interface CreatorAccessRequest {
+  email: string;
+  fullName: string;
+  youtubeHandle: string;
+  location?: string | null;
+  notes?: string | null;
+  submittedAt: string;
+  status: "pending" | "approved" | "rejected";
+}
+
+export interface CreatorAccessState {
+  request: CreatorAccessRequest | null;
+  status: "none" | "pending" | "approved" | "rejected";
+  isApproved: boolean;
+  isPending: boolean;
+  hasRequest: boolean;
+}
+
 export interface ProfileOverview {
   profile: Profile | null;
   stats: {
@@ -34,6 +52,19 @@ export interface ProfileOverview {
   };
   recentTracks: Track[];
   recentPlaylists: Playlist[];
+}
+
+export interface CatalogArtist {
+  id: string;
+  display_name: string;
+  avatar_url?: string | null;
+  hero_image_url?: string | null;
+  bio?: string | null;
+  followers_count: number;
+  songs_count: number;
+  total_plays: number;
+  latest_release_at?: string | null;
+  contributor_label?: string | null;
 }
 
 export interface Album {

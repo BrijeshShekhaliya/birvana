@@ -18,7 +18,7 @@ const navItems = [
   { href: "/liked", label: "Liked", icon: Heart, match: "/liked" },
   { href: "/history", label: "History", icon: Clock3, match: "/history", showInMobile: false },
   { href: "/artists", label: "Artists", icon: Users, match: "/artists", showInMobile: false },
-  { href: "/studio/upload", label: "Studio", icon: SlidersHorizontal, match: "/studio", showInMobile: false },
+  { href: "/studio", label: "Studio", icon: SlidersHorizontal, match: "/studio", showInMobile: false },
   { href: "/settings", label: "Settings", icon: Settings, match: "/settings" },
   { href: "/profile", label: "Profile", icon: UserRound, match: "/profile" },
 ];

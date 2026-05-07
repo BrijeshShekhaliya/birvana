@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+import { getCreatorAccessState } from "@/lib/auth/account-state";
 import { DATA_CACHE_TAGS } from "@/lib/cache-tags";
 import { processAudioUpload } from "@/lib/media/processAudioUpload";
 import { deleteObjectFromR2, putObjectToR2 } from "@/lib/r2/client";
@@ -41,6 +42,13 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!getCreatorAccessState(user).isApproved) {
+      return NextResponse.json(
+        { error: "Studio access needs BIRVANA approval before uploads are enabled." },
+        { status: 403 },
+      );
     }
 
     let mutationSupabase = supabase;
@@ -112,7 +120,6 @@ export async function POST(request: Request) {
         id: user.id,
         email: user.email ?? existingProfile?.email ?? null,
         display_name: displayName,
-        is_artist: true,
       },
       {
         onConflict: "id",

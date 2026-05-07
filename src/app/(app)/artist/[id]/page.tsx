@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
+import { Disc3, Radio } from "lucide-react";
 import { ArtistFollowButton } from "@/components/shared/ArtistFollowButton";
 import styles from "./page.module.css";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { LazyImage } from "@/components/shared/LazyImage";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { TrackCard } from "@/components/shared/TrackCard";
+import { compactNumber } from "@/lib/format";
 import { getArtistDetail, getCurrentUser, getEngagementState } from "@/lib/data";
 
 export default async function ArtistDetailPage({
@@ -31,16 +34,39 @@ export default async function ArtistDetailPage({
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
-        <p className={styles.name}>{artist.display_name}</p>
-        <p className={styles.bio}>{artist.bio || "This artist has not added a bio yet."}</p>
-        {user && artist.id !== user.id ? (
-          <div className={styles.actions}>
-            <ArtistFollowButton
-              artistId={artist.id}
-              initialFollowing={followedArtistIds.has(artist.id)}
-            />
-          </div>
+        {artist.hero_image_url ? (
+          <LazyImage className={styles.heroImage} src={artist.hero_image_url} alt={artist.display_name} eager />
         ) : null}
+        <div className={styles.heroShade} />
+        <div className={styles.heroBody}>
+          <p className={styles.kicker}>Artist</p>
+          <p className={styles.name}>{artist.display_name}</p>
+          <p className={styles.bio}>{artist.bio || "This artist has not added a bio yet."}</p>
+
+          <div className={styles.metrics}>
+            <span>
+              <Disc3 size={15} strokeWidth={2} />
+              {compactNumber(artist.songs_count)} tracks
+            </span>
+            <span>
+              <Radio size={15} strokeWidth={2} />
+              {compactNumber(artist.total_plays)} plays
+            </span>
+          </div>
+
+          {artist.contributor_label ? (
+            <p className={styles.contributor}>Latest releases curated by {artist.contributor_label}</p>
+          ) : null}
+
+          {user ? (
+            <div className={styles.actions}>
+              <ArtistFollowButton
+                artistId={artist.id}
+                initialFollowing={followedArtistIds.has(artist.id)}
+              />
+            </div>
+          ) : null}
+        </div>
       </section>
 
       <section>
@@ -63,7 +89,7 @@ export default async function ArtistDetailPage({
         ) : (
           <EmptyState
             title="No released songs"
-            description="This artist does not have any ready tracks visible yet."
+            description="This artist does not have any ready tracks visible in the public catalog yet."
           />
         )}
       </section>
@@ -82,7 +108,7 @@ export default async function ArtistDetailPage({
         ) : (
           <EmptyState
             title="No albums yet"
-            description="Album releases will appear here once the artist starts grouping songs."
+            description="Album groupings will appear here when BIRVANA starts organizing this artist into release projects."
           />
         )}
       </section>

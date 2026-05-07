@@ -3,10 +3,11 @@ import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
+import { getFollowedArtistIds } from "@/lib/auth/account-state";
 import { DATA_CACHE_TAGS } from "@/lib/cache-tags";
 import { getPublicSupabaseEnv, hasSupabaseEnv } from "@/lib/env";
 import { getAdminSupabase, getServerSupabase } from "@/lib/supabase/server";
-import type { Album, Playlist, PlaylistTrack, Profile, ProfileOverview, Track } from "@/types/models";
+import type { Album, CatalogArtist, Playlist, PlaylistTrack, Profile, ProfileOverview, Track } from "@/types/models";
 
 type DiscoverData = {
   tracks: Track[];
@@ -54,6 +55,33 @@ function uniqueValues<T>(values: T[]) {
   return [...new Set(values)];
 }
 
+function normalizeArtistId(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[^\w\s-]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-") || "artist";
+}
+
+function buildArtistId(name: string) {
+  return `catalog:${normalizeArtistId(name)}`;
+}
+
+function buildCatalogArtistBio(name: string, trackCount: number, contributorLabel?: string | null) {
+  const parts = [
+    `${name} is part of the BIRVANA catalog.`,
+    `${trackCount} ${trackCount === 1 ? "track is" : "tracks are"} currently available.`,
+  ];
+
+  if (contributorLabel) {
+    parts.push(`Latest releases are being curated by ${contributorLabel}.`);
+  }
+
+  return parts.join(" ");
+}
+
 const TRACK_CARD_FIELDS = [
   "id",
   "artist_id",
@@ -92,8 +120,6 @@ const ARTIST_CARD_FIELDS = [
   "followers_count",
   "songs_count",
 ].join(",");
-
-const ALBUM_LIST_FIELDS = ["id", "title", "release_date"].join(",");
 
 async function getPublicCacheSupabase(): Promise<SupabaseQueryClient | null> {
   if (!hasSupabaseEnv()) {
@@ -237,11 +263,35 @@ async function fetchEngagementState(
     : Promise.resolve({ data: [] as Array<{ playlist_id: string }> | null });
 
   const followedPromise = normalizedArtistIds.length
-    ? supabase
-        .from("artist_follows")
-        .select("artist_id")
-        .eq("user_id", userId)
-        .in("artist_id", normalizedArtistIds)
+    ? getAdminSupabase()
+        .then(async (adminSupabase) => {
+          if (adminSupabase) {
+            const { data, error } = await adminSupabase.auth.admin.getUserById(userId);
+
+            if (!error) {
+              const followedIds = getFollowedArtistIds(data.user).filter((artistId) =>
+                normalizedArtistIds.includes(artistId),
+              );
+
+              return { data: followedIds.map((artistId) => ({ artist_id: artistId })) };
+            }
+          }
+
+          const { data } = await supabase.auth.getUser();
+          const followedIds = getFollowedArtistIds(data.user).filter((artistId) =>
+            normalizedArtistIds.includes(artistId),
+          );
+
+          return { data: followedIds.map((artistId) => ({ artist_id: artistId })) };
+        })
+        .catch(async () => {
+          const { data } = await supabase.auth.getUser();
+          const followedIds = getFollowedArtistIds(data.user).filter((artistId) =>
+            normalizedArtistIds.includes(artistId),
+          );
+
+          return { data: followedIds.map((artistId) => ({ artist_id: artistId })) };
+        })
     : Promise.resolve({ data: [] as Array<{ artist_id: string }> | null });
 
   const [{ data: likedRows }, { data: savedRows }, { data: followedRows }] = await Promise.all([
@@ -317,38 +367,141 @@ async function fetchLikedTracks(supabase: SupabaseQueryClient, userId: string) {
   return songIds.map((id) => trackMap.get(id)).filter(Boolean) as Track[];
 }
 
-async function fetchArtists(supabase: SupabaseQueryClient) {
+async function fetchPublicCatalogTracks(supabase: SupabaseQueryClient) {
+  const { data } = await supabase
+    .from("songs")
+    .select(TRACK_CARD_FIELDS)
+    .eq("status", "ready")
+    .eq("visibility", "public")
+    .not("audio_path", "is", null)
+    .order("play_count", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  return (data as Track[] | null) ?? [];
+}
+
+async function fetchContributorProfiles(supabase: SupabaseQueryClient, tracks: Track[]) {
+  const contributorIds = uniqueValues(tracks.map((track) => track.artist_id).filter(Boolean));
+
+  if (!contributorIds.length) {
+    return new Map<string, Profile>();
+  }
+
   const { data } = await supabase
     .from("profiles")
-    .select(ARTIST_CARD_FIELDS)
-    .eq("is_artist", true)
-    .order("followers_count", { ascending: false })
-    .limit(18);
+    .select("id,display_name,avatar_url,bio")
+    .in("id", contributorIds);
 
-  return (data as Profile[] | null) ?? [];
+  return new Map<string, Profile>(((data as Profile[] | null) ?? []).map((profile) => [profile.id, profile]));
+}
+
+function buildCatalogArtists(tracks: Track[], profileMap: Map<string, Profile>) {
+  const artistMap = new Map<
+    string,
+    CatalogArtist & {
+      tracks: Track[];
+      contributorIds: Set<string>;
+    }
+  >();
+
+  for (const track of tracks) {
+    const name = track.artist_display?.trim() || "Unknown artist";
+    const id = buildArtistId(name);
+    const contributor = profileMap.get(track.artist_id);
+    const existing = artistMap.get(id);
+
+    if (existing) {
+      existing.songs_count += 1;
+      existing.total_plays += track.play_count ?? 0;
+      existing.latest_release_at =
+        !existing.latest_release_at || (track.created_at && track.created_at > existing.latest_release_at)
+          ? track.created_at ?? existing.latest_release_at
+          : existing.latest_release_at;
+      existing.hero_image_url = existing.hero_image_url ?? track.cover_url ?? null;
+      existing.avatar_url = existing.avatar_url ?? contributor?.avatar_url ?? track.cover_url ?? null;
+      if (!existing.contributor_label && contributor?.display_name) {
+        existing.contributor_label = contributor.display_name;
+      }
+      existing.tracks.push(track);
+      existing.contributorIds.add(track.artist_id);
+      continue;
+    }
+
+    artistMap.set(id, {
+      id,
+      display_name: name,
+      avatar_url: contributor?.avatar_url ?? track.cover_url ?? null,
+      hero_image_url: track.cover_url ?? contributor?.avatar_url ?? null,
+      bio: contributor?.bio ?? buildCatalogArtistBio(name, 1, contributor?.display_name),
+      followers_count: 0,
+      songs_count: 1,
+      total_plays: track.play_count ?? 0,
+      latest_release_at: track.created_at ?? null,
+      contributor_label: contributor?.display_name ?? null,
+      tracks: [track],
+      contributorIds: new Set([track.artist_id]),
+    });
+  }
+
+  return [...artistMap.values()]
+    .map((artist) => ({
+      ...artist,
+      bio: artist.bio ?? buildCatalogArtistBio(artist.display_name, artist.songs_count, artist.contributor_label),
+    }))
+    .sort((left, right) => {
+      if (right.total_plays !== left.total_plays) {
+        return right.total_plays - left.total_plays;
+      }
+
+      return (right.latest_release_at ?? "").localeCompare(left.latest_release_at ?? "");
+    });
+}
+
+async function fetchArtists(supabase: SupabaseQueryClient) {
+  const tracks = await fetchPublicCatalogTracks(supabase);
+  const profiles = await fetchContributorProfiles(supabase, tracks);
+
+  return buildCatalogArtists(tracks, profiles).slice(0, 24).map((artist) => ({
+    id: artist.id,
+    display_name: artist.display_name,
+    avatar_url: artist.avatar_url,
+    hero_image_url: artist.hero_image_url,
+    bio: artist.bio,
+    followers_count: artist.followers_count,
+    songs_count: artist.songs_count,
+    total_plays: artist.total_plays,
+    latest_release_at: artist.latest_release_at,
+    contributor_label: artist.contributor_label,
+  }));
 }
 
 async function fetchArtistDetail(supabase: SupabaseQueryClient, artistId: string) {
-  const [artistResult, tracksResult, albumsResult] = await Promise.all([
-    supabase.from("profiles").select("id,display_name,bio").eq("id", artistId).maybeSingle(),
-    supabase
-      .from("songs")
-      .select(TRACK_CARD_FIELDS)
-      .eq("artist_id", artistId)
-      .eq("status", "ready")
-      .not("audio_path", "is", null)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("albums")
-      .select(ALBUM_LIST_FIELDS)
-      .eq("artist_id", artistId)
-      .order("release_date", { ascending: false }),
-  ]);
+  const tracks = await fetchPublicCatalogTracks(supabase);
+  const profiles = await fetchContributorProfiles(supabase, tracks);
+  const artists = buildCatalogArtists(tracks, profiles);
+  const match = artists.find((artist) => artist.id === artistId);
+
+  if (!match) {
+    return { artist: null, tracks: [], albums: [] };
+  }
+
+  const albums: Album[] = [];
 
   return {
-    artist: (artistResult.data as Profile | null) ?? null,
-    tracks: (tracksResult.data as Track[] | null) ?? [],
-    albums: (albumsResult.data as Album[] | null) ?? [],
+    artist: {
+      id: match.id,
+      display_name: match.display_name,
+      avatar_url: match.avatar_url,
+      hero_image_url: match.hero_image_url,
+      bio: match.bio,
+      followers_count: match.followers_count,
+      songs_count: match.songs_count,
+      total_plays: match.total_plays,
+      latest_release_at: match.latest_release_at,
+      contributor_label: match.contributor_label,
+    },
+    tracks: match.tracks,
+    albums,
   };
 }
 

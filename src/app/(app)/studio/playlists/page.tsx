@@ -1,5 +1,7 @@
 import styles from "./page.module.css";
+import { getCreatorAccessState } from "@/lib/auth/account-state";
 import { CreatePlaylistForm } from "@/components/studio/CreatePlaylistForm";
+import { StudioAccessGate } from "@/components/studio/StudioAccessGate";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PlaylistCard } from "@/components/shared/PlaylistCard";
 import { StudioNav } from "@/components/studio/StudioNav";
@@ -10,6 +12,12 @@ export default async function StudioPlaylistsPage() {
 
   if (!user) {
     return null;
+  }
+
+  const creatorAccess = getCreatorAccessState(user);
+
+  if (!creatorAccess.isApproved) {
+    return <StudioAccessGate email={user.email ?? "listener@birvana.app"} creatorAccess={creatorAccess} />;
   }
 
   const playlists = await getStudioPlaylists(user.id);
