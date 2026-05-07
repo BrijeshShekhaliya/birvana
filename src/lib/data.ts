@@ -82,6 +82,22 @@ function buildCatalogArtistBio(name: string, trackCount: number, contributorLabe
   return parts.join(" ");
 }
 
+function splitArtistCredits(value: string | null | undefined) {
+  const normalized = (value ?? "")
+    .replace(/\b(feat\.?|ft\.?|featuring|with)\b/giu, ",")
+    .replace(/\s+[xX]\s+/g, ",")
+    .replace(/\s*&\s*/g, ",")
+    .replace(/\s+and\s+/giu, ",")
+    .replace(/\//g, ",");
+
+  const artists = normalized
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return uniqueValues(artists.length ? artists : ["Unknown artist"]);
+}
+
 const TRACK_CARD_FIELDS = [
   "id",
   "artist_id",
@@ -400,47 +416,55 @@ function buildCatalogArtists(tracks: Track[], profileMap: Map<string, Profile>) 
     string,
     CatalogArtist & {
       tracks: Track[];
+      trackIds: Set<number>;
       contributorIds: Set<string>;
     }
   >();
 
   for (const track of tracks) {
-    const name = track.artist_display?.trim() || "Unknown artist";
-    const id = buildArtistId(name);
+    const creditedArtists = splitArtistCredits(track.artist_display);
     const contributor = profileMap.get(track.artist_id);
-    const existing = artistMap.get(id);
 
-    if (existing) {
-      existing.songs_count += 1;
-      existing.total_plays += track.play_count ?? 0;
-      existing.latest_release_at =
-        !existing.latest_release_at || (track.created_at && track.created_at > existing.latest_release_at)
-          ? track.created_at ?? existing.latest_release_at
-          : existing.latest_release_at;
-      existing.hero_image_url = existing.hero_image_url ?? track.cover_url ?? null;
-      existing.avatar_url = existing.avatar_url ?? contributor?.avatar_url ?? track.cover_url ?? null;
-      if (!existing.contributor_label && contributor?.display_name) {
-        existing.contributor_label = contributor.display_name;
+    for (const name of creditedArtists) {
+      const id = buildArtistId(name);
+      const existing = artistMap.get(id);
+
+      if (existing) {
+        if (!existing.trackIds.has(track.id)) {
+          existing.trackIds.add(track.id);
+          existing.tracks.push(track);
+          existing.songs_count += 1;
+          existing.total_plays += track.play_count ?? 0;
+        }
+        existing.latest_release_at =
+          !existing.latest_release_at || (track.created_at && track.created_at > existing.latest_release_at)
+            ? track.created_at ?? existing.latest_release_at
+            : existing.latest_release_at;
+        existing.hero_image_url = existing.hero_image_url ?? track.cover_url ?? null;
+        existing.avatar_url = existing.avatar_url ?? contributor?.avatar_url ?? track.cover_url ?? null;
+        if (!existing.contributor_label && contributor?.display_name) {
+          existing.contributor_label = contributor.display_name;
+        }
+        existing.contributorIds.add(track.artist_id);
+        continue;
       }
-      existing.tracks.push(track);
-      existing.contributorIds.add(track.artist_id);
-      continue;
-    }
 
-    artistMap.set(id, {
-      id,
-      display_name: name,
-      avatar_url: contributor?.avatar_url ?? track.cover_url ?? null,
-      hero_image_url: track.cover_url ?? contributor?.avatar_url ?? null,
-      bio: contributor?.bio ?? buildCatalogArtistBio(name, 1, contributor?.display_name),
-      followers_count: 0,
-      songs_count: 1,
-      total_plays: track.play_count ?? 0,
-      latest_release_at: track.created_at ?? null,
-      contributor_label: contributor?.display_name ?? null,
-      tracks: [track],
-      contributorIds: new Set([track.artist_id]),
-    });
+      artistMap.set(id, {
+        id,
+        display_name: name,
+        avatar_url: contributor?.avatar_url ?? track.cover_url ?? null,
+        hero_image_url: track.cover_url ?? contributor?.avatar_url ?? null,
+        bio: contributor?.bio ?? buildCatalogArtistBio(name, 1, contributor?.display_name),
+        followers_count: 0,
+        songs_count: 1,
+        total_plays: track.play_count ?? 0,
+        latest_release_at: track.created_at ?? null,
+        contributor_label: contributor?.display_name ?? null,
+        tracks: [track],
+        trackIds: new Set([track.id]),
+        contributorIds: new Set([track.artist_id]),
+      });
+    }
   }
 
   return [...artistMap.values()]
