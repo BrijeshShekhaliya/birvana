@@ -241,6 +241,56 @@ function getVisualizerAccentRgb(canvas: HTMLCanvasElement, tone: string | null) 
   return parseCanvasRgb(accent, parseCanvasRgb(tone ?? ""));
 }
 
+function getTrackMotionSeed(key: string) {
+  let hash = 0;
+
+  for (let index = 0; index < key.length; index += 1) {
+    hash = (hash * 33 + key.charCodeAt(index)) % 1_000_003;
+  }
+
+  return hash / 1_000_003;
+}
+
+function getProceduralBandLevel({
+  band,
+  elapsed,
+  index,
+  progressRatio,
+  seed,
+}: {
+  band: (typeof VISUALIZER_BANDS)[number];
+  elapsed: number;
+  index: number;
+  progressRatio: number;
+  seed: number;
+}) {
+  const bars = VISUALIZER_BANDS.length;
+  const ratio = index / Math.max(bars - 1, 1);
+  const mirrored = ratio <= 0.5 ? ratio * 2 : (1 - ratio) * 2;
+  const bandSeed = seed * (0.7 + band.gain * 0.18) + ratio * 1.37;
+  const sweep = Math.sin(elapsed * (1.2 + band.gain * 0.22) + bandSeed * 8.4 + ratio * 8.6) * 0.5 + 0.5;
+  const harmonic = Math.sin(elapsed * (2.35 + mirrored * 0.65) - bandSeed * 5.2 + ratio * 15.8) * 0.5 + 0.5;
+  const chatter = Math.sin(elapsed * (4.8 + ratio * 0.9) + bandSeed * 11.4 - ratio * 25.5) * 0.5 + 0.5;
+  const phrase = Math.sin(progressRatio * Math.PI * 2 + bandSeed * Math.PI * 1.2 + ratio * 4.4) * 0.5 + 0.5;
+  const edgeLift = Math.max(
+    Math.exp(-((ratio - 0.08) ** 2) / 0.014),
+    Math.exp(-((ratio - 0.92) ** 2) / 0.014),
+  );
+  const centerLift = Math.sin(ratio * Math.PI) ** 0.6;
+  const pulse = Math.max(0, Math.sin(elapsed * 0.86 + seed * 18 + ratio * 10.2));
+  const baseEnergy =
+    0.12 +
+    sweep * 0.24 +
+    harmonic * 0.2 +
+    chatter * 0.12 +
+    phrase * 0.12 +
+    centerLift * 0.08 +
+    edgeLift * 0.06 +
+    pulse * 0.1;
+
+  return Math.min(1, Math.max(0.04, baseEnergy * (0.76 + band.gain * 0.22)));
+}
+
 function drawIdleVisualizer(context: CanvasRenderingContext2D, width: number, height: number, accentRgb: string) {
   context.clearRect(0, 0, width, height);
 
@@ -271,14 +321,23 @@ function drawIdleVisualizer(context: CanvasRenderingContext2D, width: number, he
 }
 
 function DesktopWaveform({
+  motionKey,
+  progress,
+  duration,
   playing,
   tone,
 }: {
+  motionKey: string;
+  progress: number;
+  duration: number;
   playing: boolean;
   tone: string | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [enabled, setEnabled] = useState(false);
+  const progressRef = useRef(progress);
+  const durationRef = useRef(duration);
+  const seedRef = useRef(getTrackMotionSeed(motionKey));
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 960px)");
@@ -288,6 +347,18 @@ function DesktopWaveform({
     mediaQuery.addEventListener("change", updateEnabled);
     return () => mediaQuery.removeEventListener("change", updateEnabled);
   }, []);
+
+  useEffect(() => {
+    progressRef.current = progress;
+  }, [progress]);
+
+  useEffect(() => {
+    durationRef.current = duration;
+  }, [duration]);
+
+  useEffect(() => {
+    seedRef.current = getTrackMotionSeed(motionKey);
+  }, [motionKey]);
 
   useEffect(() => {
     if (!enabled) {
@@ -310,7 +381,7 @@ function DesktopWaveform({
     let lastWidth = 0;
     let lastHeight = 0;
     const smoothBars = new Float32Array(VISUALIZER_BANDS.length);
-    let phase = 0;
+    const startedAt = performance.now();
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
@@ -348,27 +419,33 @@ function DesktopWaveform({
       const startX = (width - availableWidth) / 2;
       const centerY = height * 0.5;
       const maxBarHeight = height * 0.82;
+      const elapsed = (performance.now() - startedAt) / 1000 + progressRef.current * 0.72 + seedRef.current * 4.8;
+      const progressRatio = durationRef.current > 0 ? progressRef.current / durationRef.current : 0;
 
       context.lineCap = "round";
       context.lineWidth = barWidth;
-      phase += 0.09;
 
       for (let index = 0; index < bars; index += 1) {
+        const target = getProceduralBandLevel({
+          band: VISUALIZER_BANDS[index],
+          elapsed,
+          index,
+          progressRatio,
+          seed: seedRef.current,
+        });
+        const smoothing = target > smoothBars[index] ? 0.3 : 0.14;
+        smoothBars[index] = smoothBars[index] * (1 - smoothing) + target * smoothing;
+
         const ratio = index / Math.max(bars - 1, 1);
-        const mirrored = ratio <= 0.5 ? ratio * 2 : (1 - ratio) * 2;
-        const sweep = Math.sin(phase + ratio * 7.2) * 0.5 + 0.5;
-        const pulse = Math.sin(phase * 0.72 + ratio * 16) * 0.5 + 0.5;
         const edgeLift = Math.max(
           Math.exp(-((ratio - 0.08) ** 2) / 0.018),
           Math.exp(-((ratio - 0.92) ** 2) / 0.018),
         );
-        const target = 0.16 + sweep * 0.38 + pulse * 0.22 + edgeLift * 0.06 + mirrored * 0.08;
-        const smoothing = target > smoothBars[index] ? 0.28 : 0.12;
-        smoothBars[index] = smoothBars[index] * (1 - smoothing) + target * smoothing;
-
-        const barHeight = Math.max(3, maxBarHeight * smoothBars[index]);
+        const centerPresence = Math.sin(ratio * Math.PI);
+        const spatialLift = 0.82 + edgeLift * 0.18 + centerPresence * 0.08;
+        const barHeight = Math.max(2.6, maxBarHeight * smoothBars[index] * spatialLift);
         const x = startX + barWidth / 2 + index * (barWidth + gap);
-        const opacity = Math.min(1, 0.36 + smoothBars[index] * 0.56);
+        const opacity = Math.min(1, 0.38 + smoothBars[index] * 0.62);
 
         context.strokeStyle = `rgba(${accentRgb}, ${opacity})`;
         context.beginPath();
@@ -696,6 +773,7 @@ export function PlayerBar() {
     return null;
   }
 
+  const waveformMotionKey = `${currentTrack.audio_url ?? currentTrack.title}:${currentTrack.artist_display}`;
   const transitionKey = currentTrack.audio_url ?? currentTrack.title;
 
   return (
@@ -919,7 +997,13 @@ export function PlayerBar() {
                 </div>
 
                 <div className={styles.desktopWaveBasin} aria-hidden="true">
-                <DesktopWaveform playing={playing} tone={effectiveArtworkTone} />
+                  <DesktopWaveform
+                    motionKey={waveformMotionKey}
+                    progress={progress}
+                    duration={duration}
+                    playing={playing}
+                    tone={effectiveArtworkTone}
+                  />
                 </div>
 
                 <div className={styles.mobilePanelProgress}>
